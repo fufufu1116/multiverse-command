@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MULTIVERSE - 本城司令システム [#5]</title>
+    <title>MULTIVERSE - 本城司令システム [#6]</title>
     
     <!-- PWA / iOS専用メタタグ -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -48,6 +48,7 @@
             --text-muted: #8c9bae; 
             --border-gold: rgba(212, 175, 55, 0.4); 
             --accent-blue: #38bdf8;
+            --success: #4ade80;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -81,7 +82,7 @@
         /* 本城ヒーローカード */
         .emperor-hero-card { background: linear-gradient(135deg, rgba(18,26,48,0.98), rgba(8,12,22,0.95)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 20px var(--gold-glow); }
         .avatar-frame { width: 75px; height: 75px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 15px var(--gold-glow); position: relative; overflow: hidden; }
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #030408; z-index: 2; }
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: var(--success); border-radius: 50%; border: 2px solid #030408; z-index: 2; }
         
         .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
         .emperor-details p { margin: 3px 0; font-size: 0.8rem; color: var(--text-muted); }
@@ -94,14 +95,21 @@
         /* 部隊グリッド */
         .troop-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
         @media(min-width: 768px) { .troop-grid { grid-template-columns: repeat(2, 1fr); } }
-        .troop-card { background: rgba(5, 7, 15, 0.85); border: 1px solid var(--border-gold); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; cursor: pointer; transition: 0.2s; }
-        .troop-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); transform: translateY(-2px); }
+        .troop-card { background: rgba(5, 7, 15, 0.85); border: 1px solid var(--border-gold); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; transition: 0.2s; }
+        .troop-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
         
         .troop-info { flex: 1; }
-        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
+        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
         .troop-info p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
 
-        .dialogue-box { background: rgba(3, 4, 8, 0.9); border-left: 3px solid var(--gold); padding: 6px 10px; margin-top: 6px; font-size: 0.75rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
+        .dialogue-box { background: rgba(3, 4, 8, 0.9); border-left: 3px solid var(--gold); padding: 6px 10px; margin-top: 6px; font-size: 0.75rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; cursor: pointer; }
+        .dialogue-box:hover { background: rgba(212,175,55,0.08); }
+
+        /* データ入力用ボタン・コントロール */
+        .action-row { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+        .action-row input { background: #030408; border: 1px solid var(--border-gold); color: var(--gold-light); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; width: 90px; }
+        .action-row button { background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
+        .action-row button:hover { background: var(--gold); color: #000; }
 
         /* チャットルーム */
         .chat-stream { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
@@ -128,57 +136,53 @@
         nav.bottom-nav span.icon { font-size: 1.2rem; }
 
         .ticker { background: rgba(0,0,0,0.6); border-left: 3px solid var(--gold); padding: 10px 12px; font-size: 0.8rem; font-family: monospace; color: var(--text-muted); border-radius: 0 6px 6px 0; }
-        
         .pwa-banner { background: rgba(212,175,55,0.1); border: 1px dashed var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; color: var(--gold-light); text-align: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <header>
         <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <span class="version-tag">称号: 初陣の指揮官 [#5]</span>
+        <span class="version-tag">称号: 初陣の指揮官 [#6]</span>
     </header>
 
     <div class="container">
         <!-- 🏰 【本城】司令官個室 -->
         <div id="view-home" class="view-section active">
             <div class="pwa-banner">
-                📱 <strong>PWA対応完了:</strong> Safariの「共有」ボタン ➔ 「ホーム画面に追加」で、専用アプリとして起動できます。
+                💾 <strong>ローカルストレージ稼働中:</strong> 入力された資産や売上は端末に自動保存されます。
             </div>
 
             <div class="emperor-hero-card">
                 <div class="avatar-frame">🛡️<div class="status-dot"></div></div>
                 <div class="emperor-details">
-                    <h4>司令官 Emperor <span style="font-size:0.65rem; background:rgba(212,175,55,0.2); padding:2px 6px; border-radius:4px; color:var(--gold-light);">フルアーマー・絶対君主</span></h4>
-                    <p>総資産基盤: <strong id="stat-assets">0円</strong> (基盤構築中)</p>
-                    <p>システム進化度: <strong>フェーズ 5 [#5] (PWAネイティブ化対応)</strong></p>
+                    <h4>司令官 Emperor <span style="font-size:0.65rem; background:rgba(212,175,55,0.2); padding:2px 6px; border-radius:4px; color:var(--gold-light);">データ永続化対応</span></h4>
+                    <p>総資産基盤: <strong id="display-total-revenue" style="color:var(--gold-light);">0円</strong></p>
+                    <p>システム進化度: <strong>フェーズ 6 [#6] (実データ連動)</strong></p>
                 </div>
             </div>
 
             <div class="panel">
                 <h3>🏆 獲得称号 & 実績録</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
-                <div class="badge-list">
-                    <span class="badge-tag">⚔️ 初陣の指揮官 [#5]</span>
-                    <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
-                    <span class="badge-tag locked">👨‍🎓 確率の支配者 (安定収益未達成)</span>
-                    <span class="badge-tag locked">💰 黄金の錬金術師 (利益10万超え未達成)</span>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊の売上や実績に応じて、称号がリアルタイムで解放されます。</p>
+                <div class="badge-list" id="badge-container">
+                    <!-- 動的生成 -->
                 </div>
             </div>
 
             <div class="panel">
                 <h3>📌 現在の最優先タスク & 通知</h3>
                 <div style="background: rgba(5,7,15,0.7); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
-                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#5] PWA実装</h4>
-                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">ホーム画面へのインストールとネイティブアプリ化の基盤が確立されました。</p>
+                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#6] データ永続化</h4>
+                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">各部隊の収益入力およびブラウザ保存（LocalStorage）機構が有効化されました。</p>
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-muted); padding: 2px 0;">
-                    📢 <strong>通信:</strong> ブラウザの枠組みを取り払い、完全な司令端末として単独稼働します。
+                    📢 <strong>通信:</strong> 「部隊」タブから各セクターの売上や進捗を入力してみてください。
                 </div>
             </div>
 
             <div class="ticker">
-                >> [システムテレメトリー] バージョン [#5] PWA稼働中。<br>
-                >> ホーム画面追加により、ワンタップで司令システムにアクセス可能です。
+                >> [システムテレメトリー] バージョン [#6] 正常稼働中。<br>
+                >> マルチバース実戦データの蓄積を開始します。
             </div>
         </div>
 
@@ -194,8 +198,8 @@
         <!-- ⚔️ 部隊タブ -->
         <div id="view-troops" class="view-section">
             <div class="panel">
-                <h3>全部隊・固有スキル管理</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">カードをタップすると円卓へ直通報告が飛びます。</p>
+                <h3>全部隊・固有スキル & 収益管理</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">各部隊の売上を入力・更新すると、総資産に即時反映されます。</p>
                 <div class="troop-grid" id="troop-list-container" style="margin-top: 10px;"></div>
             </div>
         </div>
@@ -236,77 +240,145 @@
     </nav>
 
     <script>
-        const troopsData = [
+        // 部隊データの初期定義（LocalStorageから復元可能）
+        let troopsData = [
             {
                 id: "raphael",
                 name: "ラファエル（主席軍師）",
                 role: "全体統括・予測分析",
                 skill: "謎の生物マスコット演算",
-                statusText: "稼働中",
-                task: "PWAネイティブ環境の監視と調律",
-                revenue: "0円",
+                task: "マルチバース実戦データの統括管理",
+                revenue: 0,
                 avatar: "🐰",
-                quote: "「司令官、バージョン [#5] でPWA化が完了しました！ホーム画面に追加すれば、もうただのWebページではありません。」"
+                quote: "「司令官、バージョン [#6] です！私に売上を入力して下されば、しっかりと記録・保存いたします！」"
             },
             {
                 id: "hyakunin",
-                name: "百人将プロジェクト (Kensei / Yariashi)",
+                name: "百人将プロジェクト",
                 role: "前線ビジネス探索",
-                skill: "「エンペラーアイ」 (実用部隊連携)",
-                statusText: "探索中",
+                skill: "「エンペラーアイ」 (市場調査)",
                 task: "収益機会のスクリーニング",
-                revenue: "0円",
+                revenue: 0,
                 avatar: "⚔️",
-                quote: "「『エンペラーアイ』展開！ホーム画面からのクイック起動で、いつでも前線に直結します！」"
+                quote: "「『エンペラーアイ』展開中！得られた成果をここに叩き込んでください！」"
             },
             {
                 id: "tokushu",
-                name: "特殊部隊（公営競技 / Hayate）",
-                role: "特務・潜入データ処理",
+                name: "特殊部隊（公営競技）",
+                role: "特務・データ処理",
                 skill: "「異世界」 (シミュレーション)",
-                statusText: "待機・準備中",
-                task: "公営競技のV8エンジン事前登録",
-                revenue: "0円",
+                task: "公営競技のV8エンジン運用",
+                revenue: 0,
                 avatar: "🛡️",
-                quote: "「『異世界』シミュレーション稼働中。ネイティブアプリ感覚でデータを回し込みます！」"
+                quote: "「『異世界』シミュレーション稼働中。収益を出して『確率博士』の称号を掴みましょう！」"
             },
             {
                 id: "ai_research",
-                name: "AI研究班 (Yumihi / Kikyo)",
+                name: "AI研究班",
                 role: "通信・先端技術解析",
-                skill: "プロバイダ解析・通信支援",
-                statusText: "解析中",
-                task: "新しい技術の調査と実験",
-                revenue: "0円",
+                skill: "プロバイダ解析・知見抽出",
+                task: "新技術の調査と実験",
+                revenue: 0,
                 avatar: "📡",
-                quote: "「通信バックエンドの安定化を確認。全セクター、いつでもオフライン同期可能です！」"
+                quote: "「通信およびデータ記録、正常稼働中！マルチバースの拡張をバックアップします！」"
             }
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🐰", text: "「バージョン [#5] PWAシステムが起動しました。スマホの『ホーム画面に追加』を実行してください！」", time: "たった今" }
+            { name: "ラファエル", avatar: "🐰", text: "「バージョン [#6] システム起動。データ永続化（LocalStorage）が有効になりました。」", time: "たった今" }
         ];
+
+        // 保存されたデータのロード
+        function loadSavedData() {
+            const saved = localStorage.getItem('multiverse_troops');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    troopsData.forEach((t, i) => {
+                        if (parsed[i] !== undefined && parsed[i].revenue !== undefined) {
+                            t.revenue = Number(parsed[i].revenue) || 0;
+                        }
+                    });
+                } catch(e) { console.error(e); }
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('multiverse_troops', JSON.stringify(troopsData));
+        }
+
+        function getTotalRevenue() {
+            return troopsData.reduce((sum, t) => sum + (Number(t.revenue) || 0), 0);
+        }
+
+        function renderDashboard() {
+            loadSavedData();
+            const total = getTotalRevenue();
+            document.getElementById('display-total-revenue').innerText = total.toLocaleString() + '円';
+
+            // 称号の判定ロジック
+            const hasEarnings = total > 0;
+            const isDoctor = total >= 10000;
+            const isMaster = total >= 50000;
+            const isAlchemist = total >= 100000;
+
+            const badges = [
+                { name: "⚔️ 初陣の指揮官 [#6]", unlocked: true },
+                { name: "🎓 確率博士 (収益1万円超)", unlocked: isDoctor },
+                { name: "👨‍🎓 確率の支配者 (収益5万円超)", unlocked: isMaster },
+                { name: "💰 黄金の錬金術師 (利益10万円超)", unlocked: isAlchemist }
+            ];
+
+            document.getElementById('badge-container').innerHTML = badges.map(b => `
+                <span class="badge-tag ${b.unlocked ? '' : 'locked'}">${b.name} ${b.unlocked ? '✨' : ''}</span>
+            `).join('');
+
+            renderTroops();
+            renderChatStream();
+        }
 
         function renderTroops() {
             const container = document.getElementById('troop-list-container');
             if (!container) return;
             
-            container.innerHTML = troopsData.map(t => `
-                <div class="troop-card" onclick="triggerTroopChat('${t.id}')">
+            container.innerHTML = troopsData.map((t, index) => `
+                <div class="troop-card">
                     <div class="avatar-frame" style="width: 50px; height: 50px; font-size: 1.4rem;">
                         ${t.avatar}
                         <div class="status-dot"></div>
                     </div>
                     <div class="troop-info">
-                        <h4>${t.name} <span>売上: ${t.revenue}</span></h4>
-                        <p>固有スキル: <strong style="color:var(--gold-light);">${t.skill}</strong></p>
-                        <p>現在任務: ${t.task}</p>
-                        <div class="dialogue-box">
-                            ${t.quote}
+                        <h4>${t.name}</h4>
+                        <p>スキル: <strong style="color:var(--gold-light);">${t.skill}</strong></p>
+                        <p>任務: ${t.task}</p>
+                        <div class="action-row">
+                            <span>売上:</span>
+                            <input type="number" id="rev-${index}" value="${t.revenue}" placeholder="数値入力">
+                            <button onclick="updateRevenue(${index})">記録</button>
+                        </div>
+                        <div class="dialogue-box" onclick="triggerTroopChat('${t.id}')">
+                            ${t.quote} (タップで報告)
                         </div>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function updateRevenue(index) {
+            const inputVal = document.getElementById(`rev-${index}`).value;
+            const val = parseInt(inputVal, 10) || 0;
+            troopsData[index].revenue = val;
+            saveData();
+            renderDashboard();
+
+            // 更新報告チャット
+            chatMessages.unshift({
+                name: troopsData[index].name,
+                avatar: troopsData[index].avatar,
+                text: `「収益データを更新しました！ 現在の数値: ${val.toLocaleString()}円です。」`,
+                time: "たった今"
+            });
+            renderChatStream();
         }
 
         function renderChatStream() {
@@ -319,8 +391,6 @@
                     <p style="margin: 4px 0 0; color: var(--gold-light);">${m.text}</p>
                 </div>
             `).join('');
-            
-            container.scrollTop = container.scrollHeight;
         }
 
         function triggerTroopChat(id) {
@@ -334,36 +404,25 @@
                 time: "たった今"
             });
 
-            if (chatMessages.length > 10) {
-                chatMessages.pop();
-            }
+            if (chatMessages.length > 10) chatMessages.pop();
 
             switchTab('war');
             renderChatStream();
         }
 
         function switchTab(tabName) {
-            document.querySelectorAll('.view-section').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('nav.bottom-nav button').forEach(el => {
-                el.classList.remove('active');
-            });
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav.bottom-nav button').forEach(el => el.classList.remove('active'));
 
             const targetView = document.getElementById('view-' + tabName);
-            if (targetView) {
-                targetView.classList.add('active');
-            }
+            if (targetView) targetView.classList.add('active');
             const targetBtn = document.getElementById('nav-' + tabName);
-            if (targetBtn) {
-                targetBtn.classList.add('active');
-            }
+            if (targetBtn) targetBtn.classList.add('active');
             window.scrollTo(0, 0);
         }
 
         window.onload = function() {
-            renderTroops();
-            renderChatStream();
+            renderDashboard();
         };
     </script>
 </body>
