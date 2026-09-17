@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MULTIVERSE - 本城司令システム [#6]</title>
+    <title>MULTIVERSE - 本城司令システム [#7]</title>
     
     <!-- PWA / iOS専用メタタグ -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,416 +14,349 @@
     <!-- インライン・Web App Manifest -->
     <script>
         const manifestData = {
-            "name": "MULTIVERSE 本城司令システム",
+            "name": "MULTIVERSE 本城司令",
             "short_name": "MULTIVERSE",
             "start_url": "./",
             "display": "standalone",
             "background_color": "#05070f",
             "theme_color": "#05070f",
-            "icons": [
-                {
-                    "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>",
-                    "sizes": "192x192",
-                    "type": "image/svg+xml"
-                }
-            ]
+            "icons": [{ "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>", "sizes": "192x192", "type": "image/svg+xml" }]
         };
-        const stringManifest = JSON.stringify(manifestData);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
+        const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
         const link = document.createElement('link');
-        link.rel = 'manifest';
-        link.href = manifestURL;
-        document.head.appendChild(link);
+        link.rel = 'manifest'; link.href = URL.createObjectURL(blob); document.head.appendChild(link);
     </script>
 
     <style>
         :root { 
-            --bg-dark: #05070f; 
-            --panel-bg: rgba(13, 19, 33, 0.95); 
-            --gold: #d4af37; 
-            --gold-light: #f3e5ab; 
-            --gold-glow: rgba(212, 175, 55, 0.35);
-            --text-main: #e2e8f0; 
-            --text-muted: #8c9bae; 
+            --bg-dark: #05070f; --panel-bg: rgba(13, 19, 33, 0.95); 
+            --gold: #d4af37; --gold-light: #f3e5ab; --gold-glow: rgba(212, 175, 55, 0.35);
+            --text-main: #e2e8f0; --text-muted: #8c9bae; 
             --border-gold: rgba(212, 175, 55, 0.4); 
-            --accent-blue: #38bdf8;
-            --success: #4ade80;
+            --success: #4ade80; --danger: #f87171; --warning: #fbbf24;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; padding: 0; background-color: var(--bg-dark); color: var(--text-main); 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            min-height: 100vh; padding-bottom: 90px;
-        }
-        header { 
-            display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; 
-            background: rgba(5, 7, 15, 0.98); border-bottom: 2px solid var(--gold); 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 1001;
-        }
+        body { margin: 0; background-color: var(--bg-dark); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; min-height: 100vh; padding-bottom: 90px; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: rgba(5, 7, 15, 0.98); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 20px rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 1001; }
         header h1 { margin: 0; font-size: 1rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
-        
-        .version-tag {
-            font-size: 0.75rem; color: var(--gold); font-weight: bold; 
-            background: rgba(212,175,55,0.15); padding: 4px 10px; border-radius: 6px; 
-            border: 1px solid var(--border-gold); box-shadow: 0 0 10px var(--gold-glow);
-        }
-
+        .version-tag { font-size: 0.75rem; color: var(--gold); font-weight: bold; background: rgba(212,175,55,0.15); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-gold); box-shadow: 0 0 10px var(--gold-glow); }
         .container { max-width: 1100px; margin: 16px auto; padding: 0 16px; display: grid; gap: 16px; }
-        
-        .view-section { display: none; }
-        .view-section.active { display: grid; gap: 16px; animation: fadeIn 0.25s ease; }
-
+        .view-section { display: none; } .view-section.active { display: grid; gap: 16px; animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
         .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 12px; padding: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
-        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px; }
-
-        /* 本城ヒーローカード */
-        .emperor-hero-card { background: linear-gradient(135deg, rgba(18,26,48,0.98), rgba(8,12,22,0.95)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 20px var(--gold-glow); }
-        .avatar-frame { width: 75px; height: 75px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 15px var(--gold-glow); position: relative; overflow: hidden; }
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: var(--success); border-radius: 50%; border: 2px solid #030408; z-index: 2; }
+        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; }
         
-        .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .emperor-hero-card { background: linear-gradient(135deg, rgba(18,26,48,0.98), rgba(8,12,22,0.95)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 20px var(--gold-glow); }
+        .avatar-frame { width: 70px; height: 70px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 15px var(--gold-glow); position: relative; }
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: var(--success); border-radius: 50%; border: 2px solid #030408; }
+        .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; }
         .emperor-details p { margin: 3px 0; font-size: 0.8rem; color: var(--text-muted); }
 
-        /* 実績称号バッジ */
         .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
         .badge-tag { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold-light); padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
         .badge-tag.locked { background: rgba(13, 19, 33, 0.6); border-color: rgba(140,155,174,0.3); color: var(--text-muted); opacity: 0.5; font-weight: normal; }
 
-        /* 部隊グリッド */
         .troop-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
         @media(min-width: 768px) { .troop-grid { grid-template-columns: repeat(2, 1fr); } }
-        .troop-card { background: rgba(5, 7, 15, 0.85); border: 1px solid var(--border-gold); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; transition: 0.2s; }
-        .troop-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
-        
+        .troop-card { background: rgba(5, 7, 15, 0.85); border: 1px solid var(--border-gold); border-radius: 10px; padding: 12px; display: flex; gap: 12px; transition: 0.2s; }
         .troop-info { flex: 1; }
-        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
         .troop-info p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
-
         .dialogue-box { background: rgba(3, 4, 8, 0.9); border-left: 3px solid var(--gold); padding: 6px 10px; margin-top: 6px; font-size: 0.75rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; cursor: pointer; }
-        .dialogue-box:hover { background: rgba(212,175,55,0.08); }
 
-        /* データ入力用ボタン・コントロール */
+        /* 入力UI群 */
         .action-row { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
-        .action-row input { background: #030408; border: 1px solid var(--border-gold); color: var(--gold-light); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; width: 90px; }
-        .action-row button { background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
-        .action-row button:hover { background: var(--gold); color: #000; }
+        .action-row input { background: #030408; border: 1px solid var(--border-gold); color: var(--gold-light); padding: 6px; border-radius: 4px; font-size: 0.75rem; width: 100px; }
+        .action-row button { background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
+        
+        /* 確率部隊用特殊グリッド */
+        .prob-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+        .prob-grid input { background: #030408; border: 1px solid var(--border-gold); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 0.75rem; width: 100%; }
+        .prob-btn { grid-column: span 2; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); padding: 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; cursor: pointer; }
 
-        /* チャットルーム */
         .chat-stream { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
         .chat-bubble { background: rgba(5, 7, 15, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 10px 12px; font-size: 0.8rem; }
         .chat-bubble h5 { margin: 0 0 3px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
+        .chat-bubble.RED { border-color: var(--danger); background: rgba(248, 113, 113, 0.1); }
+        .chat-bubble.YELLOW { border-color: var(--warning); background: rgba(251, 191, 36, 0.1); }
+        .chat-bubble.GREEN { border-color: var(--success); background: rgba(74, 222, 128, 0.1); }
 
-        /* MAPグリッド */
-        .map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-        .map-tile { background: rgba(5, 7, 15, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; text-align: center; }
-        .map-tile h4 { margin: 0 0 4px; color: var(--gold); font-size: 0.85rem; }
-        .map-tile p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
-
-        /* ボトムナビゲーション */
-        nav.bottom-nav { 
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5, 7, 15, 0.98); 
-            border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; 
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.8);
-        }
-        nav.bottom-nav button { 
-            background: none; border: none; color: var(--text-muted); font-size: 0.65rem; text-align: center; 
-            display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; cursor: pointer; transition: 0.2s;
-        }
+        nav.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5, 7, 15, 0.98); border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        nav.bottom-nav button { background: none; border: none; color: var(--text-muted); font-size: 0.65rem; display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; cursor: pointer; }
         nav.bottom-nav button.active { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
         nav.bottom-nav span.icon { font-size: 1.2rem; }
-
         .ticker { background: rgba(0,0,0,0.6); border-left: 3px solid var(--gold); padding: 10px 12px; font-size: 0.8rem; font-family: monospace; color: var(--text-muted); border-radius: 0 6px 6px 0; }
-        .pwa-banner { background: rgba(212,175,55,0.1); border: 1px dashed var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; color: var(--gold-light); text-align: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <header>
         <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <span class="version-tag">称号: 初陣の指揮官 [#6]</span>
+        <span class="version-tag">称号: 初陣の指揮官 [#7]</span>
     </header>
 
     <div class="container">
-        <!-- 🏰 【本城】司令官個室 -->
+        <!-- 🏰 【本城】 -->
         <div id="view-home" class="view-section active">
-            <div class="pwa-banner">
-                💾 <strong>ローカルストレージ稼働中:</strong> 入力された資産や売上は端末に自動保存されます。
-            </div>
-
             <div class="emperor-hero-card">
                 <div class="avatar-frame">🛡️<div class="status-dot"></div></div>
                 <div class="emperor-details">
-                    <h4>司令官 Emperor <span style="font-size:0.65rem; background:rgba(212,175,55,0.2); padding:2px 6px; border-radius:4px; color:var(--gold-light);">データ永続化対応</span></h4>
+                    <h4>司令官 Emperor</h4>
                     <p>総資産基盤: <strong id="display-total-revenue" style="color:var(--gold-light);">0円</strong></p>
-                    <p>システム進化度: <strong>フェーズ 6 [#6] (実データ連動)</strong></p>
+                    <p>システム進化度: <strong>フェーズ 7 [#7] (オフライン参謀実装)</strong></p>
+                </div>
+            </div>
+
+            <!-- エンペラーアイ状態表示パネル -->
+            <div class="panel" style="border-color: var(--accent-blue); box-shadow: inset 0 0 20px rgba(56,189,248,0.1);">
+                <h3 style="color: var(--accent-blue); border-color: rgba(56,189,248,0.3);">👁️ エンペラーアイ戦況分析</h3>
+                <div id="emperorStatus" style="font-size: 0.8rem; color: var(--text-main); white-space: pre-line; line-height: 1.4;">
+                    分析データを待機中...
                 </div>
             </div>
 
             <div class="panel">
                 <h3>🏆 獲得称号 & 実績録</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊の売上や実績に応じて、称号がリアルタイムで解放されます。</p>
-                <div class="badge-list" id="badge-container">
-                    <!-- 動的生成 -->
-                </div>
+                <div class="badge-list" id="badge-container"></div>
             </div>
-
-            <div class="panel">
-                <h3>📌 現在の最優先タスク & 通知</h3>
-                <div style="background: rgba(5,7,15,0.7); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
-                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#6] データ永続化</h4>
-                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">各部隊の収益入力およびブラウザ保存（LocalStorage）機構が有効化されました。</p>
-                </div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); padding: 2px 0;">
-                    📢 <strong>通信:</strong> 「部隊」タブから各セクターの売上や進捗を入力してみてください。
-                </div>
-            </div>
-
+            
             <div class="ticker">
-                >> [システムテレメトリー] バージョン [#6] 正常稼働中。<br>
-                >> マルチバース実戦データの蓄積を開始します。
+                >> [参謀テレメトリー] バージョン [#7] 正常。<br>
+                >> 外部AI非依存の自律推論エンジン稼働開始。
             </div>
         </div>
 
-        <!-- 🛡️ 円卓タブ -->
+        <!-- 🛡️ 円卓 -->
         <div id="view-war" class="view-section">
             <div class="panel">
                 <h3>作戦報告・リアルタイム会話ログ</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊カードをタップするとここに作戦報告がリアルタイムで届きます。</p>
-                <div class="chat-stream" id="chat-stream-container" style="margin-top: 10px;"></div>
+                <div class="chat-stream" id="chat-stream-container"></div>
             </div>
         </div>
 
-        <!-- ⚔️ 部隊タブ -->
+        <!-- ⚔️ 部隊 -->
         <div id="view-troops" class="view-section">
             <div class="panel">
                 <h3>全部隊・固有スキル & 収益管理</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">各部隊の売上を入力・更新すると、総資産に即時反映されます。</p>
-                <div class="troop-grid" id="troop-list-container" style="margin-top: 10px;"></div>
-            </div>
-        </div>
-
-        <!-- 🗺️ MAPタブ -->
-        <div id="view-map" class="view-section">
-            <div class="panel">
-                <h3>戦略マップ（出撃エリア）</h3>
-                <div class="map-grid" style="margin-top: 10px;">
-                    <div class="map-tile"><h4>本城</h4><p>司令官個室</p></div>
-                    <div class="map-tile"><h4>投資城</h4><p>未開放</p></div>
-                    <div class="map-tile"><h4>競技砦</h4><p>計算拠点</p></div>
-                    <div class="map-tile"><h4>転売関所</h4><p>調査中</p></div>
-                    <div class="map-tile"><h4>研究塔</h4><p>実験室</p></div>
-                    <div class="map-tile"><h4>アビスゲート</h4><p>未接続</p></div>
-                </div>
+                <div class="troop-grid" id="troop-list-container"></div>
             </div>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <button id="nav-home" class="active" onclick="switchTab('home')">
-            <span class="icon">🏯</span>
-            <span>本城</span>
-        </button>
-        <button id="nav-war" onclick="switchTab('war')">
-            <span class="icon">🛡️</span>
-            <span>円卓</span>
-        </button>
-        <button id="nav-troops" onclick="switchTab('troops')">
-            <span class="icon">⚔️</span>
-            <span>部隊</span>
-        </button>
-        <button id="nav-map" onclick="switchTab('map')">
-            <span class="icon">🗺️</span>
-            <span>MAP</span>
-        </button>
+        <button id="nav-home" class="active" onclick="switchTab('home')"><span class="icon">🏯</span><span>本城</span></button>
+        <button id="nav-war" onclick="switchTab('war')"><span class="icon">🛡️</span><span>円卓</span></button>
+        <button id="nav-troops" onclick="switchTab('troops')"><span class="icon">⚔️</span><span>部隊</span></button>
     </nav>
 
     <script>
-        // 部隊データの初期定義（LocalStorageから復元可能）
+        // -----------------------------------------
+        // 1. データベース・状態管理
+        // -----------------------------------------
+        let profitHistory = []; 
         let troopsData = [
-            {
-                id: "raphael",
-                name: "ラファエル（主席軍師）",
-                role: "全体統括・予測分析",
-                skill: "謎の生物マスコット演算",
-                task: "マルチバース実戦データの統括管理",
-                revenue: 0,
-                avatar: "🐰",
-                quote: "「司令官、バージョン [#6] です！私に売上を入力して下されば、しっかりと記録・保存いたします！」"
-            },
-            {
-                id: "hyakunin",
-                name: "百人将プロジェクト",
-                role: "前線ビジネス探索",
-                skill: "「エンペラーアイ」 (市場調査)",
-                task: "収益機会のスクリーニング",
-                revenue: 0,
-                avatar: "⚔️",
-                quote: "「『エンペラーアイ』展開中！得られた成果をここに叩き込んでください！」"
-            },
-            {
-                id: "tokushu",
-                name: "特殊部隊（公営競技）",
-                role: "特務・データ処理",
-                skill: "「異世界」 (シミュレーション)",
-                task: "公営競技のV8エンジン運用",
-                revenue: 0,
-                avatar: "🛡️",
-                quote: "「『異世界』シミュレーション稼働中。収益を出して『確率博士』の称号を掴みましょう！」"
-            },
-            {
-                id: "ai_research",
-                name: "AI研究班",
-                role: "通信・先端技術解析",
-                skill: "プロバイダ解析・知見抽出",
-                task: "新技術の調査と実験",
-                revenue: 0,
-                avatar: "📡",
-                quote: "「通信およびデータ記録、正常稼働中！マルチバースの拡張をバックアップします！」"
-            }
+            { id: "raphael", name: "ラファエル（主席軍師）", role: "統括", skill: "自律マスコット演算", revenue: 0, avatar: "🐰", quote: "「司令官、オフラインでの自律推論機能が実装されました。外部AIなしでも我々は戦えます！」" },
+            { id: "hyakunin", name: "百人将プロジェクト", role: "ビジネス", skill: "「エンペラーアイ」", revenue: 0, avatar: "⚔️", quote: "「『エンペラーアイ』により直近の戦果を自動分析中。収益を報告してください！」" },
+            { id: "tokushu", name: "特殊部隊（公営競技）", role: "特務", skill: "「異世界エンジン」 (EV計算)", revenue: 0, avatar: "🛡️", quote: "「オッズと勝率を入力せよ。期待値(EV)とケリー基準から、出撃の可否を瞬時に判定する。」" },
+            { id: "ai_research", name: "AI研究班", role: "通信", skill: "プロバイダ解析", revenue: 0, avatar: "📡", quote: "「スタンドアロン状態での稼働を確認。いつでも作戦実行可能です！」" }
         ];
 
-        let chatMessages = [
-            { name: "ラファエル", avatar: "🐰", text: "「バージョン [#6] システム起動。データ永続化（LocalStorage）が有効になりました。」", time: "たった今" }
-        ];
+        let chatMessages = [{ name: "ラファエル", avatar: "🐰", text: "「バージョン [#7] 起動。ケリー基準および戦況分析アルゴリズムの稼働を確認。」", time: "たった今" }];
 
-        // 保存されたデータのロード
         function loadSavedData() {
-            const saved = localStorage.getItem('multiverse_troops');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    troopsData.forEach((t, i) => {
-                        if (parsed[i] !== undefined && parsed[i].revenue !== undefined) {
-                            t.revenue = Number(parsed[i].revenue) || 0;
-                        }
-                    });
-                } catch(e) { console.error(e); }
-            }
+            try {
+                const savedTroops = localStorage.getItem('multiverse_troops');
+                if (savedTroops) {
+                    const parsed = JSON.parse(savedTroops);
+                    troopsData.forEach((t, i) => { if (parsed[i]) t.revenue = Number(parsed[i].revenue) || 0; });
+                }
+                const savedHistory = localStorage.getItem('multiverse_profit_history');
+                if (savedHistory) profitHistory = JSON.parse(savedHistory);
+            } catch(e) {}
         }
 
         function saveData() {
             localStorage.setItem('multiverse_troops', JSON.stringify(troopsData));
+            localStorage.setItem('multiverse_profit_history', JSON.stringify(profitHistory));
         }
 
-        function getTotalRevenue() {
-            return troopsData.reduce((sum, t) => sum + (Number(t.revenue) || 0), 0);
+        // -----------------------------------------
+        // 2. オフライン参謀エンジン (ChatGPT提供)
+        // -----------------------------------------
+        
+        // 異世界シミュレーション（確率部隊）
+        function calculateProbabilityTactics({ odds, winRate, bankroll, stake }) {
+            odds = Number(odds); winRate = Number(winRate); bankroll = Number(bankroll); stake = Number(stake);
+            if (!Number.isFinite(odds) || !Number.isFinite(winRate) || !Number.isFinite(bankroll) || !Number.isFinite(stake) || odds <= 1 || winRate <= 0 || winRate >= 1 || bankroll <= 0 || stake < 0) {
+                return { decision: "INVALID", level: "RED", message: "【参謀】入力値が不正です。出撃を停止します。" };
+            }
+            const ev = winRate * odds - 1;
+            const b = odds - 1, q = 1 - winRate;
+            const fullKelly = (b * winRate - q) / b;
+            const halfKelly = Math.max(0, fullKelly * 0.5);
+            const cappedFraction = Math.min(halfKelly, 0.10);
+            const recommendedStake = bankroll * cappedFraction;
+            
+            let decision, level, message;
+            if (ev <= 0) { decision = "RETREAT"; level = "RED"; message = "【特殊部隊】期待値がマイナス。出撃を中止し、直ちに撤退せよ。"; }
+            else if (fullKelly <= 0) { decision = "RETREAT"; level = "RED"; message = "【特殊部隊】ケリー基準がマイナス。資金投入は許可できない。"; }
+            else if (stake > recommendedStake) { decision = "REDUCE"; level = "YELLOW"; message = `【特殊部隊】期待値はプラスだが掛け金が過大だ。推奨上限: ${Math.floor(recommendedStake).toLocaleString()}円に減額せよ。`; }
+            else { decision = "ATTACK"; level = "GREEN"; message = "【特殊部隊】正の期待値を確認。資金管理も適正範囲内。出撃を許可する！"; }
+            
+            return { decision, level, evPercent: ev * 100, fullKelly, halfKelly, recommendedStake, message };
         }
 
+        // エンペラーアイ（収益分析）
+        function emperorEye() {
+            if (profitHistory.length < 3) {
+                return { title: "戦況観測中", quote: "【百人将】戦況データが不足しています。売上データの蓄積（3回以上）を待ちます。" };
+            }
+            const recent = profitHistory.slice(-3);
+            const allPositive = recent.every(v => v > 0);
+            const allNegative = recent.every(v => v < 0);
+            const latest = recent[2], previous = recent[1];
+            
+            if (allPositive) {
+                return { title: "🔥 強気攻勢", quote: latest > previous ? "【百人将】三連続黒字、かつ勢力拡大中！このまま強気攻勢を維持せよ！" : "【百人将】三連続黒字を確認。慢心は禁物だが、現在の戦略を維持せよ！" };
+            } else if (allNegative) {
+                return { title: "🛡️ 戦略見直し", quote: latest < previous ? "【百人将】三連続損失、かつ被害拡大中。即座に攻勢を停止し、戦略を根本から見直せ！" : "【百人将】三連続損失。現在の戦略を再点検し、一時守勢へ移行せよ。" };
+            } else {
+                if (latest > 0 && previous < 0) return { title: "🔎 戦況偵察", quote: "【百人将】損失から反転の兆候。まだ本格攻勢には早い、偵察を継続せよ。" };
+                if (latest < 0 && previous > 0) return { title: "🔎 戦況監視", quote: "【百人将】黒字から失速。攻勢を急がず、次の戦況を監視せよ。" };
+                return { title: "⚖️ 混戦状態", quote: "【百人将】収益が混戦状態。攻守を固定せず、柔軟に立ち回れ。" };
+            }
+        }
+
+        // -----------------------------------------
+        // 3. UI連携・レンダリング
+        // -----------------------------------------
         function renderDashboard() {
             loadSavedData();
-            const total = getTotalRevenue();
+            const total = troopsData.reduce((sum, t) => sum + t.revenue, 0);
             document.getElementById('display-total-revenue').innerText = total.toLocaleString() + '円';
 
-            // 称号の判定ロジック
-            const hasEarnings = total > 0;
-            const isDoctor = total >= 10000;
-            const isMaster = total >= 50000;
-            const isAlchemist = total >= 100000;
-
             const badges = [
-                { name: "⚔️ 初陣の指揮官 [#6]", unlocked: true },
-                { name: "🎓 確率博士 (収益1万円超)", unlocked: isDoctor },
-                { name: "👨‍🎓 確率の支配者 (収益5万円超)", unlocked: isMaster },
-                { name: "💰 黄金の錬金術師 (利益10万円超)", unlocked: isAlchemist }
+                { name: "⚔️ 初陣の指揮官 [#7]", unlocked: true },
+                { name: "🎓 確率博士 (収益1万円超)", unlocked: total >= 10000 },
+                { name: "👨‍🎓 確率の支配者 (収益5万円超)", unlocked: total >= 50000 },
+                { name: "💰 黄金の錬金術師 (利益10万超)", unlocked: total >= 100000 }
             ];
+            document.getElementById('badge-container').innerHTML = badges.map(b => `<span class="badge-tag ${b.unlocked ? '' : 'locked'}">${b.name} ${b.unlocked ? '✨' : ''}</span>`).join('');
 
-            document.getElementById('badge-container').innerHTML = badges.map(b => `
-                <span class="badge-tag ${b.unlocked ? '' : 'locked'}">${b.name} ${b.unlocked ? '✨' : ''}</span>
-            `).join('');
-
+            updateEmperorEyeUI();
             renderTroops();
             renderChatStream();
+        }
+
+        function updateEmperorEyeUI() {
+            const result = emperorEye();
+            document.getElementById('emperorStatus').innerText = `【分析】${result.title}\n${result.quote}\n\n▶︎ 直近3回の収益動向: [ ${profitHistory.slice(-3).map(v => v>0?'+'+v:v).join(' / ') || 'データなし'} ]`;
+            troopsData[1].quote = result.quote; // 百人将のセリフも書き換える
         }
 
         function renderTroops() {
             const container = document.getElementById('troop-list-container');
             if (!container) return;
             
-            container.innerHTML = troopsData.map((t, index) => `
-                <div class="troop-card">
-                    <div class="avatar-frame" style="width: 50px; height: 50px; font-size: 1.4rem;">
-                        ${t.avatar}
-                        <div class="status-dot"></div>
-                    </div>
-                    <div class="troop-info">
-                        <h4>${t.name}</h4>
-                        <p>スキル: <strong style="color:var(--gold-light);">${t.skill}</strong></p>
-                        <p>任務: ${t.task}</p>
+            container.innerHTML = troopsData.map((t, index) => {
+                // 特殊部隊（tokushu）だけはEV計算用UIにする
+                let actionHTML = '';
+                if (t.id === 'tokushu') {
+                    actionHTML = `
+                        <div class="prob-grid">
+                            <input type="number" id="prob-odds" placeholder="ｵｯｽﾞ (例:3.0)" step="0.1">
+                            <input type="number" id="prob-win" placeholder="勝率% (例:40)">
+                            <input type="number" id="prob-bank" placeholder="総資金 (例:100000)">
+                            <input type="number" id="prob-stake" placeholder="掛金 (例:5000)">
+                            <button class="prob-btn" onclick="runProbability()">📊 期待値(EV)・ケリー判定</button>
+                        </div>
+                    `;
+                } else {
+                    actionHTML = `
                         <div class="action-row">
-                            <span>売上:</span>
-                            <input type="number" id="rev-${index}" value="${t.revenue}" placeholder="数値入力">
-                            <button onclick="updateRevenue(${index})">記録</button>
+                            <span>売上加算:</span>
+                            <input type="number" id="rev-${index}" placeholder="金額を入力">
+                            <button onclick="addRevenue(${index})">記録</button>
+                            <span style="font-size:0.7rem; color:var(--gold-light); margin-left:auto;">累計: ${t.revenue.toLocaleString()}</span>
                         </div>
-                        <div class="dialogue-box" onclick="triggerTroopChat('${t.id}')">
-                            ${t.quote} (タップで報告)
+                    `;
+                }
+
+                return `
+                    <div class="troop-card">
+                        <div class="avatar-frame" style="width: 50px; height: 50px; font-size: 1.4rem;">${t.avatar}<div class="status-dot"></div></div>
+                        <div class="troop-info">
+                            <h4>${t.name}</h4>
+                            <p>スキル: <strong style="color:var(--gold-light);">${t.skill}</strong></p>
+                            ${actionHTML}
+                            <div class="dialogue-box" onclick="triggerTroopChat('${t.id}')">
+                                ${t.quote} (タップで円卓へ)
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        function updateRevenue(index) {
+        function addRevenue(index) {
             const inputVal = document.getElementById(`rev-${index}`).value;
             const val = parseInt(inputVal, 10) || 0;
-            troopsData[index].revenue = val;
+            if(val === 0) return;
+            
+            troopsData[index].revenue += val;
+            profitHistory.push(val); // 履歴を追加
             saveData();
             renderDashboard();
 
-            // 更新報告チャット
-            chatMessages.unshift({
-                name: troopsData[index].name,
-                avatar: troopsData[index].avatar,
-                text: `「収益データを更新しました！ 現在の数値: ${val.toLocaleString()}円です。」`,
-                time: "たった今"
+            addChatMessage(troopsData[index].name, troopsData[index].avatar, `「収益データを記録！ ${val > 0 ? '+'+val : val}円。累計: ${troopsData[index].revenue.toLocaleString()}円です。」`, "GREEN");
+        }
+
+        function runProbability() {
+            const result = calculateProbabilityTactics({
+                odds: document.getElementById('prob-odds').value,
+                winRate: Number(document.getElementById('prob-win').value) / 100,
+                bankroll: document.getElementById('prob-bank').value,
+                stake: document.getElementById('prob-stake').value
             });
+
+            let text = `${result.message}`;
+            if(result.decision !== "INVALID") {
+                text += `\n▶︎ 期待値(EV): ${result.evPercent.toFixed(1)}%`;
+                text += `\n▶︎ 推奨掛金上限(ハーフケリー): ${Math.floor(result.recommendedStake).toLocaleString()}円`;
+            }
+            addChatMessage("特殊部隊", "🛡️", text, result.level);
+            switchTab('war'); // 計算したらすぐ円卓（結果画面）へ飛ぶ
+        }
+
+        function addChatMessage(name, avatar, text, level="NONE") {
+            chatMessages.unshift({ name, avatar, text, level, time: "たった今" });
+            if (chatMessages.length > 15) chatMessages.pop();
             renderChatStream();
         }
 
         function renderChatStream() {
             const container = document.getElementById('chat-stream-container');
             if (!container) return;
-
             container.innerHTML = chatMessages.map(m => `
-                <div class="chat-bubble">
+                <div class="chat-bubble ${m.level}">
                     <h5><span>${m.avatar} ${m.name}</span> <span style="font-size:0.6rem; color:var(--text-muted);">${m.time}</span></h5>
-                    <p style="margin: 4px 0 0; color: var(--gold-light);">${m.text}</p>
+                    <p style="margin: 4px 0 0; color: ${m.level === 'RED' ? 'var(--danger)' : m.level === 'YELLOW' ? 'var(--warning)' : 'var(--gold-light)'};">${m.text}</p>
                 </div>
             `).join('');
         }
 
         function triggerTroopChat(id) {
             const troop = troopsData.find(t => t.id === id);
-            if (!troop) return;
-
-            chatMessages.unshift({
-                name: troop.name,
-                avatar: troop.avatar,
-                text: troop.quote,
-                time: "たった今"
-            });
-
-            if (chatMessages.length > 10) chatMessages.pop();
-
-            switchTab('war');
-            renderChatStream();
+            if (troop) { addChatMessage(troop.name, troop.avatar, troop.quote); switchTab('war'); }
         }
 
         function switchTab(tabName) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('nav.bottom-nav button').forEach(el => el.classList.remove('active'));
-
-            const targetView = document.getElementById('view-' + tabName);
-            if (targetView) targetView.classList.add('active');
-            const targetBtn = document.getElementById('nav-' + tabName);
-            if (targetBtn) targetBtn.classList.add('active');
+            document.querySelectorAll('.view-section, nav.bottom-nav button').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + tabName)?.classList.add('active');
+            document.getElementById('nav-' + tabName)?.classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        window.onload = function() {
-            renderDashboard();
-        };
+        window.onload = renderDashboard;
     </script>
 </body>
 </html>
