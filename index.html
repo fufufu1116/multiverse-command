@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULTIVERSE - 司令統括システム</title>
+    <title>MULTIVERSE - 本城司令統括システム</title>
     <style>
         :root { 
             --bg-dark: #070913; 
@@ -14,107 +14,101 @@
             --text-main: #e2e8f0; 
             --text-muted: #94a3b8; 
             --border-gold: rgba(212, 175, 55, 0.4); 
-            --accent-blue: #38bdf8;
         }
         body { 
             margin: 0; padding: 0; background-color: var(--bg-dark); color: var(--text-main); 
-            font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; padding-bottom: 90px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            min-height: 100vh; padding-bottom: 90px;
         }
         header { 
-            display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; 
+            display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; 
             background: rgba(7, 9, 19, 0.98); border-bottom: 2px solid var(--gold); 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6); position: sticky; top: 0; z-index: 1001;
         }
-        header h1 { margin: 0; font-size: 1rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
+        header h1 { margin: 0; font-size: 1.1rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
         
-        .container { max-width: 1000px; margin: 12px auto; padding: 0 10px; display: grid; gap: 12px; }
+        /* レスポンシブ対応コンテナ（MacBookでは広く、iPhoneではジャストフィット） */
+        .container { max-width: 1100px; margin: 16px auto; padding: 0 16px; display: grid; gap: 16px; }
         
         .view-section { display: none; }
-        .view-section.active { display: grid; gap: 12px; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: grid; gap: 16px; animation: fadeIn 0.25s ease; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 8px; padding: 14px; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
-        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 6px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px; }
+        .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 10px; padding: 16px; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
+        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px; }
 
         /* 本城ヒーローカード */
-        .emperor-hero-card { background: linear-gradient(135deg, rgba(20,28,48,0.98), rgba(10,14,26,0.95)); border: 1px solid var(--gold); border-radius: 8px; padding: 14px; display: flex; gap: 14px; align-items: center; box-shadow: 0 0 15px var(--gold-glow); }
-        .emperor-avatar-large { width: 65px; height: 65px; background: #0b0f19; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 10px var(--gold-glow); }
-        .emperor-details h4 { margin: 0 0 3px; color: var(--gold); font-size: 1rem; }
-        .emperor-details p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
+        .emperor-hero-card { background: linear-gradient(135deg, rgba(20,28,48,0.98), rgba(10,14,26,0.95)); border: 1px solid var(--gold); border-radius: 10px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 15px var(--gold-glow); }
+        .emperor-avatar-large { width: 70px; height: 70px; background: #0b0f19; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; flex-shrink: 0; box-shadow: 0 0 10px var(--gold-glow); }
+        .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; }
+        .emperor-details p { margin: 3px 0; font-size: 0.8rem; color: var(--text-muted); }
 
         /* 実績称号バッジ */
-        .badge-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-        .badge-tag { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold-light); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .badge-tag { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold-light); padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
         .badge-tag.locked { background: rgba(15, 22, 38, 0.6); border-color: rgba(148,163,184,0.3); color: var(--text-muted); opacity: 0.5; font-weight: normal; }
 
-        /* プロジェクト・部隊切替ハブ */
-        .project-switch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
-        .project-switch-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
+        /* クイック切替グリッド（PCでは3〜4列、スマホでは2列に自動可変） */
+        .project-switch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
+        .project-switch-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
         .project-switch-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); transform: translateY(-2px); }
-        .project-switch-card h5 { margin: 0 0 3px; color: var(--gold-light); font-size: 0.8rem; }
-        .project-switch-card p { margin: 0; font-size: 0.65rem; color: var(--text-muted); }
+        .project-switch-card h5 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.85rem; }
+        .project-switch-card p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
 
-        /* 部隊グリッド & カード */
-        .troop-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
-        @media(min-width: 600px) { .troop-grid { grid-template-columns: 1fr 1fr; } }
-        .troop-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; display: flex; gap: 10px; align-items: center; cursor: pointer; transition: 0.2s; }
-        .troop-card:hover { border-color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+        /* 部隊グリッド（PCでは2カラム並び、スマホでは1カラム） */
+        .troop-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        @media(min-width: 768px) { .troop-grid { grid-template-columns: repeat(2, 1fr); } }
+        .troop-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center; }
         
-        .avatar-thumb { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: #070913; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); flex-shrink: 0; font-size: 1.3rem; position: relative; }
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 9px; height: 9px; background: #4ade80; border-radius: 50%; border: 2px solid #070913; }
+        .avatar-thumb { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: #070913; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); flex-shrink: 0; font-size: 1.4rem; position: relative; }
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #070913; }
         
         .troop-info { flex: 1; }
-        .troop-info h4 { margin: 0 0 2px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
-        .troop-info p { margin: 2px 0; font-size: 0.7rem; color: var(--text-muted); }
+        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
+        .troop-info p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
 
-        .dialogue-box { background: rgba(7, 9, 19, 0.85); border-left: 3px solid var(--gold); padding: 6px 8px; margin-top: 4px; font-size: 0.7rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
-
-        /* スキル発動トースト演出 */
-        #skill-toast { position: fixed; top: 65px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(15, 22, 38, 0.95); border: 1px solid var(--gold); color: var(--gold-light); padding: 8px 16px; border-radius: 20px; font-size: 0.75rem; z-index: 2000; opacity: 0; transition: 0.3s ease; pointer-events: none; box-shadow: 0 0 15px var(--gold-glow); }
-        #skill-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .dialogue-box { background: rgba(7, 9, 19, 0.85); border-left: 3px solid var(--gold); padding: 6px 10px; margin-top: 6px; font-size: 0.75rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
 
         /* 円卓会議室 */
-        .war-room-circle { position: relative; width: 240px; height: 240px; margin: 15px auto; border: 2px dashed var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(11, 15, 25, 0.6); }
-        .emperor-center { text-align: center; color: var(--gold); font-weight: bold; font-size: 0.8rem; }
-        .table-node { position: absolute; width: 50px; height: 50px; background: #0f1626; border: 1px solid var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--gold-light); text-align: center; cursor: pointer; transition: 0.2s; }
+        .war-room-circle { position: relative; width: 260px; height: 260px; margin: 20px auto; border: 2px dashed var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(11, 15, 25, 0.6); }
+        .emperor-center { text-align: center; color: var(--gold); font-weight: bold; font-size: 0.85rem; }
+        .table-node { position: absolute; width: 55px; height: 55px; background: #0f1626; border: 1px solid var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--gold-light); text-align: center; cursor: pointer; transition: 0.2s; }
         .table-node:hover { transform: scale(1.15); background: rgba(212, 175, 55, 0.2); }
 
-        .chat-stream { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
-        .chat-bubble { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 8px 10px; font-size: 0.75rem; }
-        .chat-bubble h5 { margin: 0 0 2px; color: var(--gold); font-size: 0.8rem; display: flex; justify-content: space-between; }
+        .chat-stream { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
+        .chat-bubble { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 10px 12px; font-size: 0.8rem; }
+        .chat-bubble h5 { margin: 0 0 3px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
 
-        .map-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .map-tile { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: center; }
-        .map-tile h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.8rem; }
-        .map-tile p { margin: 0; font-size: 0.65rem; color: var(--text-muted); }
+        .map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .map-tile { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; text-align: center; }
+        .map-tile h4 { margin: 0 0 4px; color: var(--gold); font-size: 0.85rem; }
+        .map-tile p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
 
-        .archive-item { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
-        .archive-item h4 { margin: 0 0 3px; color: var(--gold-light); font-size: 0.85rem; }
-        .archive-item p { margin: 0; font-size: 0.75rem; color: var(--text-muted); }
+        .archive-item { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+        .archive-item h4 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.9rem; }
+        .archive-item p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
 
+        /* ボトムナビゲーション（iPhoneでの親指操作に最適化） */
         nav.bottom-nav { 
             position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(7, 9, 19, 0.98); 
-            border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; 
+            border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; 
             box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
         }
         nav.bottom-nav button { 
-            background: none; border: none; color: var(--text-muted); font-size: 0.6rem; text-align: center; 
-            display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; cursor: pointer; transition: 0.2s;
+            background: none; border: none; color: var(--text-muted); font-size: 0.65rem; text-align: center; 
+            display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; cursor: pointer; transition: 0.2s;
         }
         nav.bottom-nav button.active { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
-        nav.bottom-nav span.icon { font-size: 1.1rem; }
+        nav.bottom-nav span.icon { font-size: 1.2rem; }
 
-        .ticker { background: rgba(0,0,0,0.6); border-left: 3px solid var(--gold); padding: 8px 10px; font-size: 0.75rem; font-family: monospace; color: var(--text-muted); }
+        .ticker { background: rgba(0,0,0,0.6); border-left: 3px solid var(--gold); padding: 10px 12px; font-size: 0.8rem; font-family: monospace; color: var(--text-muted); border-radius: 0 6px 6px 0; }
     </style>
 </head>
 <body>
-    <!-- スキル発動時の通知ポップアップ -->
-    <div id="skill-toast">⚔️ スキル発動: エンペラーアイ展開中</div>
-
     <header>
         <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <span style="font-size: 0.7rem; color: var(--gold);">称号: 初陣の指揮官</span>
+        <span style="font-size: 0.75rem; color: var(--gold);">称号: 初陣の指揮官</span>
     </header>
 
     <div class="container">
@@ -125,13 +119,13 @@
                 <div class="emperor-details">
                     <h4>司令官 Emperor</h4>
                     <p>総資産基盤: <strong>0円</strong> (基盤構築中)</p>
-                    <p>装備ギア: <strong>標準型司令端末</strong></p>
+                    <p>環境同期: <strong>iPhone / Mac対応 (無課金ローカル)</strong></p>
                 </div>
             </div>
 
             <div class="panel">
                 <h3>🏆 獲得称号 & 実績録</h3>
-                <p style="font-size: 0.7rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
                 <div class="badge-list">
                     <span class="badge-tag">⚔️ 初陣の指揮官</span>
                     <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
@@ -142,31 +136,31 @@
 
             <div class="panel">
                 <h3>📌 現在の最優先タスク & 通知</h3>
-                <div style="background: rgba(7,9,19,0.7); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 6px;">
-                    <h4 style="margin:0 0 2px; color:var(--gold-light); font-size:0.8rem;">最優先作戦: タクティカルUI展開フェーズ</h4>
-                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">部隊固有スキル（エンペラーアイ・異世界・AI研究）の同期完了。</p>
+                <div style="background: rgba(7,9,19,0.7); border: 1px solid var(--border-gold); border-radius: 6px; padding: 12px; margin-bottom: 8px;">
+                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: マルチデバイス環境最適化</h4>
+                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">iPhoneおよびMacBookのどちらからでも完全同期するレスポンシブUIを適用完了。</p>
                 </div>
-                <div style="font-size: 0.7rem; color: var(--text-muted); padding: 2px 0;">
-                    📢 <strong>通信:</strong> 全セクター異常なし。各部隊は出撃待機中。
+                <div style="font-size: 0.75rem; color: var(--text-muted); padding: 2px 0;">
+                    📢 <strong>通信:</strong> サーバーコスト0円の完全無課金体制にて正常稼働中。
                 </div>
             </div>
 
             <div class="panel">
                 <h3>⚡ プロジェクト・部隊クイック切替</h3>
                 <div class="project-switch-grid">
-                    <div class="project-switch-card" onclick="switchTab('troops'); triggerSkillToast('ラファエル統括 起動');">
+                    <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>🧠 ラファエル統括</h5>
                         <p>設計・システム調律</p>
                     </div>
-                    <div class="project-switch-card" onclick="switchTab('troops'); triggerSkillToast('⚔️ スキル発動: エンペラーアイ');">
+                    <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>⚔️ 百人将プロジェクト</h5>
                         <p>スキル: エンペラーアイ</p>
                     </div>
-                    <div class="project-switch-card" onclick="switchTab('troops'); triggerSkillToast('🛡️ スキル発動: 異世界シミュレーション');">
+                    <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>🛡️ 特殊部隊 (公営競技)</h5>
                         <p>スキル: 異世界</p>
                     </div>
-                    <div class="project-switch-card" onclick="switchTab('troops'); triggerSkillToast('🔮 AI研究班プロバイダ解析中');">
+                    <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>🔮 AI研究班</h5>
                         <p>先端技術・プロバイダ解析</p>
                     </div>
@@ -174,8 +168,8 @@
             </div>
 
             <div class="ticker">
-                >> [軍議テレメトリー] システム稼働率100% / 部隊接続完了。<br>
-                >> カードタップで固有スキルのアクティブ発動が可能です。
+                >> [システムテレメトリー] Emperor専用ローカル完結型・全デバイス適応完了。<br>
+                >> iPhoneでの片手操作、MacBookの大画面閲覧の双方に完全対応しています。
             </div>
         </div>
 
@@ -185,11 +179,11 @@
                 <h3>作戦会議室（円卓）</h3>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊長アイコンを押すと、直通の作戦報告がチャットに届きます。</p>
                 <div class="war-room-circle">
-                    <div class="emperor-center">👑 司令官<br><span style="font-size:0.55rem; color:var(--text-muted);">本城より指揮</span></div>
-                    <div class="table-node" style="top: 10px; left: 95px;" onclick="triggerTroopChat('raphael')">🧠<br>ラファエル</div>
-                    <div class="table-node" style="top: 95px; right: 10px;" onclick="triggerTroopChat('hyakunin')">⚔️<br>百人将</div>
-                    <div class="table-node" style="bottom: 10px; left: 95px;" onclick="triggerTroopChat('tokushu')">🛡️<br>特殊</div>
-                    <div class="table-node" style="top: 50px; left: 10px;" onclick="triggerTroopChat('ai_research')">🔮<br>AI研究</div>
+                    <div class="emperor-center">👑 司令官<br><span style="font-size:0.6rem; color:var(--text-muted);">本城より指揮</span></div>
+                    <div class="table-node" style="top: 10px; left: 102px;" onclick="triggerTroopChat('raphael')">🧠<br>ラファエル</div>
+                    <div class="table-node" style="top: 102px; right: 10px;" onclick="triggerTroopChat('hyakunin')">⚔️<br>百人将</div>
+                    <div class="table-node" style="bottom: 10px; left: 102px;" onclick="triggerTroopChat('tokushu')">🛡️<br>特殊</div>
+                    <div class="table-node" style="top: 102px; left: 10px;" onclick="triggerTroopChat('ai_research')">🔮<br>AI研究</div>
                 </div>
             </div>
             <div class="panel">
@@ -202,8 +196,8 @@
         <div id="view-troops" class="view-section">
             <div class="panel">
                 <h3>全部隊・固有スキル管理</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">カードをタップするとスキルが発動し、円卓へ直通報告が飛みます。</p>
-                <div class="troop-grid" id="troop-list-container" style="margin-top: 8px;"></div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊カードをタップすると円卓へ直通報告が飛みます。</p>
+                <div class="troop-grid" id="troop-list-container" style="margin-top: 10px;"></div>
             </div>
         </div>
 
@@ -211,7 +205,7 @@
         <div id="view-map" class="view-section">
             <div class="panel">
                 <h3>戦略マップ（出撃エリア）</h3>
-                <div class="map-grid" style="margin-top: 8px;">
+                <div class="map-grid" style="margin-top: 10px;">
                     <div class="map-tile"><h4>本城</h4><p>司令官個室</p></div>
                     <div class="map-tile"><h4>投資城</h4><p>未開放</p></div>
                     <div class="map-tile"><h4>競技砦</h4><p>計算拠点</p></div>
@@ -227,8 +221,8 @@
             <div class="panel">
                 <h3>これまでの歩み・歴史記録</h3>
                 <div class="archive-item">
-                    <h4>近代戦国タクティカルUIへの進化</h4>
-                    <p>ステータス: 完了 / 称号連動基盤・スキル発動演出（トースト）の実装</p>
+                    <h4>MacBook & iPhone レスポンシブ最適化</h4>
+                    <p>ステータス: 完了 / 無課金かつマルチデバイス対応のレイアウト自動可変システム実装</p>
                 </div>
             </div>
         </div>
@@ -264,31 +258,28 @@
                 name: "ラファエル（統括）",
                 role: "全体統括・設計",
                 skill: "論理構築・システム調律",
-                modelColor: "var(--gold)",
                 statusText: "稼働中",
                 task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、現代戦国タクティカルUIの展開が完了しました。」"
+                quote: "「司令官、iPhoneでもMacBookでも完璧に美しく映えるレイアウトに調律しました。」"
             },
             {
                 id: "hyakunin",
                 name: "百人将プロジェクト",
                 role: "前線ビジネス探索",
                 skill: "「エンペラーアイ」 (市場調査・機会看破)",
-                modelColor: "var(--gold)",
                 statusText: "探索中",
                 task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「『エンペラーアイ』起動！市場の利益チャンスを鋭く見抜きます！」"
+                quote: "「『エンペラーアイ』起動中！大画面でもスマホでも、利益チャンスは見逃しません！」"
             },
             {
                 id: "tokushu",
                 name: "特殊部隊（公営競技）",
                 role: "特務・データ処理",
                 skill: "「異世界」 (仮想世界シミュレーション)",
-                modelColor: "var(--gold)",
                 statusText: "待機・準備中",
                 task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
@@ -300,7 +291,6 @@
                 name: "AI研究班",
                 role: "先端技術解析",
                 skill: "プロバイダ解析・知見抽出",
-                modelColor: "#4ade80",
                 statusText: "解析中",
                 task: "新しい技術の調査と実験",
                 revenue: "0円",
@@ -312,7 +302,6 @@
                 name: "システム保守班",
                 role: "安定稼働担当",
                 skill: "絶対防御・エラー遮断",
-                modelColor: "#4ade80",
                 statusText: "安定",
                 task: "インフラとアプリの保守",
                 revenue: "0円",
@@ -322,25 +311,15 @@
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「新UIシステムが起動しました。カードタップによるスキル発動演出をお楽しみください。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「マルチデバイス対応の司令システムが起動しました。快適な指揮をお楽しみください。」", time: "たった今" }
         ];
-
-        function triggerSkillToast(msg) {
-            const toast = document.getElementById('skill-toast');
-            if (!toast) return;
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2500);
-        }
 
         function renderTroops() {
             const container = document.getElementById('troop-list-container');
             if (!container) return;
             
             container.innerHTML = troopsData.map(t => `
-                <div class="troop-card" onclick="triggerTroopChat('${t.id}'); triggerSkillToast('✨ ${t.name}のスキル確認');">
+                <div class="troop-card" onclick="triggerTroopChat('${t.id}')">
                     <div class="avatar-thumb">
                         ${t.avatar}
                         <div class="status-dot"></div>
@@ -416,4 +395,3 @@
     </script>
 </body>
 </html>
-
