@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULTIVERSE - 司令システム</title>
+    <title>MULTIVERSE - 本城司令システム</title>
     <style>
         :root { 
             --bg-dark: #0b0f19; 
@@ -32,9 +32,15 @@
         .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; }
         .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 5px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
 
-        .roadmap-box { background: rgba(15, 23, 42, 0.95); border: 1px solid var(--gold); border-radius: 6px; padding: 12px; margin-bottom: 8px; }
-        .roadmap-box h4 { margin: 0 0 4px; color: var(--gold); font-size: 0.9rem; }
-        .roadmap-box p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
+        /* 本城（emperor個室）のスタイル */
+        .emperor-hero-card { background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(30,41,59,0.95)); border: 1px solid var(--gold); border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center; }
+        .emperor-avatar-large { width: 60px; height: 60px; background: #111; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
+        .emperor-details h4 { margin: 0 0 2px; color: var(--gold); font-size: 1rem; }
+        .emperor-details p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
+
+        .badge-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+        .badge-tag { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); color: var(--gold-light); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; }
+        .badge-tag.locked { background: rgba(15, 23, 42, 0.5); border-color: var(--text-muted); color: var(--text-muted); opacity: 0.6; }
 
         .project-switch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
         .project-switch-card { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
@@ -89,49 +95,57 @@
 <body>
     <header>
         <h1>⚔️ MULTIVERSE 司令システム</h1>
-        <span style="font-size: 0.75rem; color: var(--gold);">Emperor (Lv.27)</span>
+        <span style="font-size: 0.75rem; color: var(--gold);">称号: 初陣の指揮官</span>
     </header>
 
     <div class="container">
-        <!-- 🏠 ホーム画面（本陣・人生ロードマップ・全体資金ハブ） -->
+        <!-- 🏰 【本城】Emperor個室・ステータス・装備・タスク・称号確認画面 -->
         <div id="view-home" class="view-section active">
-            <!-- 全体資産サマリー -->
-            <div class="panel" style="background: linear-gradient(135deg, rgba(18,24,38,0.98), rgba(30,41,59,0.95)); border: 1px solid var(--gold);">
-                <h3 style="color: var(--gold);">💰 司令官の全体資産 & 収益基盤</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
-                    <div style="background: rgba(15,23,42,0.8); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold);">
-                        <div style="font-size:0.65rem; color:var(--text-muted);">総資産 / 今月の売上</div>
-                        <div style="font-size:1.1rem; color:var(--gold); font-weight:bold; margin-top:2px;">0円 <span style="font-size:0.6rem; color:var(--text-muted);">(基盤構築中)</span></div>
-                    </div>
-                    <div style="background: rgba(15,23,42,0.8); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold);">
-                        <div style="font-size:0.65rem; color:var(--text-muted);">システム安定度</div>
-                        <div style="font-size:1.1rem; color:#4ade80; font-weight:bold; margin-top:2px;">100.0% <span style="font-size:0.6rem; color:var(--text-muted);">(完全同期)</span></div>
-                    </div>
+            <!-- Emperorアバター & ステータス -->
+            <div class="emperor-hero-card">
+                <div class="emperor-avatar-large">👑</div>
+                <div class="emperor-details">
+                    <h4>司令官 Emperor</h4>
+                    <p>現在の資産基盤: <strong>0円</strong> (基盤構築中)</p>
+                    <p>装備中のギア: <strong>標準型司令端末</strong></p>
                 </div>
             </div>
 
-            <!-- 🗺️ Emperor 人生ロードマップ & 現在の最優先タスク -->
+            <!-- 🏆 獲得・未獲得の称号一覧（実績連動） -->
             <div class="panel">
-                <h3>👑 Emperor 人生ロードマップ & 最優先タスク</h3>
-                <div class="roadmap-box">
-                    <h4>現在のステージ: 第1章「陣屋・基盤構築フェーズ」</h4>
-                    <p><strong>現在の最優先タスク:</strong> アプリ基盤の安定化および各プロジェクトの稼働準備</p>
-                    <p><strong>次なるマイルストーン:</strong> 特殊部隊・百人将のプロジェクト本格始動と最初の収益化（0円からの脱却）</p>
+                <h3>🏆 獲得称号 & 実績</h3>
+                <p style="font-size: 0.70rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に応じて称号がアンロックされます。</p>
+                <div class="badge-list">
+                    <span class="badge-tag">⚔️ 初陣の指揮官</span>
+                    <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
+                    <span class="badge-tag locked">👨‍🎓 確率の支配者 (安定収益未達成)</span>
+                    <span class="badge-tag locked">💰 黄金の錬金術師 (利益10万超え未達成)</span>
                 </div>
             </div>
 
-            <!-- 🎛️ プロジェクト・部隊の切り替えハブ -->
+            <!-- 📌 現在の最優先タスク & 通知 -->
             <div class="panel">
-                <h3>🚀 作戦プロジェクト・部隊の切替ハブ</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">タップすると詳細な状況や部隊の確認ができます。</p>
+                <h3>📌 現在のタスク & 直近の通知</h3>
+                <div class="roadmap-box" style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 6px;">
+                    <h4 style="margin:0 0 2px; color:var(--gold-light); font-size:0.8rem;">最優先タスク: 基盤構築フェーズ</h4>
+                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">アプリケーションの土台を整え、各部隊（特殊部隊・百人将）の出撃準備を行う。</p>
+                </div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); padding: 4px 0;">
+                    📢 <strong>直近の通知:</strong> システムは正常稼働中。特殊部隊のデータ連携待機中。
+                </div>
+            </div>
+
+            <!-- 🚀 各プロジェクト・部隊への切替ハブ -->
+            <div class="panel">
+                <h3>⚡ プロジェクト・部隊への切替</h3>
                 <div class="project-switch-grid">
                     <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>🧠 ラファエル統括</h5>
-                        <p>全体設計・調整 (稼働中)</p>
+                        <p>設計・全体調整</p>
                     </div>
                     <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>⚔️ 百人将プロジェクト</h5>
-                        <p>機会発見・前線探索</p>
+                        <p>前線ビジネス探索</p>
                     </div>
                     <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>🛡️ 特殊部隊 (公営競技)</h5>
@@ -145,8 +159,8 @@
             </div>
 
             <div class="ticker">
-                >> [本陣ハブ] 司令官のロードマップおよび全体資金トラッカーが正常に展開されました。<br>
-                >> 特殊部隊や百人将のプロジェクト状況は「部隊タブ」からいつでも切り替え可能です。
+                >> [本城管理室] 司令官の装備および実績称号システムが有効化されました。<br>
+                >> 成果を上げて新たな称号を手に入れましょう。
             </div>
         </div>
 
@@ -154,9 +168,9 @@
         <div id="view-war" class="view-section">
             <div class="panel">
                 <h3>作戦会議室（円卓）</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊長アイコンを押すと、直通の作戦報告がチャットに届きます。</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊長アイコンを押すと、作戦報告がチャットに届きます。</p>
                 <div class="war-room-circle">
-                    <div class="emperor-center">👑 司令官<br><span style="font-size:0.55rem; color:var(--text-muted);">ここで指揮中</span></div>
+                    <div class="emperor-center">👑 司令官<br><span style="font-size:0.55rem; color:var(--text-muted);">本城より指揮</span></div>
                     <div class="table-node" style="top: 10px; left: 95px;" onclick="triggerTroopChat('raphael')">🧠<br>ラファエル</div>
                     <div class="table-node" style="top: 95px; right: 10px;" onclick="triggerTroopChat('hyakunin')">⚔️<br>百人将</div>
                     <div class="table-node" style="bottom: 10px; left: 95px;" onclick="triggerTroopChat('tokushu')">🛡️<br>特殊</div>
@@ -187,7 +201,7 @@
             <div class="panel">
                 <h3>戦略マップ（出撃エリア）</h3>
                 <div class="map-grid" style="margin-top: 8px;">
-                    <div class="map-tile"><h4>本陣</h4><p>現在地</p></div>
+                    <div class="map-tile"><h4>本城</h4><p>司令官個室</p></div>
                     <div class="map-tile"><h4>投資城</h4><p>未開放</p></div>
                     <div class="map-tile"><h4>競技砦</h4><p>計算拠点</p></div>
                     <div class="map-tile"><h4>転売関所</h4><p>調査中</p></div>
@@ -202,11 +216,11 @@
             <div class="panel">
                 <h3>これまでの歩み・記録</h3>
                 <div class="archive-item">
-                    <h4>本陣（ホーム画面）のリニューアル</h4>
-                    <p>ステータス: 完了 / 人生ロードマップ、全体資金、プロジェクト切替ハブの統合</p>
+                    <h4>【本城】個室・実績称号システムの導入</h4>
+                    <p>ステータス: 完了 / レベルや権限を廃止し、成果連動の称号（確率博士など）へ移行</p>
                 </div>
                 <div class="archive-item">
-                    <h4>特殊部隊・百人将の管理基盤</h4>
+                    <h4>特殊部隊・百人将のプロジェクト管理</h4>
                     <p>ステータス: 稼働中 / 各部隊ごとの任務とチャット連動</p>
                 </div>
             </div>
@@ -215,8 +229,8 @@
 
     <nav class="bottom-nav">
         <button id="nav-home" class="active" onclick="switchTab('home')">
-            <span class="icon">🏰</span>
-            <span>本陣</span>
+            <span class="icon">🏯</span>
+            <span>本城</span>
         </button>
         <button id="nav-war" onclick="switchTab('war')">
             <span class="icon">🛡️</span>
@@ -237,7 +251,6 @@
     </nav>
 
     <script>
-        // 各部隊・プロジェクトのデータ
         const troopsData = [
             {
                 id: "raphael",
@@ -248,7 +261,7 @@
                 task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、本陣からの全体統括ですね。いつでも各部隊へ号令を出せます。」"
+                quote: "「司令官、本城からのご統括ですね。いつでも各部隊へ号令を出せます。」"
             },
             {
                 id: "hyakunin",
@@ -270,7 +283,7 @@
                 task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
                 avatar: "🛡️",
-                quote: "「特殊部隊、いつでも秘匿データの演算を開始できます。」"
+                quote: "「特殊部隊、いつでも秘匿データの演算を開始できます。収益が出れば『確率博士』の称号が近づきますね！」"
             },
             {
                 id: "system",
@@ -286,7 +299,7 @@
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「本陣ホーム画面が構築されました。司令官の人生ロードマップと全体資産がここに集約されます。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「本城画面が起動しました。ここで装備の確認や獲得した称号、最優先タスクを一望できます。」", time: "たった今" }
         ];
 
         function renderTroops() {
