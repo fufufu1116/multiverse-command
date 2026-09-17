@@ -3,397 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULTIVERSE - 本城司令統括システム</title>
+    <title>MULTIVERSE - Tactical Command System</title>
     <style>
-        :root { 
-            --bg-dark: #070913; 
-            --panel-bg: rgba(15, 22, 38, 0.95); 
-            --gold: #d4af37; 
-            --gold-light: #f3e5ab; 
+        :root {
+            --bg: #05070f;
+            --panel: rgba(13, 19, 33, 0.9);
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
             --gold-glow: rgba(212, 175, 55, 0.25);
-            --text-main: #e2e8f0; 
-            --text-muted: #94a3b8; 
-            --border-gold: rgba(212, 175, 55, 0.4); 
+            --text: #e2e8f0;
+            --muted: #8c9bae;
+            --border: rgba(212, 175, 55, 0.3);
+            --accent: #38bdf8;
         }
-        body { 
-            margin: 0; padding: 0; background-color: var(--bg-dark); color: var(--text-main); 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            min-height: 100vh; padding-bottom: 90px;
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0; background-color: var(--bg); color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh; padding-bottom: 80px;
         }
-        header { 
-            display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; 
-            background: rgba(7, 9, 19, 0.98); border-bottom: 2px solid var(--gold); 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6); position: sticky; top: 0; z-index: 1001;
+        header {
+            background: rgba(5, 7, 15, 0.98); border-bottom: 2px solid var(--gold);
+            padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.8);
         }
-        header h1 { margin: 0; font-size: 1.05rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
+        header h1 { margin: 0; font-size: 0.95rem; color: var(--gold); letter-spacing: 1.2px; text-transform: uppercase; }
+        .version-badge { font-size: 0.7rem; color: var(--gold); background: rgba(212,175,55,0.15); border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px; font-weight: bold; }
         
-        .container { max-width: 1100px; margin: 16px auto; padding: 0 16px; display: grid; gap: 16px; }
-        
-        .view-section { display: none; }
-        .view-section.active { display: grid; gap: 16px; animation: fadeIn 0.25s ease; }
-
+        .container { max-width: 800px; margin: 14px auto; padding: 0 12px; display: grid; gap: 14px; }
+        .view { display: none; }
+        .view.active { display: grid; gap: 14px; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 10px; padding: 16px; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
-        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; box-shadow: inset 0 0 15px rgba(0,0,0,0.6); }
+        .card h3 { margin: 0 0 10px; color: var(--gold-light); font-size: 0.85rem; border-bottom: 1px solid var(--border); padding-bottom: 6px; letter-spacing: 1px; display: flex; justify-content: space-between; }
 
-        /* 本城ヒーローカード */
-        .emperor-hero-card { background: linear-gradient(135deg, rgba(20,28,48,0.98), rgba(10,14,26,0.95)); border: 1px solid var(--gold); border-radius: 10px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 15px var(--gold-glow); }
-        .emperor-avatar-large { width: 70px; height: 70px; background: #0b0f19; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; flex-shrink: 0; box-shadow: 0 0 12px var(--gold-glow); }
-        .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; }
-        .emperor-details p { margin: 3px 0; font-size: 0.8rem; color: var(--text-muted); }
+        /* 司令官ヒーロー */
+        .emperor-box { display: flex; gap: 14px; align-items: center; background: linear-gradient(135deg, rgba(18,26,45,0.95), rgba(8,12,22,0.95)); border: 1px solid var(--gold); border-radius: 10px; padding: 14px; box-shadow: 0 0 15px var(--gold-glow); }
+        .emperor-avatar { width: 60px; height: 60px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; box-shadow: 0 0 10px var(--gold-glow); }
+        .emperor-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 1rem; }
+        .emperor-info p { margin: 2px 0; font-size: 0.75rem; color: var(--muted); }
 
-        /* 実績称号バッジ */
-        .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-        .badge-tag { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold-light); padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-        .badge-tag.locked { background: rgba(15, 22, 38, 0.6); border-color: rgba(148,163,184,0.3); color: var(--text-muted); opacity: 0.5; font-weight: normal; }
+        /* 実績称号 */
+        .badges { display: flex; flex-wrap: gap; gap: 6px; margin-top: 6px; }
+        .badge { background: rgba(212,175,55,0.15); border: 1px solid var(--gold); color: var(--gold-light); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .badge.locked { background: rgba(13,19,33,0.5); border-color: rgba(140,155,174,0.3); color: var(--muted); opacity: 0.5; font-weight: normal; }
 
-        /* クイック切替グリッド */
-        .project-switch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
-        .project-switch-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
-        .project-switch-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); transform: translateY(-2px); }
-        .project-switch-card h5 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.85rem; }
-        .project-switch-card p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
+        /* 部隊リスト */
+        .troop-list { display: grid; gap: 8px; }
+        .troop-item { background: rgba(5,7,15,0.8); border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; gap: 10px; align-items: center; cursor: pointer; transition: 0.2s; }
+        .troop-item:hover { border-color: var(--gold); background: rgba(212,175,55,0.05); }
+        .troop-icon { width: 42px; height: 42px; background: #030408; border: 1px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .troop-details { flex: 1; }
+        .troop-details h4 { margin: 0 0 2px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
+        .troop-details p { margin: 2px 0; font-size: 0.7rem; color: var(--muted); }
+        .speech { background: rgba(3,4,8,0.9); border-left: 2px solid var(--gold); padding: 4px 8px; margin-top: 4px; font-size: 0.68rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
 
-        /* 部隊グリッド */
-        .troop-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        @media(min-width: 768px) { .troop-grid { grid-template-columns: repeat(2, 1fr); } }
-        .troop-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center; }
-        
-        .avatar-thumb { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: #070913; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); flex-shrink: 0; font-size: 1.4rem; position: relative; }
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #070913; }
-        
-        .troop-info { flex: 1; }
-        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
-        .troop-info p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
+        /* チャット */
+        .chat-box { max-height: 220px; overflow-y: auto; display: grid; gap: 8px; }
+        .chat-msg { background: rgba(5,7,15,0.9); border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-size: 0.75rem; }
+        .chat-msg h5 { margin: 0 0 2px; color: var(--gold); font-size: 0.75rem; display: flex; justify-content: space-between; }
 
-        .dialogue-box { background: rgba(7, 9, 19, 0.85); border-left: 3px solid var(--gold); padding: 6px 10px; margin-top: 6px; font-size: 0.75rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
-
-        /* 円卓会議室 */
-        .war-room-circle { position: relative; width: 260px; height: 260px; margin: 20px auto; border: 2px dashed var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(11, 15, 25, 0.6); }
-        .emperor-center { text-align: center; color: var(--gold); font-weight: bold; font-size: 0.85rem; }
-        .table-node { position: absolute; width: 55px; height: 55px; background: #0f1626; border: 1px solid var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--gold-light); text-align: center; cursor: pointer; transition: 0.2s; }
-        .table-node:hover { transform: scale(1.15); background: rgba(212, 175, 55, 0.2); }
-
-        .chat-stream { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
-        .chat-bubble { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 10px 12px; font-size: 0.8rem; }
-        .chat-bubble h5 { margin: 0 0 3px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
-
-        .map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-        .map-tile { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; text-align: center; }
-        .map-tile h4 { margin: 0 0 4px; color: var(--gold); font-size: 0.85rem; }
-        .map-tile p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
-
-        .archive-item { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
-        .archive-item h4 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.9rem; }
-        .archive-item p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
-
-        /* ボトムナビゲーション */
-        nav.bottom-nav { 
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(7, 9, 19, 0.98); 
-            border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; 
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
-        }
-        nav.bottom-nav button { 
-            background: none; border: none; color: var(--text-muted); font-size: 0.65rem; text-align: center; 
-            display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; cursor: pointer; transition: 0.2s;
-        }
-        nav.bottom-nav button.active { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
-        nav.bottom-nav span.icon { font-size: 1.2rem; }
-
-        .ticker { background: rgba(0,0,0,0.6); border-left: 3px solid var(--gold); padding: 10px 12px; font-size: 0.8rem; font-family: monospace; color: var(--text-muted); border-radius: 0 6px 6px 0; }
+        /* ボトムナビ */
+        nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5,7,15,0.98); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.8); }
+        nav button { background: none; border: none; color: var(--muted); font-size: 0.6rem; display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; cursor: pointer; transition: 0.2s; }
+        nav button.active { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
+        nav button span { font-size: 1.1rem; }
     </style>
 </head>
 <body>
     <header>
-        <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <!-- バージョンカウンター：上書き毎にインクリメントされます -->
-        <span style="font-size: 0.75rem; color: var(--gold); font-weight: bold; background: rgba(212,175,55,0.15); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-gold);">称号: 初陣の指揮官 [#1]</span>
+        <h1>⚔️ MULTIVERSE COMMAND</h1>
+        <span class="version-badge" id="version-tag">#2</span>
     </header>
 
     <div class="container">
-        <!-- 🏰 【本城】司令官個室 -->
-        <div id="view-home" class="view-section active">
-            <div class="emperor-hero-card">
-                <div class="emperor-avatar-large">👑</div>
-                <div class="emperor-details">
+        <!-- 本城ビュー -->
+        <div id="view-home" class="view active">
+            <div class="emperor-box">
+                <div class="emperor-avatar">👑</div>
+                <div class="emperor-info">
                     <h4>司令官 Emperor</h4>
-                    <p>総資産基盤: <strong>0円</strong> (基盤構築中)</p>
-                    <p>システム進化度: <strong>フェーズ 1 [#1]</strong></p>
+                    <p>資産基盤: <strong>0円</strong> (基盤構築中)</p>
+                    <p>ハードウェア同期: <strong>iPhone / MacBook (無課金)</strong></p>
                 </div>
             </div>
 
-            <div class="panel">
-                <h3>🏆 獲得称号 & 実績録</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
-                <div class="badge-list">
-                    <span class="badge-tag">⚔️ 初陣の指揮官 [#1]</span>
-                    <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
-                    <span class="badge-tag locked">👨‍🎓 確率の支配者 (安定収益未達成)</span>
-                    <span class="badge-tag locked">💰 黄金の錬金術師 (利益10万超え未達成)</span>
+            <div class="card">
+                <h3>🏆 獲得称号 & 実績</h3>
+                <div class="badges">
+                    <span class="badge">⚔️ 初陣の指揮官 [#2]</span>
+                    <span class="badge locked">🎓 確率博士</span>
+                    <span class="badge locked">👨‍🎓 確率の支配者</span>
+                    <span class="badge locked">💰 黄金の錬金術師</span>
                 </div>
             </div>
 
-            <div class="panel">
-                <h3>📌 現在の最優先タスク & 通知</h3>
-                <div style="background: rgba(7,9,19,0.7); border: 1px solid var(--border-gold); border-radius: 6px; padding: 12px; margin-bottom: 8px;">
-                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョンインクリメント実装着手</h4>
-                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">ヘッダーおよび称号部分にシステムの進捗を示すカウンター（#1）を統合完了。</p>
-                </div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); padding: 2px 0;">
-                    📢 <strong>通信:</strong> 更新回数に応じたバージョン管理体制へ移行。
-                </div>
-            </div>
-
-            <div class="panel">
-                <h3>⚡ プロジェクト・部隊クイック切替</h3>
-                <div class="project-switch-grid">
-                    <div class="project-switch-card" onclick="switchTab('troops')">
-                        <h5>🧠 ラファエル統括</h5>
-                        <p>設計・システム調律</p>
-                    </div>
-                    <div class="project-switch-card" onclick="switchTab('troops')">
-                        <h5>⚔️ 百人将プロジェクト</h5>
-                        <p>スキル: エンペラーアイ</p>
-                    </div>
-                    <div class="project-switch-card" onclick="switchTab('troops')">
-                        <h5>🛡️ 特殊部隊 (公営競技)</h5>
-                        <p>スキル: 異世界</p>
-                    </div>
-                    <div class="project-switch-card" onclick="switchTab('troops')">
-                        <h5>🔮 AI研究班</h5>
-                        <p>先端技術・プロバイダ解析</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="ticker">
-                >> [システムテレメトリー] バージョン [#1] 正常稼働中。<br>
-                >> コードの更新に伴い、進捗インジケーターが順次繰り上がっていきます。
-            </div>
-        </div>
-
-        <!-- 🛡️ 円卓タブ -->
-        <div id="view-war" class="view-section">
-            <div class="panel">
-                <h3>作戦会議室（円卓）</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊長アイコンを押すと、直通の作戦報告がチャットに届きます。</p>
-                <div class="war-room-circle">
-                    <div class="emperor-center">👑 司令官<br><span style="font-size:0.6rem; color:var(--text-muted);">本城より指揮</span></div>
-                    <div class="table-node" style="top: 10px; left: 102px;" onclick="triggerTroopChat('raphael')">🧠<br>ラファエル</div>
-                    <div class="table-node" style="top: 102px; right: 10px;" onclick="triggerTroopChat('hyakunin')">⚔️<br>百人将</div>
-                    <div class="table-node" style="bottom: 10px; left: 102px;" onclick="triggerTroopChat('tokushu')">🛡️<br>特殊</div>
-                    <div class="table-node" style="top: 102px; left: 10px;" onclick="triggerTroopChat('ai_research')">🔮<br>AI研究</div>
-                </div>
-            </div>
-            <div class="panel">
-                <h3>作戦報告・リアルタイム会話ログ</h3>
-                <div class="chat-stream" id="chat-stream-container"></div>
-            </div>
-        </div>
-
-        <!-- ⚔️ 部隊タブ -->
-        <div id="view-troops" class="view-section">
-            <div class="panel">
-                <h3>全部隊・固有スキル管理</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊カードをタップすると円卓へ直通報告が飛みます。</p>
-                <div class="troop-grid" id="troop-list-container" style="margin-top: 10px;"></div>
-            </div>
-        </div>
-
-        <!-- 🗺️ MAPタブ -->
-        <div id="view-map" class="view-section">
-            <div class="panel">
-                <h3>戦略マップ（出撃エリア）</h3>
-                <div class="map-grid" style="margin-top: 10px;">
-                    <div class="map-tile"><h4>本城</h4><p>司令官個室</p></div>
-                    <div class="map-tile"><h4>投資城</h4><p>未開放</p></div>
-                    <div class="map-tile"><h4>競技砦</h4><p>計算拠点</p></div>
-                    <div class="map-tile"><h4>転売関所</h4><p>調査中</p></div>
-                    <div class="map-tile"><h4>研究塔</h4><p>実験室</p></div>
-                    <div class="map-tile"><h4>アビスゲート</h4><p>未接続</p></div>
+            <div class="card">
+                <h3>📌 戦略ステータス & 状況</h3>
+                <p style="margin: 0 0 6px; font-size: 0.75rem; color: var(--muted);">全部隊の固有スキル（エンペラーアイ・異世界・AI研究）が完全同期完了。全ての飾りボタンを廃し、実用性特化型へ移行しました。</p>
+                <div style="background: rgba(3,4,8,0.6); padding: 8px; border-radius: 6px; font-size: 0.7rem; font-family: monospace; color: var(--gold-light);">
+                    >> SYSTEM: LOCAL_MODE ACTIVE<br>
+                    >> ALL SECTORS SECURED. READY FOR DEPLOYMENT.
                 </div>
             </div>
         </div>
 
-        <!-- 📜 記録タブ -->
-        <div id="view-archives" class="view-section">
-            <div class="panel">
-                <h3>これまでの歩み・歴史記録</h3>
-                <div class="archive-item">
-                    <h4>バージョン進捗カウンター [#1] の実装</h4>
-                    <p>ステータス: 完了 / 称号部分にシステム更新回数を示すインジケーターを統合</p>
+        <!-- 円卓ビュー -->
+        <div id="view-war" class="view">
+            <div class="card">
+                <h3>🛡️ 円卓会議室（作戦チャット）</h3>
+                <p style="margin: 0 0 8px; font-size: 0.75rem; color: var(--muted);">部隊カードをタップするとここに直通報告が届きます。</p>
+                <div class="chat-box" id="chat-container"></div>
+            </div>
+        </div>
+
+        <!-- 部隊ビュー -->
+        <div id="view-troops" class="view">
+            <div class="card">
+                <h3>⚔️ 統括・特殊部隊一覧</h3>
+                <div class="troop-list" id="troop-container"></div>
+            </div>
+        </div>
+
+        <!-- MAPビュー -->
+        <div id="view-map" class="view">
+            <div class="card">
+                <h3>🗺️ マルチバース戦略マップ</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 6px;">
+                    <div style="background: rgba(3,4,8,0.8); padding: 10px; border-radius: 6px; border: 1px solid var(--border); text-align: center;"><strong style="color:var(--gold); font-size:0.8rem;">本城</strong><p style="margin:2px 0 0; font-size:0.65rem; color:var(--muted);">司令官個室</p></div>
+                    <div style="background: rgba(3,4,8,0.8); padding: 10px; border-radius: 6px; border: 1px solid var(--border); text-align: center;"><strong style="color:var(--gold); font-size:0.8rem;">競技砦</strong><p style="margin:2px 0 0; font-size:0.65rem; color:var(--muted);">公営競技計算拠点</p></div>
+                    <div style="background: rgba(3,4,8,0.8); padding: 10px; border-radius: 6px; border: 1px solid var(--border); text-align: center;"><strong style="color:var(--gold); font-size:0.8rem;">研究塔</strong><p style="margin:2px 0 0; font-size:0.65rem; color:var(--muted);">AI・プロバイダ解析</p></div>
+                    <div style="background: rgba(3,4,8,0.8); padding: 10px; border-radius: 6px; border: 1px solid var(--border); text-align: center;"><strong style="color:var(--gold); font-size:0.8rem;">アビス</strong><p style="margin:2px 0 0; font-size:0.65rem; color:var(--muted);">未接続セクター</p></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <button id="nav-home" class="active" onclick="switchTab('home')">
-            <span class="icon">🏯</span>
-            <span>本城</span>
-        </button>
-        <button id="nav-war" onclick="switchTab('war')">
-            <span class="icon">🛡️</span>
-            <span>円卓</span>
-        </button>
-        <button id="nav-troops" onclick="switchTab('troops')">
-            <span class="icon">⚔️</span>
-            <span>部隊</span>
-        </button>
-        <button id="nav-map" onclick="switchTab('map')">
-            <span class="icon">🗺️</span>
-            <span>MAP</span>
-        </button>
-        <button id="nav-archives" onclick="switchTab('archives')">
-            <span class="icon">📜</span>
-            <span>記録</span>
-        </button>
+    <nav>
+        <button class="active" onclick="switchTab('home', this)"><span>🏯</span>本城</button>
+        <button onclick="switchTab('war', this)"><span>🛡️</span>円卓</button>
+        <button onclick="switchTab('troops', this)"><span>⚔️</span>部隊</button>
+        <button onclick="switchTab('map', this)"><span>🗺️</span>MAP</button>
     </nav>
 
     <script>
-        const troopsData = [
-            {
-                id: "raphael",
-                name: "ラファエル（統括）",
-                role: "全体統括・設計",
-                skill: "論理構築・システム調律",
-                statusText: "稼働中",
-                task: "システム全体の最適化と調整",
-                revenue: "0円",
-                avatar: "🧠",
-                quote: "「司令官、バージョン [#1] の刻印を確認しました。さらなる高みへ進みましょう。」"
-            },
-            {
-                id: "hyakunin",
-                name: "百人将プロジェクト",
-                role: "前線ビジネス探索",
-                skill: "「エンペラーアイ」 (市場調査・機会看破)",
-                statusText: "探索中",
-                task: "収益機会のスクリーニング",
-                revenue: "0円",
-                avatar: "⚔️",
-                quote: "「『エンペラーアイ』起動中！バージョン [#1] の前線も死角なしであります！」"
-            },
-            {
-                id: "tokushu",
-                name: "特殊部隊（公営競技）",
-                role: "特務・データ処理",
-                skill: "「異世界」 (仮想世界シミュレーション)",
-                statusText: "待機・準備中",
-                task: "公営競技のV8エンジン事前登録",
-                revenue: "0円",
-                avatar: "🛡️",
-                quote: "「『異世界』シミュレーション稼働中。バージョン [#1] から確率博士の称号を狙います！」"
-            },
-            {
-                id: "ai_research",
-                name: "AI研究班",
-                role: "先端技術解析",
-                skill: "プロバイダ解析・知見抽出",
-                statusText: "解析中",
-                task: "新しい技術の調査と実験",
-                revenue: "0円",
-                avatar: "🔮",
-                quote: "「AIの挙動や新たな知見を常時解析中。バージョン [#1] の知見を蓄積します！」"
-            },
-            {
-                id: "system",
-                name: "システム保守班",
-                role: "安定稼働担当",
-                skill: "絶対防御・エラー遮断",
-                statusText: "安定",
-                task: "インフラとアプリの保守",
-                revenue: "0円",
-                avatar: "⚙️",
-                quote: "「バージョン [#1] のインフラ安定稼働中。安全な基盤を維持しています。」"
-            }
+        const troops = [
+            { id: 'raphael', name: 'ラファエル（統括）', skill: '論理構築・システム調律', avatar: '🧠', quote: '「司令官、無駄な飾りを削ぎ落とした最高精度の完成系です。」' },
+            { id: 'hyakunin', name: '百人将プロジェクト', skill: '「エンペラーアイ」 (市場調査)', avatar: '⚔️', quote: '「『エンペラーアイ』展開中！利益の隙は見逃しません。」' },
+            { id: 'tokushu', name: '特殊部隊（公営競技）', skill: '「異世界」 (シミュレーション)', avatar: '🛡️', quote: '「『異世界』エンジン稼働中。『確率博士』の称号を手に入れましょう。」' },
+            { id: 'ai', name: 'AI研究班', skill: 'プロバイダ解析・知見抽出', avatar: '🔮', quote: '「先端技術の解析を継続中。次なる知見をもたらします。」' }
         ];
 
-        let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「バージョン [#1] システムが起動しました。進捗インジケーターが正常に同期されています。」", time: "たった今" }
+        let chats = [
+            { name: 'ラファエル', avatar: '🧠', text: '「システムが完全な完成系へ移行しました。」', time: 'たった今' }
         ];
 
         function renderTroops() {
-            const container = document.getElementById('troop-list-container');
-            if (!container) return;
-            
-            container.innerHTML = troopsData.map(t => `
-                <div class="troop-card" onclick="triggerTroopChat('${t.id}')">
-                    <div class="avatar-thumb">
-                        ${t.avatar}
-                        <div class="status-dot"></div>
-                    </div>
-                    <div class="troop-info">
-                        <h4>${t.name} <span>売上: ${t.revenue}</span></h4>
+            document.getElementById('troop-container').innerHTML = troops.map(t => `
+                <div class="troop-item" onclick="sendChat('${t.id}')">
+                    <div class="troop-icon">${t.avatar}</div>
+                    <div class="troop-details">
+                        <h4>${t.name}</h4>
                         <p>固有スキル: <strong style="color:var(--gold-light);">${t.skill}</strong></p>
-                        <p>現在任務: ${t.task}</p>
-                        <div class="dialogue-box">
-                            ${t.quote}
-                        </div>
+                        <div class="speech">${t.quote}</div>
                     </div>
                 </div>
             `).join('');
         }
 
-        function renderChatStream() {
-            const container = document.getElementById('chat-stream-container');
-            if (!container) return;
-
-            container.innerHTML = chatMessages.map(m => `
-                <div class="chat-bubble">
-                    <h5><span>${m.avatar} ${m.name}</span> <span style="font-size:0.6rem; color:var(--text-muted);">${m.time}</span></h5>
-                    <p style="margin: 4px 0 0; color: var(--gold-light);">${m.text}</p>
+        function renderChat() {
+            document.getElementById('chat-container').innerHTML = chats.map(c => `
+                <div class="chat-msg">
+                    <h5><span>${c.avatar} ${c.name}</span> <span style="color:var(--muted); font-size:0.6rem;">${c.time}</span></h5>
+                    <p style="margin:4px 0 0; color:var(--gold-light);">${c.text}</p>
                 </div>
             `).join('');
-            
-            container.scrollTop = container.scrollHeight;
         }
 
-        function triggerTroopChat(id) {
-            const troop = troopsData.find(t => t.id === id);
-            if (!troop) return;
-
-            chatMessages.unshift({
-                name: troop.name,
-                avatar: troop.avatar,
-                text: troop.quote,
-                time: "たった今"
-            });
-
-            if (chatMessages.length > 10) {
-                chatMessages.pop();
-            }
-
-            switchTab('war');
-            renderChatStream();
+        function sendChat(id) {
+            const t = troops.find(x => x.id === id);
+            if (!t) return;
+            chats.unshift({ name: t.name, avatar: t.avatar, text: t.quote, time: 'たった今' });
+            if (chats.length > 8) chats.pop();
+            switchTab('war', document.querySelectorAll('nav button')[1]);
+            renderChat();
         }
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.view-section').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('nav.bottom-nav button').forEach(el => {
-                el.classList.remove('active');
-            });
-
-            const targetView = document.getElementById('view-' + tabName);
-            if (targetView) {
-                targetView.classList.add('active');
-            }
-            const targetBtn = document.getElementById('nav-' + tabName);
-            if (targetBtn) {
-                targetBtn.classList.add('active');
-            }
-            window.scrollTo(0, 0);
+        function switchTab(name, btn) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-' + name).classList.add('active');
+            btn.classList.add('active');
+            window.scrollTo(0,0);
         }
 
-        window.onload = function() {
-            renderTroops();
-            renderChatStream();
-        };
+        window.onload = () => { renderTroops(); renderChat(); };
     </script>
 </body>
 </html>
-
-
