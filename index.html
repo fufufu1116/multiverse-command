@@ -128,10 +128,10 @@
                 <h3>📌 現在のタスク & 直近の通知</h3>
                 <div class="roadmap-box" style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 6px;">
                     <h4 style="margin:0 0 2px; color:var(--gold-light); font-size:0.8rem;">最優先タスク: 基盤構築フェーズ</h4>
-                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">アプリケーションの土台を整え、各部隊（特殊部隊・百人将）の出撃準備を行う。</p>
+                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">部隊固有スキル（エンペラーアイ・異世界など）の統括と出撃準備を行う。</p>
                 </div>
                 <div style="font-size: 0.7rem; color: var(--text-muted); padding: 4px 0;">
-                    📢 <strong>直近の通知:</strong> ΩOMEGAやレベル表記を廃止し、実績称号システムへ移行完了。
+                    📢 <strong>直近の通知:</strong> 百人将の「エンペラーアイ」および特殊部隊の「異世界」スキルが登録されました。
                 </div>
             </div>
 
@@ -145,11 +145,11 @@
                     </div>
                     <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>⚔️ 百人将プロジェクト</h5>
-                        <p>前線ビジネス探索</p>
+                        <p>スキル: エンペラーアイ</p>
                     </div>
                     <div class="project-switch-card" onclick="switchTab('troops')">
                         <h5>🛡️ 特殊部隊 (公営競技)</h5>
-                        <p>期待値計算・V8準備</p>
+                        <p>スキル: 異世界</p>
                     </div>
                     <div class="project-switch-card" onclick="switchTab('war')">
                         <h5>🛡️ 円卓会議室</h5>
@@ -159,8 +159,8 @@
             </div>
 
             <div class="ticker">
-                >> [本城管理室] レベル・権限表記の完全廃止と実績称号システムへの刷新完了。<br>
-                >> 成果を上げて新たな称号を手に入れましょう。
+                >> [本城管理室] 百人将「エンペラーアイ」、特殊部隊「異世界」のスキルデータがロードされました。<br>
+                >> 各部隊の特殊能力を駆使して収益化を目指しましょう。
             </div>
         </div>
 
@@ -185,11 +185,11 @@
             </div>
         </div>
 
-        <!-- ⚔️ 部隊タブ（特殊部隊や百人将の管理） -->
+        <!-- ⚔️ 部隊タブ（特殊部隊や百人将の管理・スキル表示） -->
         <div id="view-troops" class="view-section">
             <div class="panel">
                 <h3>特殊部隊・百人将 プロジェクト管理</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">各プロジェクトの稼働状況や任務を確認できます。</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">各プロジェクトの固有スキルと任務を確認できます。</p>
                 <div class="troop-grid" id="troop-list-container" style="margin-top: 8px;">
                     <!-- 動的生成 -->
                 </div>
@@ -216,12 +216,12 @@
             <div class="panel">
                 <h3>これまでの歩み・記録</h3>
                 <div class="archive-item">
-                    <h4>【本城】称号システムへの刷新</h4>
-                    <p>ステータス: 完了 / レベル・権限を完全廃止し、実績連動の称号システムへ最適化</p>
+                    <h4>部隊固有スキル（エンペラーアイ・異世界）の実装</h4>
+                    <p>ステータス: 完了 / 百人将と特殊部隊の特殊能力データを完全統合</p>
                 </div>
                 <div class="archive-item">
-                    <h4>特殊部隊・百人将のプロジェクト管理</h4>
-                    <p>ステータス: 稼働中 / 各部隊ごとの任務とチャット連動</p>
+                    <h4>【本城】称号システムへの刷新</h4>
+                    <p>ステータス: 稼働中 / 実績に応じた称号アンロック機構</p>
                 </div>
             </div>
         </div>
@@ -256,39 +256,43 @@
                 id: "raphael",
                 name: "ラファエル（統括）",
                 role: "全体統括・設計",
+                skill: "論理構築・システム調律",
                 modelColor: "var(--gold)",
                 statusText: "稼働中",
                 task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、本城からのご統括ですね。いつでも各部隊へ号令を出せます。」"
+                quote: "「司令官、各部隊のスキル連携も完璧です。いつでも出撃の号令を！」"
             },
             {
                 id: "hyakunin",
                 name: "百人将プロジェクト",
                 role: "前線ビジネス探索",
+                skill: "「エンペラーアイ」 (市場調査・機会看破)",
                 modelColor: "var(--gold)",
                 statusText: "探索中",
                 task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「百人将、前線の利益チャンスを鋭意探索中であります！」"
+                quote: "「『エンペラーアイ』起動中！前線の利益チャンスを鋭く見抜いてみせます！」"
             },
             {
                 id: "tokushu",
                 name: "特殊部隊（公営競技）",
                 role: "特務・データ処理",
+                skill: "「異世界」 (仮想世界シミュレーション)",
                 modelColor: "var(--gold)",
                 statusText: "待機・準備中",
                 task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
                 avatar: "🛡️",
-                quote: "「特殊部隊、いつでも秘匿データの演算を開始できます。収益が出れば『確率博士』の称号が手に入りますね！」"
+                quote: "『異世界』シミュレーション正常稼働中。収益化で『確率博士』の称号をつかみ取りましょう！"
             },
             {
                 id: "system",
                 name: "システム保守班",
                 role: "安定稼働担当",
+                skill: "絶対防御・エラー遮断",
                 modelColor: "#4ade80",
                 statusText: "安定",
                 task: "インフラとアプリの保守",
@@ -299,7 +303,7 @@
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「本城画面へようこそ。レベルや権限表記を排除し、実績と称号に特化した司令官の個室です。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「本城画面に各部隊の固有スキル（エンペラーアイ、異世界）が実装されました。」", time: "たった今" }
         ];
 
         function renderTroops() {
@@ -314,7 +318,7 @@
                     </div>
                     <div class="troop-info">
                         <h4>${t.name} <span>売上: ${t.revenue}</span></h4>
-                        <p>役割: <strong style="color:${t.modelColor};">${t.role}</strong> (${t.statusText})</p>
+                        <p>固有スキル: <strong style="color:var(--gold-light);">${t.skill}</strong></p>
                         <p>現在任務: ${t.task}</p>
                         <div class="dialogue-box">
                             ${t.quote}
@@ -326,7 +330,7 @@
 
         function renderChatStream() {
             const container = document.getElementById('chat-stream-container');
-            if (!container) return;
+            if (-!container) return;
 
             container.innerHTML = chatMessages.map(m => `
                 <div class="chat-bubble">
