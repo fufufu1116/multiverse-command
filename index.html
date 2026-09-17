@@ -2,145 +2,286 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>MULTIVERSE - 3D Avatar Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MULTIVERSE - 司令システム</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#050914">
+
+    <!-- PWA用マニフェスト -->
+    <script>
+        const manifestData = {
+            "name": "MULTIVERSE 本城司令",
+            "short_name": "MULTIVERSE",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#050914",
+            "theme_color": "#050914",
+            "icons": [{ "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>", "sizes": "192x192", "type": "image/svg+xml" }]
+        };
+        const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+        const link = document.createElement('link');
+        link.rel = 'manifest'; link.href = URL.createObjectURL(blob); document.head.appendChild(link);
+    </script>
+
     <style>
-        body { margin: 0; overflow: hidden; background-color: #050914; color: white; font-family: sans-serif; }
-        /* 3Dを描画するキャンバスを一番奥に配置 */
-        #webgl-canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+        :root {
+            --theme-bg: #050914; 
+            --theme-panel: rgba(13, 19, 33, 0.85); 
+            --theme-primary: #55dcff; 
+            --theme-secondary: #9b7cff; 
+            --theme-gold: #ffd36a; 
+            --theme-border: rgba(255, 211, 106, 0.3); 
+            --theme-text: #e2e8f0; 
+            --theme-text-muted: #8c9bae; 
+            --color-success: #4ade80;
+            --color-danger: #f87171;
+            --color-warning: #fbbf24;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background-color: var(--theme-bg); color: var(--theme-text); font-family: -apple-system, sans-serif; min-height: 100vh; overflow-x: hidden; padding-bottom: 70px;}
+        .app-layout { display: grid; gap: 16px; padding: 16px; max-width: 1600px; margin: 0 auto; }
+        .panel { background: var(--theme-panel); border: 1px solid var(--theme-border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+        .panel h3 { margin: 0 0 12px 0; color: var(--theme-gold); font-size: 1rem; border-bottom: 1px solid var(--theme-border); padding-bottom: 8px; }
         
-        /* 既存のUIはこのキャンバスの手前に透けるように配置する */
-        .ui-layer { position: absolute; top: 20px; left: 20px; z-index: 10; background: rgba(13, 19, 33, 0.8); padding: 20px; border: 1px solid #ffd36a; border-radius: 8px; backdrop-filter: blur(5px); }
-        button { background: #ffd36a; color: #000; border: none; padding: 10px 15px; margin: 5px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .avatar-frame { border: 2px solid var(--theme-gold); border-radius: 50%; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-card { display: flex; gap: 16px; align-items: center; }
+        .hero-card .avatar-frame { width: 80px; height: 80px; font-size: 2.5rem; }
+        .hero-info h2 { margin: 0 0 4px 0; color: var(--theme-primary); font-size: 1.4rem; }
+        .hero-info p { margin: 0; font-size: 0.9rem; color: var(--theme-text-muted); }
+
+        .eye-quote { font-style: italic; color: var(--theme-gold); font-size: 0.95rem; padding: 10px; background: rgba(0,0,0,0.4); border-left: 3px solid var(--theme-gold); margin: 10px 0; border-radius: 0 4px 4px 0; }
+        
+        .input-group { display: flex; gap: 8px; margin-top: 10px; }
+        .input-group input, .adv-grid input { flex: 1; background: #000; border: 1px solid var(--theme-border); color: var(--theme-text); padding: 10px; border-radius: 6px; font-size: 0.9rem; width:100%; }
+        .input-group button, .btn-primary { background: rgba(255, 211, 106, 0.15); border: 1px solid var(--theme-gold); color: var(--theme-gold); padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        
+        .units-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+        .unit-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; }
+        .unit-header { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+        .unit-header .avatar-frame { width: 50px; height: 50px; font-size: 1.5rem; }
+        .unit-info h4 { margin: 0 0 2px 0; font-size: 1rem; }
+        
+        .adv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .adv-result { margin-top: 16px; padding: 12px; background: #000; border-radius: 6px; border-left: 4px solid var(--theme-primary); display:none; }
+
+        .task-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+        .task-item { display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 6px; }
+        .task-item.completed { opacity: 0.5; text-decoration: line-through; }
+
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .bottom-nav-sp { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5, 9, 20, 0.98); border-top: 1px solid var(--theme-border); z-index: 1000; padding: 10px 0 20px 0; }
+        .bottom-nav-sp button { flex: 1; background: none; border: none; color: var(--theme-text-muted); font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .bottom-nav-sp button.active { color: var(--theme-gold); text-shadow: 0 0 8px var(--theme-gold); }
+        .bottom-nav-sp span.icon { font-size: 1.2rem; }
+        
+        @media (min-width: 1024px) {
+            .app-layout { grid-template-columns: 1fr 300px; }
+            .tab-content { display: block !important; }
+            .bottom-nav-sp { display: none; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 3D表示用キャンバス -->
-    <canvas id="webgl-canvas"></canvas>
+<div class="app-layout">
+    <div class="center-column">
+        <!-- 司令塔 (Home) -->
+        <section id="sec-home" class="tab-content active">
+            <div class="panel hero-card">
+                <div class="avatar-frame">
+                    <!-- ★ ここがアバター画像(GIF)が入る場所です ★ -->
+                    <img id="owner-avatar-img" src="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="avatar-fallback" id="owner-emoji" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">👑</div>
+                </div>
+                <div class="hero-info">
+                    <h2 id="owner-name">OWNER</h2>
+                    <p id="owner-title">MULTIVERSE 司令官</p>
+                    <p style="color:var(--theme-gold); margin-top:4px; font-weight:bold;">総資産: <span id="display-total">0</span> 円</p>
+                </div>
+            </div>
 
-    <!-- 司令システムのUIレイヤー（現在作っているものをここに重ねる） -->
-    <div class="ui-layer">
-        <h2 style="color: #55dcff; margin-top:0;">MULTIVERSE 3D CORE</h2>
-        <p>世界観の切り替えテスト</p>
-        <button onclick="changeTheme('cyber')">🌃 サイバーパンク空間へ</button>
-        <button onclick="changeTheme('sengoku')">🏯 戦国・本城空間へ</button>
-        <button onclick="triggerMotion()">⚔️ アバターに指示を出す</button>
-    </div>
+            <div class="panel" style="border-color: var(--theme-primary);">
+                <h3 style="color: var(--theme-primary);">👁️ エンペラーアイ 戦況分析</h3>
+                <div id="emperor-eye-display">分析データを待機中...</div>
+                <h3 style="margin-top:20px;">💰 収益記録</h3>
+                <div class="input-group">
+                    <input type="number" id="profit-input" placeholder="収益額を入力 (マイナスも可)">
+                    <button onclick="addProfit()">記録</button>
+                </div>
+            </div>
+        </section>
 
-    <!-- Three.js と VRMローダーの読み込み -->
-    <!-- ※本番ではこれらをGitHubの自分のリポジトリに保存して読み込みます -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-                "@pixiv/three-vrm": "https://unpkg.com/@pixiv/three-vrm@2.0.0/lib/three-vrm.module.js"
-            }
-        }
-    </script>
+        <!-- 部隊 (Units) -->
+        <section id="sec-units" class="tab-content">
+            <div class="panel">
+                <h3>⚔️ 配置部隊ステータス</h3>
+                <div class="units-grid" id="units-container"></div>
+            </div>
+        </section>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-        import { VRMLoaderPlugin } from '@pixiv/three-vrm';
-
-        let scene, camera, renderer, currentVrm;
-
-        // 1. 3D空間（シーン）の初期設定
-        function init() {
-            const canvas = document.getElementById('webgl-canvas');
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-
-            scene = new THREE.Scene();
-            
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 1.2, -3.0); // アバターの正面にカメラを配置
-            camera.lookAt(0, 1.0, 0);
-
-            // 光源の設定
-            const light = new THREE.DirectionalLight(0xffffff, 1.0);
-            light.position.set(1, 1, -1).normalize();
-            scene.add(light);
-            
-            const ambient = new THREE.AmbientLight(0x404040, 1.5);
-            scene.add(ambient);
-
-            // 2. アバター（.vrmファイル）の読み込み
-            loadAvatar('https://raw.githubusercontent.com/pixiv/three-vrm/dev/packages/three-vrm/examples/models/VRM1_Constraint_Twist_Sample.vrm'); // ※テスト用の公式サンプルモデル
-
-            // ループ処理開始
-            animate();
-        }
-
-        // アバター読み込み関数
-        function loadAvatar(url) {
-            const loader = new GLTFLoader();
-            loader.register((parser) => { return new VRMLoaderPlugin(parser); });
-
-            loader.load(url, (gltf) => {
-                const vrm = gltf.userData.vrm;
-                scene.add(vrm.scene);
-                currentVrm = vrm;
-                
-                // アバターを少し回転させてかっこいい角度に
-                vrm.scene.rotation.y = Math.PI; 
-            });
-        }
-
-        // 3. アニメーションループ（常に画面を更新し続ける）
-        const clock = new THREE.Clock();
-        function animate() {
-            requestAnimationFrame(animate);
-            const deltaTime = clock.getDelta();
-
-            // アバターが存在すれば、瞬きなどの自動アニメーションを更新
-            if (currentVrm) {
-                currentVrm.update(deltaTime);
-                // 待機モーション：ゆっくり上下に呼吸するように動かす
-                currentVrm.scene.position.y = Math.sin(clock.elapsedTime * 2) * 0.02;
-            }
-            renderer.render(scene, camera);
-        }
-
-        // ==========================================
-        // UIからの操作（グローバル関数として登録）
-        // ==========================================
+        <!-- 参謀 (Advisor) -->
+        <section id="sec-adv" class="tab-content">
+            <div class="panel" style="border-color: var(--theme-secondary);">
+                <h3 style="color: var(--theme-secondary);">🧠 オフライン参謀 (期待値・EV計算)</h3>
+                <div class="adv-grid">
+                    <input type="number" id="adv-odds" placeholder="オッズ (例: 3.0)">
+                    <input type="number" id="adv-winrate" placeholder="勝率 % (例: 40)">
+                    <input type="number" id="adv-bank" placeholder="総資金 (例: 100000)">
+                    <input type="number" id="adv-stake" placeholder="予定掛金 (例: 5000)">
+                </div>
+                <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="calculateEV()">📊 期待値・適正資金の算出</button>
+                <div id="adv-result" class="adv-result"></div>
+            </div>
+        </section>
         
-        // テーマ（世界観）の切り替え
-        window.changeTheme = function(theme) {
-            if (theme === 'cyber') {
-                // サイバーパンク風：背景を暗いネオンブルーにし、青い光を当てる
-                scene.background = new THREE.Color(0x050714);
-                scene.children[0].color = new THREE.Color(0x55dcff); // ライトの色変更
-                console.log("【システム】サイバー空間へ移行しました");
-            } else if (theme === 'sengoku') {
-                // 戦国風：背景を夕暮れや金屏風のような色にし、黄金の光を当てる
-                scene.background = new THREE.Color(0x2a1b0a);
-                scene.children[0].color = new THREE.Color(0xffd36a);
-                console.log("【システム】戦国本城へ移行しました");
-            }
-        };
+        <!-- 任務 (Tasks) -->
+        <section id="sec-tasks" class="tab-content">
+            <div class="panel">
+                <h3>📋 今日の最重要任務</h3>
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <input type="text" id="new-task-input" placeholder="新規タスクを入力">
+                    <button onclick="addTask()">追加</button>
+                </div>
+                <div class="task-list" id="tasks-container"></div>
+            </div>
+        </section>
+    </div>
+</div>
 
-        // アバターにモーション（指示）を出した時のリアクション
-        window.triggerMotion = function() {
-            if (!currentVrm) return;
-            // 例：クリックするとアバターが頷く（首のボーンを回転させる）
-            const head = currentVrm.humanoid.getNormalizedBoneNode('head');
-            if (head) {
-                head.rotation.x = 0.2; // 下を向く
-                setTimeout(() => { head.rotation.x = 0; }, 300); // 戻る
-            }
-        };
+<nav class="bottom-nav-sp">
+    <button onclick="switchTab('sec-home')" id="nav-sec-home" class="active"><span class="icon">🏯</span><span>司令塔</span></button>
+    <button onclick="switchTab('sec-units')" id="nav-sec-units"><span class="icon">⚔️</span><span>部隊</span></button>
+    <button onclick="switchTab('sec-adv')" id="nav-sec-adv"><span class="icon">🧠</span><span>参謀</span></button>
+    <button onclick="switchTab('sec-tasks')" id="nav-sec-tasks"><span class="icon">📋</span><span>任務</span></button>
+</nav>
 
-        // 画面サイズ変更対応
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+<script>
+    // ★ データベース: ここにGIF画像のURLを入れるとアバターが動きます ★
+    const DEFAULT_DATA = {
+        owner: { name: "Emperor", title: "MULTIVERSE 第一司令官", avatar: "", emoji: "🛡️" },
+        tasks: [
+            { id: 1, title: "ルートB: アバターGIFの調達", completed: false },
+            { id: 2, title: "日々の収益・戦果の入力", completed: false }
+        ],
+        units: [
+            { id: "business", name: "百人将", role: "事業探索", avatar: "", emoji: "⚔️", state: "探索中", quote: "収益データを待つ。" },
+            { id: "keirin", name: "確率部隊", role: "EV計算", avatar: "", emoji: "🛡️", state: "待機", quote: "参謀タブで計算可能だ。" },
+            { id: "raphael", name: "ラファエル", role: "軍師", avatar: "", emoji: "🐰", state: "稼働中", quote: "GIFアバターの実装、お待ちしております！" }
+        ],
+        profits: []
+    };
 
-        init();
-    </script>
+    let MV_DATA = {};
+
+    function init() {
+        const saved = localStorage.getItem('MV_DATA_V2');
+        if (saved) {
+            try { MV_DATA = { ...DEFAULT_DATA, ...JSON.parse(saved) }; } catch(e) { MV_DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+        } else { MV_DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+        if(MV_DATA.profits.length > 0) processEmperorEye();
+        renderAll();
+    }
+    function saveData() { localStorage.setItem('MV_DATA_V2', JSON.stringify(MV_DATA)); }
+
+    function renderAll() {
+        document.getElementById('owner-name').textContent = MV_DATA.owner.name;
+        document.getElementById('owner-title').textContent = MV_DATA.owner.title;
+        document.getElementById('owner-avatar-img').src = MV_DATA.owner.avatar;
+        document.getElementById('owner-emoji').textContent = MV_DATA.owner.emoji;
+        
+        const totalProfit = MV_DATA.profits.reduce((a,b) => a+b, 0);
+        document.getElementById('display-total').textContent = totalProfit.toLocaleString();
+
+        const bUnit = MV_DATA.units.find(u => u.id === 'business');
+        if (MV_DATA.profits.length >= 3) {
+            document.getElementById('emperor-eye-display').innerHTML = `
+                <div style="font-weight:bold;">状態: <span style="color:var(--theme-gold)">${bUnit.state}</span></div>
+                <div class="eye-quote">「${bUnit.quote}」</div>
+                <div style="font-size:0.8rem; color:var(--theme-text-muted);">直近3回: [ ${MV_DATA.profits.slice(-3).map(v=>v>0?'+'+v:v).join(', ')} ]</div>`;
+        }
+
+        document.getElementById('units-container').innerHTML = MV_DATA.units.map(unit => `
+            <div class="unit-card">
+                <div class="unit-header">
+                    <div class="avatar-frame">
+                        <img src="${unit.avatar}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="avatar-fallback" style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">${unit.emoji}</div>
+                    </div>
+                    <div><h4 style="margin:0;">${unit.name}</h4><span style="font-size:0.75rem; color:var(--theme-primary);">${unit.role}</span></div>
+                </div>
+                <div class="eye-quote" style="font-size:0.8rem;">「${unit.quote}」</div>
+            </div>
+        `).join('');
+
+        document.getElementById('tasks-container').innerHTML = MV_DATA.tasks.map(t => `
+            <div class="task-item ${t.completed ? 'completed' : ''}" onclick="toggleTask(${t.id})">
+                <input type="checkbox" ${t.completed ? 'checked' : ''}><span>${t.title}</span>
+            </div>
+        `).join('');
+    }
+
+    function toggleTask(id) {
+        const task = MV_DATA.tasks.find(t => t.id === id);
+        if(task) { task.completed = !task.completed; saveData(); renderAll(); }
+    }
+    function addTask() {
+        const input = document.getElementById('new-task-input');
+        if(!input.value.trim()) return;
+        MV_DATA.tasks.push({ id: Date.now(), title: input.value.trim(), completed: false });
+        input.value = ''; saveData(); renderAll();
+    }
+    function addProfit() {
+        const input = document.getElementById('profit-input');
+        const val = parseInt(input.value, 10);
+        if(isNaN(val)) return;
+        MV_DATA.profits.push(val);
+        input.value = ''; processEmperorEye(); saveData(); renderAll();
+    }
+
+    function processEmperorEye() {
+        const p = MV_DATA.profits;
+        if (p.length < 3) return;
+        const recent = p.slice(-3);
+        const allPos = recent.every(v => v > 0);
+        const allNeg = recent.every(v => v < 0);
+        let state = "混戦", quote = "【エンペラーアイ】収益が混戦状態。攻守を固定せず、追加データを収集せよ。";
+        if (allPos) { state = "強気攻勢"; quote = "【エンペラーアイ】三連続黒字。現在の作戦を維持し、次の一手を準備せよ。"; } 
+        else if (allNeg) { state = "戦略見直し"; quote = "【エンペラーアイ】三連続損失。ただちに攻勢を停止し、戦略を見直せ。"; }
+        const bUnit = MV_DATA.units.find(u => u.id === 'business');
+        if (bUnit) { bUnit.state = state; bUnit.quote = quote; }
+    }
+
+    function calculateEV() {
+        const odds = parseFloat(document.getElementById('adv-odds').value);
+        const winRate = parseFloat(document.getElementById('adv-winrate').value) / 100;
+        const bankroll = parseFloat(document.getElementById('adv-bank').value);
+        const stake = parseFloat(document.getElementById('adv-stake').value);
+        const res = document.getElementById('adv-result');
+        if(isNaN(odds)||isNaN(winRate)||isNaN(bankroll)||isNaN(stake)||odds<=1||winRate<=0){
+            res.style.display='block'; res.innerHTML=`<span style="color:var(--color-danger)">入力値エラー</span>`; return;
+        }
+        const ev = (winRate * odds) - 1;
+        const halfKelly = Math.max(0, ((odds-1)*winRate - (1-winRate))/(odds-1) / 2);
+        const rec = bankroll * Math.min(halfKelly, 0.1);
+        let dec = ev<=0 || halfKelly<=0 ? "撤退 (RETREAT)" : stake>rec ? "減額 (REDUCE)" : "出撃 (ATTACK)";
+        let col = dec.includes("撤退") ? "var(--color-danger)" : dec.includes("減額") ? "var(--color-warning)" : "var(--color-success)";
+        res.style.display='block'; res.style.borderLeftColor=col;
+        res.innerHTML = `<div style="color:${col}; font-weight:bold;">[判定] ${dec}</div>
+        <div style="font-size:0.9rem; margin-top:8px;">EV: ${(ev*100).toFixed(2)}% | 推奨上限: ${Math.floor(rec).toLocaleString()}円</div>`;
+    }
+
+    function switchTab(id) {
+        document.querySelectorAll('.tab-content, .bottom-nav-sp button').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('nav-' + id).classList.add('active');
+        window.scrollTo(0,0);
+    }
+    window.onload = init;
+</script>
 </body>
 </html>
