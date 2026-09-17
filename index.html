@@ -32,7 +32,6 @@
         .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; }
         .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 5px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
 
-        /* 本城（emperor個室）のスタイル */
         .emperor-hero-card { background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(30,41,59,0.95)); border: 1px solid var(--gold); border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center; }
         .emperor-avatar-large { width: 60px; height: 60px; background: #111; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
         .emperor-details h4 { margin: 0 0 2px; color: var(--gold); font-size: 1rem; }
@@ -99,9 +98,8 @@
     </header>
 
     <div class="container">
-        <!-- 🏰 【本城】Emperor個室・ステータス・装備・タスク・称号確認画面 -->
+        <!-- 🏰 【本城】Emperor個室 -->
         <div id="view-home" class="view-section active">
-            <!-- Emperorアバター & ステータス -->
             <div class="emperor-hero-card">
                 <div class="emperor-avatar-large">👑</div>
                 <div class="emperor-details">
@@ -111,7 +109,6 @@
                 </div>
             </div>
 
-            <!-- 🏆 獲得・未獲得の称号一覧（実績連動） -->
             <div class="panel">
                 <h3>🏆 獲得称号 & 実績</h3>
                 <p style="font-size: 0.70rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に応じて称号がアンロックされます。</p>
@@ -123,19 +120,17 @@
                 </div>
             </div>
 
-            <!-- 📌 現在の最優先タスク & 通知 -->
             <div class="panel">
                 <h3>📌 現在のタスク & 直近の通知</h3>
                 <div class="roadmap-box" style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 6px;">
                     <h4 style="margin:0 0 2px; color:var(--gold-light); font-size:0.8rem;">最優先タスク: 基盤構築フェーズ</h4>
-                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">部隊固有スキル（エンペラーアイ・異世界・AI研究など）の統括と出撃準備を行う。</p>
+                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">部隊固有スキル（エンペラーアイ・異世界・AI研究）を用いた作戦準備を行う。</p>
                 </div>
                 <div style="font-size: 0.7rem; color: var(--text-muted); padding: 4px 0;">
-                    📢 <strong>直近の通知:</strong> AI研究班を含む全部隊の固有スキルが本城および部隊タブに配備されました。
+                    📢 <strong>直近の通知:</strong> 百人将「エンペラーアイ」、特殊部隊「異世界」、AI研究班が完全配備されました。
                 </div>
             </div>
 
-            <!-- 🚀 各プロジェクト・部隊への切替ハブ -->
             <div class="panel">
                 <h3>⚡ プロジェクト・部隊への切替</h3>
                 <div class="project-switch-grid">
@@ -159,7 +154,7 @@
             </div>
 
             <div class="ticker">
-                >> [本城管理室] AI研究班を含む全部隊のスキルデータが正常に同期されました。<br>
+                >> [本城管理室] 全部隊の固有スキル・称号システムが正常に稼働中です。<br>
                 >> 各部隊の能力を駆使して収益化と新たな称号の獲得を目指しましょう。
             </div>
         </div>
@@ -179,20 +174,16 @@
             </div>
             <div class="panel">
                 <h3>作戦報告・リアルタイム会話ログ</h3>
-                <div class="chat-stream" id="chat-stream-container">
-                    <!-- 動的追加 -->
-                </div>
+                <div class="chat-stream" id="chat-stream-container"></div>
             </div>
         </div>
 
-        <!-- ⚔️ 部隊タブ（特殊部隊や百人将・AI研究の管理） -->
+        <!-- ⚔️ 部隊タブ -->
         <div id="view-troops" class="view-section">
             <div class="panel">
                 <h3>全部隊・プロジェクト管理</h3>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">各プロジェクトの固有スキルと任務を確認できます。</p>
-                <div class="troop-grid" id="troop-list-container" style="margin-top: 8px;">
-                    <!-- 動的生成 -->
-                </div>
+                <div class="troop-grid" id="troop-list-container" style="margin-top: 8px;"></div>
             </div>
         </div>
 
@@ -216,12 +207,8 @@
             <div class="panel">
                 <h3>これまでの歩み・記録</h3>
                 <div class="archive-item">
-                    <h4>AI研究班の復帰 ＆ 固有スキルの統合</h4>
-                    <p>ステータス: 完了 / 百人将「エンペラーアイ」、特殊部隊「異世界」、AI研究班の完全網羅</p>
-                </div>
-                <div class="archive-item">
-                    <h4>【本城】称号システムへの刷新</h4>
-                    <p>ステータス: 稼働中 / 実績に応じた称号アンロック機構</p>
+                    <h4>全部隊の固有スキル＆称号システムの完全統合</h4>
+                    <p>ステータス: 完了 / エンペラーアイ、異世界、AI研究班、称号システムの網羅</p>
                 </div>
             </div>
         </div>
@@ -262,7 +249,7 @@
                 task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、AI研究班も含めて全陣形の統率が完了しました。」"
+                quote: "「司令官、全部隊のスキルが網羅された完璧な布陣です。ご指示を！」"
             },
             {
                 id: "hyakunin",
@@ -274,7 +261,7 @@
                 task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「『エンペラーアイ』起動中！前線の利益チャンスを鋭く見抜いてみせます！」"
+                quote: "「『エンペラーアイ』起動中！市場の利益チャンスを鋭く見抜いてみせます！」"
             },
             {
                 id: "tokushu",
@@ -286,7 +273,7 @@
                 task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
                 avatar: "🛡️",
-                quote: "「『異世界』シミュレーション正常稼働中。収益化で『確率博士』の称号をつかみ取りましょう！」"
+                quote: "「『異世界』シミュレーション稼働中。収益化で『確率博士』の称号をつかみ取りましょう！」"
             },
             {
                 id: "ai_research",
@@ -315,7 +302,7 @@
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「AI研究班が戦線に復帰しました。本城の切替ハブおよび部隊一覧より確認可能です。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「本城画面に全部隊のスキルおよび称号システムが完全にロードされました。」", time: "たった今" }
         ];
 
         function renderTroops() {
@@ -399,4 +386,3 @@
     </script>
 </body>
 </html>
-
