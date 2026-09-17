@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MULTIVERSE - 部隊管理 ＆ 帝国司令室</title>
+    <style>
+        :root { 
+            --bg-dark: #0b0f19; 
+            --panel-bg: rgba(18, 24, 38, 0.95); 
+            --gold: #d4af37; 
+            --gold-light: #f3e5ab; 
+            --text-main: #e2e8f0; 
+            --text-muted: #94a3b8; 
+            --border-gold: rgba(212, 175, 55, 0.4); 
+        }
+        body { 
+            margin: 0; padding: 0; background-color: var(--bg-dark); color: var(--text-main); 
+            font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; padding-bottom: 70px;
+        }
+        header { 
+            display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; 
+            background: rgba(11, 15, 25, 0.98); border-bottom: 2px solid var(--gold); 
+        }
+        header h1 { margin: 0; font-size: 1.1rem; color: var(--gold); }
+        .nav-btn { 
+            color: var(--gold-light); text-decoration: none; font-size: 0.75rem; 
+            border: 1px solid var(--border-gold); padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.3); 
+        }
+        .container { max-width: 1000px; margin: 12px auto; padding: 0 10px; display: grid; gap: 12px; }
+        .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; }
+        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 5px; font-size: 0.9rem; }
+        
+        .castle-banner { background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(18,24,38,0.95)); border: 2px solid var(--gold); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; }
+        .castle-img { width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; background: #111; border: 1px solid var(--gold); border-radius: 6px; font-size: 1.5rem; color: var(--gold); flex-shrink: 0; }
+        
+        .troop-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        @media(min-width: 600px) { .troop-grid { grid-template-columns: 1fr 1fr; } }
+        
+        .troop-card { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; display: flex; gap: 10px; align-items: center; }
+        .avatar-thumb { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: #111; border: 1px solid var(--border-gold); border-radius: 4px; color: var(--gold); flex-shrink: 0; }
+        .troop-info { flex: 1; }
+        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
+        .troop-info p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
+
+        nav.bottom-nav { 
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 15, 25, 0.98); 
+            border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; 
+        }
+        nav.bottom-nav a { 
+            color: var(--text-muted); text-decoration: none; font-size: 0.6rem; text-align: center; 
+            display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1;
+        }
+        nav.bottom-nav a.active { color: var(--gold); }
+        nav.bottom-nav span.icon { font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>⚔️ MULTIVERSE 司令室</h1>
+        <a href="index.html" class="nav-btn">🔄 更新</a>
+    </header>
+
+    <div class="container">
+        <!-- 帝国・城郭エリア -->
+        <div class="castle-banner">
+            <div class="castle-img">🏰</div>
+            <div>
+                <h3 style="margin:0 0 3px; color:var(--gold); font-size:0.95rem;">帝国城郭：大城フェーズ</h3>
+                <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">要塞化が完了した堅牢な基盤</p>
+                <p style="margin:4px 0 0; font-size:0.7rem; color:var(--gold-light);">総兵力: 15,800</p>
+            </div>
+        </div>
+
+        <!-- 部隊一覧パネル（指定の順番） -->
+        <div class="panel">
+            <h3>稼働中の部隊（全5部隊完全同期）</h3>
+            <div class="troop-grid" style="margin-top: 8px;">
+                <!-- 1. 軍師 -->
+                <div class="troop-card">
+                    <div class="avatar-thumb">軍</div>
+                    <div class="troop-info">
+                        <h4>ラファエル (軍師) <span>兵力: 4,500</span></h4>
+                        <p>状態: <strong style="color:var(--gold);">通常稼働</strong></p>
+                        <p>帯: 安定稼働</p>
+                        <p style="font-size:0.65rem; color:var(--text-muted);">任務: 全体の戦略統括とパイプライン監視</p>
+                    </div>
+                </div>
+                <!-- 2. 百人将 -->
+                <div class="troop-card">
+                    <div class="avatar-thumb">百</div>
+                    <div class="troop-info">
+                        <h4>百人将 <span>兵力: 3,200</span></h4>
+                        <p>状態: <strong style="color:var(--gold);">通常稼働</strong></p>
+                        <p>帯: 斥候展開</p>
+                        <p style="font-size:0.65rem; color:var(--text-muted);">任務: 前線データの収集と機会の探索</p>
+                    </div>
+                </div>
+                <!-- 3. 特殊部隊 -->
+                <div class="troop-card">
+                    <div class="avatar-thumb">特</div>
+                    <div class="troop-info">
+                        <h4>特殊部隊 <span>兵力: 2,800</span></h4>
+                        <p>状態: <strong style="color:var(--gold);">通常稼働</strong></p>
+                        <p>帯: 要衝警戒</p>
+                        <p style="font-size:0.65rem; color:var(--text-muted);">任務: 特殊インシデントの監視</p>
+                    </div>
+                </div>
+                <!-- 4. システム改善 -->
+                <div class="troop-card">
+                    <div class="avatar-thumb">改</div>
+                    <div class="troop-info">
+                        <h4>システム改善 <span>兵力: 3,000</span></h4>
+                        <p>状態: <strong style="color:#4ade80;">自動稼働中</strong></p>
+                        <p>帯: 自動化推進</p>
+                        <p style="font-size:0.65rem; color:var(--text-muted);">任務: システム基盤の保守と工数削減</p>
+                    </div>
+                </div>
+                <!-- 5. AI研究 -->
+                <div class="troop-card">
+                    <div class="avatar-thumb">AI</div>
+                    <div class="troop-info">
+                        <h4>AI研究 <span>兵力: 2,300</span></h4>
+                        <p>状態: <strong style="color:var(--gold);">通常稼働</strong></p>
+                        <p>帯: 分析検証</p>
+                        <p style="font-size:0.65rem; color:var(--text-muted);">任務: AIプロバイダの実験と精度向上</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ボトムナビゲーション -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="active">
+            <span class="icon">🏰</span>
+            <span>司令室</span>
+        </a>
+        <a href="war_room.html">
+            <span class="icon">🛡️</span>
+            <span>円卓</span>
+        </a>
+        <a href="member.html">
+            <span class="icon">⚔️</span>
+            <span>部隊</span>
+        </a>
+        <a href="map.html">
+            <span class="icon">🗺️</span>
+            <span>MAP</span>
+        </a>
+        <a href="archives.html">
+            <span class="icon">📜</span>
+            <span>記録</span>
+        </a>
+    </nav>
+</body>
+</html>
