@@ -128,10 +128,10 @@
                 <h3>📌 現在のタスク & 直近の通知</h3>
                 <div class="roadmap-box" style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 6px;">
                     <h4 style="margin:0 0 2px; color:var(--gold-light); font-size:0.8rem;">最優先タスク: 基盤構築フェーズ</h4>
-                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">部隊固有スキル（エンペラーアイ・異世界など）の統括と出撃準備を行う。</p>
+                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">部隊固有スキル（エンペラーアイ・異世界・AI研究など）の統括と出撃準備を行う。</p>
                 </div>
                 <div style="font-size: 0.7rem; color: var(--text-muted); padding: 4px 0;">
-                    📢 <strong>直近の通知:</strong> 百人将の「エンペラーアイ」および特殊部隊の「異世界」スキルが登録されました。
+                    📢 <strong>直近の通知:</strong> AI研究班を含む全部隊の固有スキルが本城および部隊タブに配備されました。
                 </div>
             </div>
 
@@ -151,16 +151,16 @@
                         <h5>🛡️ 特殊部隊 (公営競技)</h5>
                         <p>スキル: 異世界</p>
                     </div>
-                    <div class="project-switch-card" onclick="switchTab('war')">
-                        <h5>🛡️ 円卓会議室</h5>
-                        <p>部隊長との作戦チャット</p>
+                    <div class="project-switch-card" onclick="switchTab('troops')">
+                        <h5>🔮 AI研究班</h5>
+                        <p>先端技術・プロバイダ解析</p>
                     </div>
                 </div>
             </div>
 
             <div class="ticker">
-                >> [本城管理室] 百人将「エンペラーアイ」、特殊部隊「異世界」のスキルデータがロードされました。<br>
-                >> 各部隊の特殊能力を駆使して収益化を目指しましょう。
+                >> [本城管理室] AI研究班を含む全部隊のスキルデータが正常に同期されました。<br>
+                >> 各部隊の能力を駆使して収益化と新たな称号の獲得を目指しましょう。
             </div>
         </div>
 
@@ -174,7 +174,7 @@
                     <div class="table-node" style="top: 10px; left: 95px;" onclick="triggerTroopChat('raphael')">🧠<br>ラファエル</div>
                     <div class="table-node" style="top: 95px; right: 10px;" onclick="triggerTroopChat('hyakunin')">⚔️<br>百人将</div>
                     <div class="table-node" style="bottom: 10px; left: 95px;" onclick="triggerTroopChat('tokushu')">🛡️<br>特殊</div>
-                    <div class="table-node" style="top: 95px; left: 10px;" onclick="triggerTroopChat('system')">⚙️<br>保守</div>
+                    <div class="table-node" style="top: 50px; left: 10px;" onclick="triggerTroopChat('ai_research')">🔮<br>AI研究</div>
                 </div>
             </div>
             <div class="panel">
@@ -185,10 +185,10 @@
             </div>
         </div>
 
-        <!-- ⚔️ 部隊タブ（特殊部隊や百人将の管理・スキル表示） -->
+        <!-- ⚔️ 部隊タブ（特殊部隊や百人将・AI研究の管理） -->
         <div id="view-troops" class="view-section">
             <div class="panel">
-                <h3>特殊部隊・百人将 プロジェクト管理</h3>
+                <h3>全部隊・プロジェクト管理</h3>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">各プロジェクトの固有スキルと任務を確認できます。</p>
                 <div class="troop-grid" id="troop-list-container" style="margin-top: 8px;">
                     <!-- 動的生成 -->
@@ -216,8 +216,8 @@
             <div class="panel">
                 <h3>これまでの歩み・記録</h3>
                 <div class="archive-item">
-                    <h4>部隊固有スキル（エンペラーアイ・異世界）の実装</h4>
-                    <p>ステータス: 完了 / 百人将と特殊部隊の特殊能力データを完全統合</p>
+                    <h4>AI研究班の復帰 ＆ 固有スキルの統合</h4>
+                    <p>ステータス: 完了 / 百人将「エンペラーアイ」、特殊部隊「異世界」、AI研究班の完全網羅</p>
                 </div>
                 <div class="archive-item">
                     <h4>【本城】称号システムへの刷新</h4>
@@ -262,7 +262,7 @@
                 task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、各部隊のスキル連携も完璧です。いつでも出撃の号令を！」"
+                quote: "「司令官、AI研究班も含めて全陣形の統率が完了しました。」"
             },
             {
                 id: "hyakunin",
@@ -286,7 +286,19 @@
                 task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
                 avatar: "🛡️",
-                quote: "『異世界』シミュレーション正常稼働中。収益化で『確率博士』の称号をつかみ取りましょう！"
+                quote: "「『異世界』シミュレーション正常稼働中。収益化で『確率博士』の称号をつかみ取りましょう！」"
+            },
+            {
+                id: "ai_research",
+                name: "AI研究班",
+                role: "先端技術解析",
+                skill: "プロバイダ解析・知見抽出",
+                modelColor: "#4ade80",
+                statusText: "解析中",
+                task: "新しい技術の調査と実験",
+                revenue: "0円",
+                avatar: "🔮",
+                quote: "「AIの挙動や新たな知見を常時解析中。次なる進化の種を収穫します！」"
             },
             {
                 id: "system",
@@ -303,7 +315,7 @@
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「本城画面に各部隊の固有スキル（エンペラーアイ、異世界）が実装されました。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「AI研究班が戦線に復帰しました。本城の切替ハブおよび部隊一覧より確認可能です。」", time: "たった今" }
         ];
 
         function renderTroops() {
@@ -330,7 +342,7 @@
 
         function renderChatStream() {
             const container = document.getElementById('chat-stream-container');
-            if (-!container) return;
+            if (!container) return;
 
             container.innerHTML = chatMessages.map(m => `
                 <div class="chat-bubble">
@@ -387,4 +399,3 @@
     </script>
 </body>
 </html>
-
