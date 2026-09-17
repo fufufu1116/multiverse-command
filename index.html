@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULTIVERSE - 本城司令システム</title>
+    <title>MULTIVERSE - 司令統括システム</title>
     <style>
         :root { 
-            --bg-dark: #0b0f19; 
-            --panel-bg: rgba(18, 24, 38, 0.95); 
+            --bg-dark: #070913; 
+            --panel-bg: rgba(15, 22, 38, 0.95); 
             --gold: #d4af37; 
             --gold-light: #f3e5ab; 
+            --gold-glow: rgba(212, 175, 55, 0.2);
             --text-main: #e2e8f0; 
             --text-muted: #94a3b8; 
             --border-gold: rgba(212, 175, 55, 0.4); 
+            --accent-blue: #38bdf8;
         }
         body { 
             margin: 0; padding: 0; background-color: var(--bg-dark); color: var(--text-main); 
@@ -20,98 +22,116 @@
         }
         header { 
             display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; 
-            background: rgba(11, 15, 25, 0.98); border-bottom: 2px solid var(--gold); 
+            background: rgba(7, 9, 19, 0.98); border-bottom: 2px solid var(--gold); 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
         }
-        header h1 { margin: 0; font-size: 1.1rem; color: var(--gold); letter-spacing: 1px; }
+        header h1 { margin: 0; font-size: 1rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
         
         .container { max-width: 1000px; margin: 12px auto; padding: 0 10px; display: grid; gap: 12px; }
         
         .view-section { display: none; }
-        .view-section.active { display: grid; gap: 12px; }
+        .view-section.active { display: grid; gap: 12px; animation: fadeIn 0.3s ease; }
 
-        .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; }
-        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 5px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        .emperor-hero-card { background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(30,41,59,0.95)); border: 1px solid var(--gold); border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center; }
-        .emperor-avatar-large { width: 60px; height: 60px; background: #111; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
-        .emperor-details h4 { margin: 0 0 2px; color: var(--gold); font-size: 1rem; }
+        .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 8px; padding: 14px; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
+        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 6px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px; }
+
+        /* 本城ヒーローカード */
+        .emperor-hero-card { background: linear-gradient(135deg, rgba(20,28,48,0.98), rgba(10,14,26,0.95)); border: 1px solid var(--gold); border-radius: 8px; padding: 14px; display: flex; gap: 14px; align-items: center; box-shadow: 0 0 15px var(--gold-glow); }
+        .emperor-avatar-large { width: 65px; height: 65px; background: #0b0f19; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 10px var(--gold-glow); }
+        .emperor-details h4 { margin: 0 0 3px; color: var(--gold); font-size: 1rem; }
         .emperor-details p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
 
-        .badge-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-        .badge-tag { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); color: var(--gold-light); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; }
-        .badge-tag.locked { background: rgba(15, 23, 42, 0.5); border-color: var(--text-muted); color: var(--text-muted); opacity: 0.6; }
+        /* 実績称号バッジ */
+        .badge-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .badge-tag { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold-light); padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .badge-tag.locked { background: rgba(15, 22, 38, 0.6); border-color: rgba(148,163,184,0.3); color: var(--text-muted); opacity: 0.5; font-weight: normal; }
 
+        /* プロジェクト・部隊切替ハブ */
         .project-switch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
-        .project-switch-card { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
-        .project-switch-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); }
-        .project-switch-card h5 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.8rem; }
-        .project-switch-card p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
+        .project-switch-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
+        .project-switch-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); transform: translateY(-2px); }
+        .project-switch-card h5 { margin: 0 0 3px; color: var(--gold-light); font-size: 0.8rem; }
+        .project-switch-card p { margin: 0; font-size: 0.65rem; color: var(--text-muted); }
 
+        /* 部隊グリッド & カード */
         .troop-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
         @media(min-width: 600px) { .troop-grid { grid-template-columns: 1fr 1fr; } }
-        .troop-card { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
+        .troop-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; display: flex; gap: 10px; align-items: center; cursor: pointer; transition: 0.2s; }
+        .troop-card:hover { border-color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
         
-        .avatar-thumb { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: #111; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); flex-shrink: 0; font-size: 1.3rem; position: relative; }
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 9px; height: 9px; background: #4ade80; border-radius: 50%; border: 2px solid #111; }
+        .avatar-thumb { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: #070913; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); flex-shrink: 0; font-size: 1.3rem; position: relative; }
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 9px; height: 9px; background: #4ade80; border-radius: 50%; border: 2px solid #070913; }
         
         .troop-info { flex: 1; }
-        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
-        .troop-info p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
+        .troop-info h4 { margin: 0 0 2px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
+        .troop-info p { margin: 2px 0; font-size: 0.7rem; color: var(--text-muted); }
 
-        .dialogue-box { background: rgba(11, 15, 25, 0.8); border-left: 3px solid var(--gold); padding: 6px 8px; margin-top: 4px; font-size: 0.7rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
+        .dialogue-box { background: rgba(7, 9, 19, 0.85); border-left: 3px solid var(--gold); padding: 6px 8px; margin-top: 4px; font-size: 0.7rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
 
-        .war-room-circle { position: relative; width: 240px; height: 240px; margin: 15px auto; border: 2px dashed var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.6); }
+        /* スキル発動トースト演出 */
+        #skill-toast { position: fixed; top: 65px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(15, 22, 38, 0.95); border: 1px solid var(--gold); color: var(--gold-light); padding: 8px 16px; border-radius: 20px; font-size: 0.75rem; z-index: 2000; opacity: 0; transition: 0.3s ease; pointer-events: none; box-shadow: 0 0 15px var(--gold-glow); }
+        #skill-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* 円卓会議室 */
+        .war-room-circle { position: relative; width: 240px; height: 240px; margin: 15px auto; border: 2px dashed var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(11, 15, 25, 0.6); }
         .emperor-center { text-align: center; color: var(--gold); font-weight: bold; font-size: 0.8rem; }
-        .table-node { position: absolute; width: 50px; height: 50px; background: #0f172a; border: 1px solid var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--gold-light); text-align: center; cursor: pointer; }
+        .table-node { position: absolute; width: 50px; height: 50px; background: #0f1626; border: 1px solid var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--gold-light); text-align: center; cursor: pointer; transition: 0.2s; }
+        .table-node:hover { transform: scale(1.15); background: rgba(212, 175, 55, 0.2); }
 
         .chat-stream { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
-        .chat-bubble { background: rgba(15, 23, 42, 0.95); border: 1px solid var(--border-gold); border-radius: 6px; padding: 8px 10px; font-size: 0.75rem; }
+        .chat-bubble { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 8px 10px; font-size: 0.75rem; }
         .chat-bubble h5 { margin: 0 0 2px; color: var(--gold); font-size: 0.8rem; display: flex; justify-content: space-between; }
 
         .map-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .map-tile { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: center; }
-        .map-tile h4 { margin: 0 0 4px; color: var(--gold); font-size: 0.8rem; }
+        .map-tile { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: center; }
+        .map-tile h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.8rem; }
         .map-tile p { margin: 0; font-size: 0.65rem; color: var(--text-muted); }
 
-        .archive-item { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
-        .archive-item h4 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.85rem; }
+        .archive-item { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
+        .archive-item h4 { margin: 0 0 3px; color: var(--gold-light); font-size: 0.85rem; }
         .archive-item p { margin: 0; font-size: 0.75rem; color: var(--text-muted); }
 
         nav.bottom-nav { 
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 15, 25, 0.98); 
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(7, 9, 19, 0.98); 
             border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; 
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
         }
         nav.bottom-nav button { 
             background: none; border: none; color: var(--text-muted); font-size: 0.6rem; text-align: center; 
-            display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; cursor: pointer; transition: 0.2s;
         }
-        nav.bottom-nav button.active { color: var(--gold); }
+        nav.bottom-nav button.active { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
         nav.bottom-nav span.icon { font-size: 1.1rem; }
 
-        .ticker { background: rgba(0,0,0,0.5); border-left: 3px solid var(--gold); padding: 8px 10px; font-size: 0.75rem; font-family: monospace; color: var(--text-muted); }
+        .ticker { background: rgba(0,0,0,0.6); border-left: 3px solid var(--gold); padding: 8px 10px; font-size: 0.75rem; font-family: monospace; color: var(--text-muted); }
     </style>
 </head>
 <body>
+    <!-- スキル発動時の通知ポップアップ -->
+    <div id="skill-toast">⚔️ スキル発動: エンペラーアイ展開中</div>
+
     <header>
-        <h1>⚔️ MULTIVERSE 本城司令システム</h1>
-        <span style="font-size: 0.75rem; color: var(--gold);">称号: 初陣の指揮官</span>
+        <h1>⚔️ MULTIVERSE 本城司令</h1>
+        <span style="font-size: 0.7rem; color: var(--gold);">称号: 初陣の指揮官</span>
     </header>
 
     <div class="container">
-        <!-- 🏰 【本城】Emperor個室 -->
+        <!-- 🏰 【本城】司令官個室 -->
         <div id="view-home" class="view-section active">
             <div class="emperor-hero-card">
                 <div class="emperor-avatar-large">👑</div>
                 <div class="emperor-details">
                     <h4>司令官 Emperor</h4>
-                    <p>現在の資産基盤: <strong>0円</strong> (基盤構築中)</p>
-                    <p>装備中のギア: <strong>標準型司令端末</strong></p>
+                    <p>総資産基盤: <strong>0円</strong> (基盤構築中)</p>
+                    <p>装備ギア: <strong>標準型司令端末</strong></p>
                 </div>
             </div>
 
             <div class="panel">
-                <h3>🏆 獲得称号 & 実績</h3>
-                <p style="font-size: 0.70rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に応じて称号がアンロックされます。</p>
+                <h3>🏆 獲得称号 & 実績録</h3>
+                <p style="font-size: 0.7rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
                 <div class="badge-list">
                     <span class="badge-tag">⚔️ 初陣の指揮官</span>
                     <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
@@ -121,32 +141,32 @@
             </div>
 
             <div class="panel">
-                <h3>📌 現在のタスク & 直近の通知</h3>
-                <div class="roadmap-box" style="background: rgba(15,23,42,0.8); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 6px;">
-                    <h4 style="margin:0 0 2px; color:var(--gold-light); font-size:0.8rem;">最優先タスク: 基盤構築フェーズ</h4>
-                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">部隊固有スキル（エンペラーアイ・異世界・AI研究）を用いた作戦準備を行う。</p>
+                <h3>📌 現在の最優先タスク & 通知</h3>
+                <div style="background: rgba(7,9,19,0.7); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 6px;">
+                    <h4 style="margin:0 0 2px; color:var(--gold-light); font-size:0.8rem;">最優先作戦: タクティカルUI展開フェーズ</h4>
+                    <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">部隊固有スキル（エンペラーアイ・異世界・AI研究）の同期完了。</p>
                 </div>
-                <div style="font-size: 0.7rem; color: var(--text-muted); padding: 4px 0;">
-                    📢 <strong>直近の通知:</strong> 百人将「エンペラーアイ」、特殊部隊「異世界」、AI研究班が完全配備されました。
+                <div style="font-size: 0.7rem; color: var(--text-muted); padding: 2px 0;">
+                    📢 <strong>通信:</strong> 全セクター異常なし。各部隊は出撃待機中。
                 </div>
             </div>
 
             <div class="panel">
-                <h3>⚡ プロジェクト・部隊への切替</h3>
+                <h3>⚡ プロジェクト・部隊クイック切替</h3>
                 <div class="project-switch-grid">
-                    <div class="project-switch-card" onclick="switchTab('troops')">
+                    <div class="project-switch-card" onclick="switchTab('troops'); triggerSkillToast('ラファエル統括 起動');">
                         <h5>🧠 ラファエル統括</h5>
-                        <p>設計・全体調整</p>
+                        <p>設計・システム調律</p>
                     </div>
-                    <div class="project-switch-card" onclick="switchTab('troops')">
+                    <div class="project-switch-card" onclick="switchTab('troops'); triggerSkillToast('⚔️ スキル発動: エンペラーアイ');">
                         <h5>⚔️ 百人将プロジェクト</h5>
                         <p>スキル: エンペラーアイ</p>
                     </div>
-                    <div class="project-switch-card" onclick="switchTab('troops')">
+                    <div class="project-switch-card" onclick="switchTab('troops'); triggerSkillToast('🛡️ スキル発動: 異世界シミュレーション');">
                         <h5>🛡️ 特殊部隊 (公営競技)</h5>
                         <p>スキル: 異世界</p>
                     </div>
-                    <div class="project-switch-card" onclick="switchTab('troops')">
+                    <div class="project-switch-card" onclick="switchTab('troops'); triggerSkillToast('🔮 AI研究班プロバイダ解析中');">
                         <h5>🔮 AI研究班</h5>
                         <p>先端技術・プロバイダ解析</p>
                     </div>
@@ -154,8 +174,8 @@
             </div>
 
             <div class="ticker">
-                >> [本城管理室] 全部隊の固有スキル・称号システムが正常に稼働中です。<br>
-                >> 各部隊の能力を駆使して収益化と新たな称号の獲得を目指しましょう。
+                >> [軍議テレメトリー] システム稼働率100% / 部隊接続完了。<br>
+                >> カードタップで固有スキルのアクティブ発動が可能です。
             </div>
         </div>
 
@@ -163,7 +183,7 @@
         <div id="view-war" class="view-section">
             <div class="panel">
                 <h3>作戦会議室（円卓）</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊長アイコンを押すと、作戦報告がチャットに届きます。</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊長アイコンを押すと、直通の作戦報告がチャットに届きます。</p>
                 <div class="war-room-circle">
                     <div class="emperor-center">👑 司令官<br><span style="font-size:0.55rem; color:var(--text-muted);">本城より指揮</span></div>
                     <div class="table-node" style="top: 10px; left: 95px;" onclick="triggerTroopChat('raphael')">🧠<br>ラファエル</div>
@@ -181,8 +201,8 @@
         <!-- ⚔️ 部隊タブ -->
         <div id="view-troops" class="view-section">
             <div class="panel">
-                <h3>全部隊・プロジェクト管理</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">各プロジェクトの固有スキルと任務を確認できます。</p>
+                <h3>全部隊・固有スキル管理</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">カードをタップするとスキルが発動し、円卓へ直通報告が飛みます。</p>
                 <div class="troop-grid" id="troop-list-container" style="margin-top: 8px;"></div>
             </div>
         </div>
@@ -205,10 +225,10 @@
         <!-- 📜 記録タブ -->
         <div id="view-archives" class="view-section">
             <div class="panel">
-                <h3>これまでの歩み・記録</h3>
+                <h3>これまでの歩み・歴史記録</h3>
                 <div class="archive-item">
-                    <h4>全部隊の固有スキル＆称号システムの完全統合</h4>
-                    <p>ステータス: 完了 / エンペラーアイ、異世界、AI研究班、称号システムの網羅</p>
+                    <h4>近代戦国タクティカルUIへの進化</h4>
+                    <p>ステータス: 完了 / 称号連動基盤・スキル発動演出（トースト）の実装</p>
                 </div>
             </div>
         </div>
@@ -249,7 +269,7 @@
                 task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、全部隊のスキルが網羅された完璧な布陣です。ご指示を！」"
+                quote: "「司令官、現代戦国タクティカルUIの展開が完了しました。」"
             },
             {
                 id: "hyakunin",
@@ -261,7 +281,7 @@
                 task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「『エンペラーアイ』起動中！市場の利益チャンスを鋭く見抜いてみせます！」"
+                quote: "「『エンペラーアイ』起動！市場の利益チャンスを鋭く見抜きます！」"
             },
             {
                 id: "tokushu",
@@ -302,15 +322,25 @@
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「本城画面に全部隊のスキルおよび称号システムが完全にロードされました。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「新UIシステムが起動しました。カードタップによるスキル発動演出をお楽しみください。」", time: "たった今" }
         ];
+
+        function triggerSkillToast(msg) {
+            const toast = document.getElementById('skill-toast');
+            if (!toast) return;
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
 
         function renderTroops() {
             const container = document.getElementById('troop-list-container');
             if (!container) return;
             
             container.innerHTML = troopsData.map(t => `
-                <div class="troop-card" onclick="triggerTroopChat('${t.id}')">
+                <div class="troop-card" onclick="triggerTroopChat('${t.id}'); triggerSkillToast('✨ ${t.name}のスキル確認');">
                     <div class="avatar-thumb">
                         ${t.avatar}
                         <div class="status-dot"></div>
