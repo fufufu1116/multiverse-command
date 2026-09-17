@@ -30,49 +30,43 @@
         .view-section.active { display: grid; gap: 12px; }
 
         .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; }
-        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 5px; font-size: 0.9rem; }
+        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 5px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
 
-        .top-status-bar { display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; }
-        .status-box { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; display: flex; align-items: center; gap: 10px; }
-        .castle-icon-mock { width: 36px; height: 36px; border-radius: 4px; border: 1px solid var(--gold); background: #111; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .roadmap-box { background: rgba(15, 23, 42, 0.95); border: 1px solid var(--gold); border-radius: 6px; padding: 12px; margin-bottom: 8px; }
+        .roadmap-box h4 { margin: 0 0 4px; color: var(--gold); font-size: 0.9rem; }
+        .roadmap-box p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
 
-        .multiverse-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .verse-card { 
-            background: rgba(15, 23, 42, 0.95); border: 1px solid var(--border-gold); border-radius: 6px; 
-            padding: 10px 6px; text-align: center; text-decoration: none; color: var(--text-main);
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-        }
-        .verse-icon { font-size: 1.2rem; }
-        .verse-card h5 { margin: 0; font-size: 0.75rem; color: var(--gold-light); }
-        .verse-card span { font-size: 0.55rem; color: var(--text-muted); }
+        .project-switch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+        .project-switch-card { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
+        .project-switch-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); }
+        .project-switch-card h5 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.8rem; }
+        .project-switch-card p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
 
         .troop-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
         @media(min-width: 600px) { .troop-grid { grid-template-columns: 1fr 1fr; } }
-        .troop-card { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; display: flex; gap: 10px; align-items: center; cursor: pointer; transition: 0.2s; }
-        .troop-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
+        .troop-card { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; display: flex; gap: 10px; align-items: center; cursor: pointer; }
         
-        .avatar-thumb { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: #111; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); flex-shrink: 0; font-size: 1.5rem; position: relative; }
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #111; }
+        .avatar-thumb { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: #111; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); flex-shrink: 0; font-size: 1.3rem; position: relative; }
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 9px; height: 9px; background: #4ade80; border-radius: 50%; border: 2px solid #111; }
         
         .troop-info { flex: 1; }
-        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
+        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
         .troop-info p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
 
-        .dialogue-box { background: rgba(11, 15, 25, 0.8); border-left: 3px solid var(--gold); padding: 8px 10px; margin-top: 6px; font-size: 0.75rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
+        .dialogue-box { background: rgba(11, 15, 25, 0.8); border-left: 3px solid var(--gold); padding: 6px 8px; margin-top: 4px; font-size: 0.7rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; }
 
-        .war-room-circle { position: relative; width: 260px; height: 260px; margin: 20px auto; border: 2px dashed var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.6); }
-        .emperor-center { text-align: center; color: var(--gold); font-weight: bold; font-size: 0.85rem; }
-        .table-node { position: absolute; width: 55px; height: 55px; background: #0f172a; border: 1px solid var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--gold-light); text-align: center; cursor: pointer; }
-        .table-node:hover { transform: scale(1.1); background: rgba(212, 175, 55, 0.2); }
+        .war-room-circle { position: relative; width: 240px; height: 240px; margin: 15px auto; border: 2px dashed var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(15, 23, 42, 0.6); }
+        .emperor-center { text-align: center; color: var(--gold); font-weight: bold; font-size: 0.8rem; }
+        .table-node { position: absolute; width: 50px; height: 50px; background: #0f172a; border: 1px solid var(--gold); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--gold-light); text-align: center; cursor: pointer; }
 
-        .chat-stream { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
+        .chat-stream { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
         .chat-bubble { background: rgba(15, 23, 42, 0.95); border: 1px solid var(--border-gold); border-radius: 6px; padding: 8px 10px; font-size: 0.75rem; }
         .chat-bubble h5 { margin: 0 0 2px; color: var(--gold); font-size: 0.8rem; display: flex; justify-content: space-between; }
 
         .map-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .map-tile { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 12px; text-align: center; }
-        .map-tile h4 { margin: 0 0 4px; color: var(--gold); font-size: 0.85rem; }
-        .map-tile p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
+        .map-tile { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; text-align: center; }
+        .map-tile h4 { margin: 0 0 4px; color: var(--gold); font-size: 0.8rem; }
+        .map-tile p { margin: 0; font-size: 0.65rem; color: var(--text-muted); }
 
         .archive-item { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-gold); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
         .archive-item h4 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.85rem; }
@@ -95,95 +89,100 @@
 <body>
     <header>
         <h1>⚔️ MULTIVERSE 司令システム</h1>
-        <span style="font-size: 0.75rem; color: var(--gold);">司令官 (Lv.27)</span>
+        <span style="font-size: 0.75rem; color: var(--gold);">Emperor (Lv.27)</span>
     </header>
 
     <div class="container">
-        <!-- 司令室タブ -->
+        <!-- 🏠 ホーム画面（本陣・人生ロードマップ・全体資金ハブ） -->
         <div id="view-home" class="view-section active">
-            <div class="top-status-bar">
-                <div class="status-box">
-                    <div class="castle-icon-mock">🏰</div>
-                    <div>
-                        <div style="font-size:0.75rem; color:var(--gold);">本陣フェーズ</div>
-                        <div style="font-size:0.6rem; color:var(--text-muted);">システム状態: 順調</div>
+            <!-- 全体資産サマリー -->
+            <div class="panel" style="background: linear-gradient(135deg, rgba(18,24,38,0.98), rgba(30,41,59,0.95)); border: 1px solid var(--gold);">
+                <h3 style="color: var(--gold);">💰 司令官の全体資産 & 収益基盤</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
+                    <div style="background: rgba(15,23,42,0.8); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold);">
+                        <div style="font-size:0.65rem; color:var(--text-muted);">総資産 / 今月の売上</div>
+                        <div style="font-size:1.1rem; color:var(--gold); font-weight:bold; margin-top:2px;">0円 <span style="font-size:0.6rem; color:var(--text-muted);">(基盤構築中)</span></div>
                     </div>
-                </div>
-                <div class="status-box" style="justify-content: flex-end;">
-                    <div style="text-align: right;">
-                        <div style="font-size:0.8rem; color:var(--gold);">💰 0円</div>
-                        <div style="font-size:0.6rem; color:var(--text-muted);">今月の総売上: 0円</div>
+                    <div style="background: rgba(15,23,42,0.8); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold);">
+                        <div style="font-size:0.65rem; color:var(--text-muted);">システム安定度</div>
+                        <div style="font-size:1.1rem; color:#4ade80; font-weight:bold; margin-top:2px;">100.0% <span style="font-size:0.6rem; color:var(--text-muted);">(完全同期)</span></div>
                     </div>
                 </div>
             </div>
 
+            <!-- 🗺️ Emperor 人生ロードマップ & 現在の最優先タスク -->
             <div class="panel">
-                <h3>司令塔ステータス</h3>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
-                    <span style="color:var(--text-muted);">権限レベル:</span>
-                    <span style="color:var(--gold-light);">最高司令官 (OMEGA)</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
-                    <span style="color:var(--text-muted);">システムの安定度:</span>
-                    <span style="color: #4ade80;">100.0% (快適稼働中)</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
-                    <span style="color:var(--text-muted);">メイン軍師:</span>
-                    <span style="color:var(--gold);">ラファエル (信頼度 98%)</span>
+                <h3>👑 Emperor 人生ロードマップ & 最優先タスク</h3>
+                <div class="roadmap-box">
+                    <h4>現在のステージ: 第1章「陣屋・基盤構築フェーズ」</h4>
+                    <p><strong>現在の最優先タスク:</strong> アプリ基盤の安定化および各プロジェクトの稼働準備</p>
+                    <p><strong>次なるマイルストーン:</strong> 特殊部隊・百人将のプロジェクト本格始動と最初の収益化（0円からの脱却）</p>
                 </div>
             </div>
 
+            <!-- 🎛️ プロジェクト・部隊の切り替えハブ -->
             <div class="panel">
-                <h3>作戦プロジェクト一覧</h3>
-                <div class="multiverse-grid" style="margin-top: 8px;">
-                    <div class="verse-card"><span class="verse-icon">📈</span><h5>投資作戦</h5><span>準備中</span></div>
-                    <div class="verse-card"><span class="verse-icon">🚴</span><h5>公営競技</h5><span>準備中</span></div>
-                    <div class="verse-card"><span class="verse-icon">🛒</span><h5>転売市場</h5><span>準備中</span></div>
-                    <div class="verse-card"><span class="verse-icon">🗺️</span><h5>全体マップ</h5><span>未開放</span></div>
-                    <div class="verse-card"><span class="verse-icon">🤝</span><h5>人脈網</h5><span>検証中</span></div>
-                    <div class="verse-card"><span class="verse-icon">💡</span><h5>特許・創作</h5><span>出願中</span></div>
+                <h3>🚀 作戦プロジェクト・部隊の切替ハブ</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">タップすると詳細な状況や部隊の確認ができます。</p>
+                <div class="project-switch-grid">
+                    <div class="project-switch-card" onclick="switchTab('troops')">
+                        <h5>🧠 ラファエル統括</h5>
+                        <p>全体設計・調整 (稼働中)</p>
+                    </div>
+                    <div class="project-switch-card" onclick="switchTab('troops')">
+                        <h5>⚔️ 百人将プロジェクト</h5>
+                        <p>機会発見・前線探索</p>
+                    </div>
+                    <div class="project-switch-card" onclick="switchTab('troops')">
+                        <h5>🛡️ 特殊部隊 (公営競技)</h5>
+                        <p>期待値計算・V8準備</p>
+                    </div>
+                    <div class="project-switch-card" onclick="switchTab('war')">
+                        <h5>🛡️ 円卓会議室</h5>
+                        <p>部隊長との作戦チャット</p>
+                    </div>
                 </div>
             </div>
 
             <div class="ticker">
-                >> [お知らせ] フェーズ2：部隊長とのチャット風会話システムが起動しました。<br>
-                >> 円卓や部隊の画面から部隊長をタップして会話を楽しめます。
+                >> [本陣ハブ] 司令官のロードマップおよび全体資金トラッカーが正常に展開されました。<br>
+                >> 特殊部隊や百人将のプロジェクト状況は「部隊タブ」からいつでも切り替え可能です。
             </div>
         </div>
 
-        <!-- 円卓タブ -->
+        <!-- 🛡️ 円卓タブ -->
         <div id="view-war" class="view-section">
             <div class="panel">
                 <h3>作戦会議室（円卓）</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">丸いテーブルの部隊長アイコンを押すと、ここへ直接作戦報告が届きます。</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">部隊長アイコンを押すと、直通の作戦報告がチャットに届きます。</p>
                 <div class="war-room-circle">
-                    <div class="emperor-center">👑 司令官<br><span style="font-size:0.6rem; color:var(--text-muted);">ここで指揮中</span></div>
-                    <div class="table-node" style="top: 10px; left: 100px;" onclick="triggerTroopChat('raphael')">🧠<br>ラファエル</div>
-                    <div class="table-node" style="top: 100px; right: 10px;" onclick="triggerTroopChat('hyakunin')">⚔️<br>百人将</div>
-                    <div class="table-node" style="bottom: 10px; left: 100px;" onclick="triggerTroopChat('tokushu')">🛡️<br>特殊部隊</div>
-                    <div class="table-node" style="top: 100px; left: 10px;" onclick="triggerTroopChat('system')">⚙️<br>システム</div>
+                    <div class="emperor-center">👑 司令官<br><span style="font-size:0.55rem; color:var(--text-muted);">ここで指揮中</span></div>
+                    <div class="table-node" style="top: 10px; left: 95px;" onclick="triggerTroopChat('raphael')">🧠<br>ラファエル</div>
+                    <div class="table-node" style="top: 95px; right: 10px;" onclick="triggerTroopChat('hyakunin')">⚔️<br>百人将</div>
+                    <div class="table-node" style="bottom: 10px; left: 95px;" onclick="triggerTroopChat('tokushu')">🛡️<br>特殊</div>
+                    <div class="table-node" style="top: 95px; left: 10px;" onclick="triggerTroopChat('system')">⚙️<br>保守</div>
                 </div>
             </div>
             <div class="panel">
-                <h3>作戦報告・会話の歴史ログ</h3>
+                <h3>作戦報告・リアルタイム会話ログ</h3>
                 <div class="chat-stream" id="chat-stream-container">
-                    <!-- JavaScriptでチャット風に動的追加 -->
+                    <!-- 動的追加 -->
                 </div>
             </div>
         </div>
 
-        <!-- 部隊タブ -->
+        <!-- ⚔️ 部隊タブ（特殊部隊や百人将の管理） -->
         <div id="view-troops" class="view-section">
             <div class="panel">
-                <h3>各部隊の状況一覧</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">カードをタップすると、部隊長が直接返事をしてくれます。</p>
+                <h3>特殊部隊・百人将 プロジェクト管理</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">各プロジェクトの稼働状況や任務を確認できます。</p>
                 <div class="troop-grid" id="troop-list-container" style="margin-top: 8px;">
-                    <!-- JavaScriptで動的生成 -->
+                    <!-- 動的生成 -->
                 </div>
             </div>
         </div>
 
-        <!-- MAPタブ -->
+        <!-- 🗺️ MAPタブ -->
         <div id="view-map" class="view-section">
             <div class="panel">
                 <h3>戦略マップ（出撃エリア）</h3>
@@ -198,17 +197,17 @@
             </div>
         </div>
 
-        <!-- 記録タブ -->
+        <!-- 📜 記録タブ -->
         <div id="view-archives" class="view-section">
             <div class="panel">
                 <h3>これまでの歩み・記録</h3>
                 <div class="archive-item">
-                    <h4>フェーズ2: 会話ログと使いやすさの向上</h4>
-                    <p>ステータス: 完了 / チャット風の報告ログと直感的な操作性を実装</p>
+                    <h4>本陣（ホーム画面）のリニューアル</h4>
+                    <p>ステータス: 完了 / 人生ロードマップ、全体資金、プロジェクト切替ハブの統合</p>
                 </div>
                 <div class="archive-item">
-                    <h4>単一アプリ基盤の安定化</h4>
-                    <p>ステータス: 稼働中 / Vercelでの表示エラーを完全に解決</p>
+                    <h4>特殊部隊・百人将の管理基盤</h4>
+                    <p>ステータス: 稼働中 / 各部隊ごとの任務とチャット連動</p>
                 </div>
             </div>
         </div>
@@ -217,7 +216,7 @@
     <nav class="bottom-nav">
         <button id="nav-home" class="active" onclick="switchTab('home')">
             <span class="icon">🏰</span>
-            <span>司令室</span>
+            <span>本陣</span>
         </button>
         <button id="nav-war" onclick="switchTab('war')">
             <span class="icon">🛡️</span>
@@ -238,71 +237,58 @@
     </nav>
 
     <script>
-        // 部隊長たちのデータ（わかりやすい表現に調整）
+        // 各部隊・プロジェクトのデータ
         const troopsData = [
             {
                 id: "raphael",
-                name: "ラファエル",
-                role: "総括軍師",
+                name: "ラファエル（統括）",
+                role: "全体統括・設計",
                 modelColor: "var(--gold)",
-                statusText: "安定・稼働中",
-                task: "全体構造の設計と調整",
+                statusText: "稼働中",
+                task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、システムの基盤は完璧です。次の作戦へ進みましょう！」"
+                quote: "「司令官、本陣からの全体統括ですね。いつでも各部隊へ号令を出せます。」"
             },
             {
                 id: "hyakunin",
-                name: "百人将",
-                role: "前線部隊",
+                name: "百人将プロジェクト",
+                role: "前線ビジネス探索",
                 modelColor: "var(--gold)",
-                statusText: "機会を探索中",
-                task: "利益につながるチャンスの発見",
+                statusText: "探索中",
+                task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「前線の様子は異常なし！いつでも出撃の号令を待っています！」"
+                quote: "「百人将、前線の利益チャンスを鋭意探索中であります！」"
             },
             {
                 id: "tokushu",
-                name: "特殊部隊",
-                role: "特務担当",
+                name: "特殊部隊（公営競技）",
+                role: "特務・データ処理",
                 modelColor: "var(--gold)",
-                statusText: "準備完了",
-                task: "公営競技データの事前登録",
+                statusText: "待機・準備中",
+                task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
                 avatar: "🛡️",
-                quote: "「裏側のエンジンは万全です。いつでも扉を開けられます。」"
+                quote: "「特殊部隊、いつでも秘匿データの演算を開始できます。」"
             },
             {
                 id: "system",
-                name: "システム改善",
-                role: "保守担当",
+                name: "システム保守班",
+                role: "安定稼働担当",
                 modelColor: "#4ade80",
-                statusText: "異常なし",
-                task: "アプリの安全と保守",
+                statusText: "安定",
+                task: "インフラとアプリの保守",
                 revenue: "0円",
                 avatar: "⚙️",
-                quote: "「エラーの起きる隙はありません。快適に動いていますよ。」"
-            },
-            {
-                id: "ai_research",
-                name: "AI研究班",
-                role: "技術研究",
-                modelColor: "#4ade80",
-                statusText: "解析中",
-                task: "新しい技術の調査",
-                revenue: "0円",
-                avatar: "🔮",
-                quote: "「面白いアイデアを次々と見つけています。楽しみにしていてください！」"
+                quote: "「エラーゼロを継続中。安全な基盤を維持しています。」"
             }
         ];
 
-        // 画面上の会話ログのリストを保持する変数
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「司令システム、無事に稼働を開始しました。ここからが本番です。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「本陣ホーム画面が構築されました。司令官の人生ロードマップと全体資産がここに集約されます。」", time: "たった今" }
         ];
 
-        // 部隊カードを画面に並べる処理
         function renderTroops() {
             const container = document.getElementById('troop-list-container');
             if (!container) return;
@@ -314,9 +300,9 @@
                         <div class="status-dot"></div>
                     </div>
                     <div class="troop-info">
-                        <h4>${t.name} <span>今月の売上: ${t.revenue}</span></h4>
+                        <h4>${t.name} <span>売上: ${t.revenue}</span></h4>
                         <p>役割: <strong style="color:${t.modelColor};">${t.role}</strong> (${t.statusText})</p>
-                        <p>現在の任務: ${t.task}</p>
+                        <p>現在任務: ${t.task}</p>
                         <div class="dialogue-box">
                             ${t.quote}
                         </div>
@@ -325,7 +311,6 @@
             `).join('');
         }
 
-        // チャット風ログを画面に描画する処理
         function renderChatStream() {
             const container = document.getElementById('chat-stream-container');
             if (!container) return;
@@ -337,16 +322,13 @@
                 </div>
             `).join('');
             
-            // 最新のメッセージが一番下（または見やすい位置）に見えるようにする
             container.scrollTop = container.scrollHeight;
         }
 
-        // 部隊長をタップしたときに会話を追加して円卓へ飛ばす処理
         function triggerTroopChat(id) {
             const troop = troopsData.find(t => t.id === id);
             if (!troop) return;
 
-            // 新しい発言をログの先頭（または末尾）に追加
             chatMessages.unshift({
                 name: troop.name,
                 avatar: troop.avatar,
@@ -354,17 +336,14 @@
                 time: "たった今"
             });
 
-            // ログが多すぎたら古いものを消す（最大10件）
             if (chatMessages.length > 10) {
                 chatMessages.pop();
             }
 
-            // 画面を円卓タブに切り替えて楽しく見せる
             switchTab('war');
             renderChatStream();
         }
 
-        // タブを切り替える処理
         function switchTab(tabName) {
             document.querySelectorAll('.view-section').forEach(el => {
                 el.classList.remove('active');
@@ -384,7 +363,6 @@
             window.scrollTo(0, 0);
         }
 
-        // ページを開いたときの初期化
         window.onload = function() {
             renderTroops();
             renderChatStream();
