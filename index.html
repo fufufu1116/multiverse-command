@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULTIVERSE - 本城司令システム [#2]</title>
+    <title>MULTIVERSE - 本城司令システム [#3]</title>
     <style>
         :root { 
             --bg-dark: #05070f; 
             --panel-bg: rgba(13, 19, 33, 0.95); 
             --gold: #d4af37; 
             --gold-light: #f3e5ab; 
-            --gold-glow: rgba(212, 175, 55, 0.3);
+            --gold-glow: rgba(212, 175, 55, 0.35);
             --text-main: #e2e8f0; 
             --text-muted: #8c9bae; 
             --border-gold: rgba(212, 175, 55, 0.4); 
@@ -45,11 +45,13 @@
         .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 12px; padding: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
         .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px; }
 
-        /* 本城ヒーローカード (プレミアムアバター枠対応) */
+        /* 本城ヒーローカード (AIアバター対応枠) */
         .emperor-hero-card { background: linear-gradient(135deg, rgba(18,26,48,0.98), rgba(8,12,22,0.95)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 20px var(--gold-glow); }
-        .avatar-frame { width: 70px; height: 70px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; flex-shrink: 0; box-shadow: 0 0 15px var(--gold-glow); position: relative; overflow: hidden; }
-        .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-frame { width: 75px; height: 75px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 15px var(--gold-glow); position: relative; overflow: hidden; }
         
+        /* Microsoft Designer等で生成した画像を当てる場合のimgタグ用スタイル */
+        .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+
         .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; }
         .emperor-details p { margin: 3px 0; font-size: 0.8rem; color: var(--text-muted); }
 
@@ -64,7 +66,7 @@
         .troop-card { background: rgba(5, 7, 15, 0.85); border: 1px solid var(--border-gold); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; cursor: pointer; transition: 0.2s; }
         .troop-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); transform: translateY(-2px); }
         
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #030408; }
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #030408; z-index: 2; }
         
         .troop-info { flex: 1; }
         .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
@@ -102,18 +104,19 @@
 <body>
     <header>
         <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <span class="version-tag">称号: 初陣の指揮官 [#2]</span>
+        <span class="version-tag">称号: 初陣の指揮官 [#3]</span>
     </header>
 
     <div class="container">
         <!-- 🏰 【本城】司令官個室 -->
         <div id="view-home" class="view-section active">
             <div class="emperor-hero-card">
+                <!-- ここにAI生成画像を組み込む場合: <img src="あなたの画像ファイル名.png" alt="Emperor"> を中に入れます -->
                 <div class="avatar-frame">👑<div class="status-dot"></div></div>
                 <div class="emperor-details">
                     <h4>司令官 Emperor</h4>
                     <p>総資産基盤: <strong>0円</strong> (基盤構築中)</p>
-                    <p>システム進化度: <strong>フェーズ 2 [#2]</strong></p>
+                    <p>システム進化度: <strong>フェーズ 3 [#3] (AIアバター連携対応)</strong></p>
                 </div>
             </div>
 
@@ -121,7 +124,7 @@
                 <h3>🏆 獲得称号 & 実績録</h3>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
                 <div class="badge-list">
-                    <span class="badge-tag">⚔️ 初陣の指揮官 [#2]</span>
+                    <span class="badge-tag">⚔️ 初陣の指揮官 [#3]</span>
                     <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
                     <span class="badge-tag locked">👨‍🎓 確率の支配者 (安定収益未達成)</span>
                     <span class="badge-tag locked">💰 黄金の錬金術師 (利益10万超え未達成)</span>
@@ -131,17 +134,17 @@
             <div class="panel">
                 <h3>📌 現在の最優先タスク & 通知</h3>
                 <div style="background: rgba(5,7,15,0.7); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
-                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#2] への移行完了</h4>
-                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">アバターフレーム拡張および外部AI画像生成連携の準備が整いました。</p>
+                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#3] 稼働開始</h4>
+                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">Microsoft Designer連携によるAIアバター導入フレームが有効化されました。</p>
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-muted); padding: 2px 0;">
-                    📢 <strong>通信:</strong> 外部AIアバターの導入により、視覚的没入感がさらに向上します。
+                    📢 <strong>通信:</strong> 外部AIで作成した画像をリポジトリに配置すれば、即座に専用アバターとして反映されます。
                 </div>
             </div>
 
             <div class="ticker">
-                >> [システムテレメトリー] バージョン [#2] 正常稼働中。<br>
-                >> iPhone・MacBook両対応のハイエンド・タクティカルUIです。
+                >> [システムテレメトリー] バージョン [#3] 正常稼働中。<br>
+                >> Microsoft Designerとの連動により、ビジュアルの拡張性が最大化されました。
             </div>
         </div>
 
@@ -209,7 +212,7 @@
                 task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、バージョン [#2] へ移行完了しました。アバター表現もさらに洗練されています。」"
+                quote: "「司令官、バージョン [#3] へ突入しました。Microsoft Designer製のビジュアルを組み込む準備も万全です！」"
             },
             {
                 id: "hyakunin",
@@ -220,7 +223,7 @@
                 task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「『エンペラーアイ』起動中！バージョン [#2] の市場も完全に見通します！」"
+                quote: "「『エンペラーアイ』起動中！バージョン [#3] の戦果にご期待ください！」
             },
             {
                 id: "tokushu",
@@ -242,12 +245,12 @@
                 task: "新しい技術の調査と実験",
                 revenue: "0円",
                 avatar: "🔮",
-                quote: "「AIの挙動や新たな知見を常時解析中。次なる進化の種を収穫します！」"
+                quote: "「AIによる画像生成や解析知見を常時フィードバック中です！」"
             }
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「バージョン [#2] システムが起動しました。各部隊の連携は万全です。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「バージョン [#3] システムが起動しました。AIアバターとの連携基盤が整っています。」", time: "たった今" }
         ];
 
         function renderTroops() {
