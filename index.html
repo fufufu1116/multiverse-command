@@ -2,8 +2,41 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULTIVERSE - 本城司令システム [#4]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MULTIVERSE - 本城司令システム [#5]</title>
+    
+    <!-- PWA / iOS専用メタタグ -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MULTIVERSE">
+    <meta name="theme-color" content="#05070f">
+
+    <!-- インライン・Web App Manifest -->
+    <script>
+        const manifestData = {
+            "name": "MULTIVERSE 本城司令システム",
+            "short_name": "MULTIVERSE",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#05070f",
+            "theme_color": "#05070f",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>",
+                    "sizes": "192x192",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+        const stringManifest = JSON.stringify(manifestData);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestURL;
+        document.head.appendChild(link);
+    </script>
+
     <style>
         :root { 
             --bg-dark: #05070f; 
@@ -16,7 +49,7 @@
             --border-gold: rgba(212, 175, 55, 0.4); 
             --accent-blue: #38bdf8;
         }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             margin: 0; padding: 0; background-color: var(--bg-dark); color: var(--text-main); 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
@@ -45,7 +78,7 @@
         .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 12px; padding: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
         .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px; }
 
-        /* 本城ヒーローカード (Emperor: フルアーマー・顔非公開モデル) */
+        /* 本城ヒーローカード */
         .emperor-hero-card { background: linear-gradient(135deg, rgba(18,26,48,0.98), rgba(8,12,22,0.95)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 20px var(--gold-glow); }
         .avatar-frame { width: 75px; height: 75px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 15px var(--gold-glow); position: relative; overflow: hidden; }
         .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #030408; z-index: 2; }
@@ -95,23 +128,29 @@
         nav.bottom-nav span.icon { font-size: 1.2rem; }
 
         .ticker { background: rgba(0,0,0,0.6); border-left: 3px solid var(--gold); padding: 10px 12px; font-size: 0.8rem; font-family: monospace; color: var(--text-muted); border-radius: 0 6px 6px 0; }
+        
+        .pwa-banner { background: rgba(212,175,55,0.1); border: 1px dashed var(--gold); padding: 10px; border-radius: 8px; font-size: 0.75rem; color: var(--gold-light); text-align: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <header>
         <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <span class="version-tag">称号: 初陣の指揮官 [#4]</span>
+        <span class="version-tag">称号: 初陣の指揮官 [#5]</span>
     </header>
 
     <div class="container">
         <!-- 🏰 【本城】司令官個室 -->
         <div id="view-home" class="view-section active">
+            <div class="pwa-banner">
+                📱 <strong>PWA対応完了:</strong> Safariの「共有」ボタン ➔ 「ホーム画面に追加」で、専用アプリとして起動できます。
+            </div>
+
             <div class="emperor-hero-card">
                 <div class="avatar-frame">🛡️<div class="status-dot"></div></div>
                 <div class="emperor-details">
                     <h4>司令官 Emperor <span style="font-size:0.65rem; background:rgba(212,175,55,0.2); padding:2px 6px; border-radius:4px; color:var(--gold-light);">フルアーマー・絶対君主</span></h4>
-                    <p>総資産基盤: <strong>0円</strong> (基盤構築中)</p>
-                    <p>システム進化度: <strong>フェーズ 4 [#4] (コンセプトアート統合)</strong></p>
+                    <p>総資産基盤: <strong id="stat-assets">0円</strong> (基盤構築中)</p>
+                    <p>システム進化度: <strong>フェーズ 5 [#5] (PWAネイティブ化対応)</strong></p>
                 </div>
             </div>
 
@@ -119,7 +158,7 @@
                 <h3>🏆 獲得称号 & 実績録</h3>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
                 <div class="badge-list">
-                    <span class="badge-tag">⚔️ 初陣の指揮官 [#4]</span>
+                    <span class="badge-tag">⚔️ 初陣の指揮官 [#5]</span>
                     <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
                     <span class="badge-tag locked">👨‍🎓 確率の支配者 (安定収益未達成)</span>
                     <span class="badge-tag locked">💰 黄金の錬金術師 (利益10万超え未達成)</span>
@@ -129,17 +168,17 @@
             <div class="panel">
                 <h3>📌 現在の最優先タスク & 通知</h3>
                 <div style="background: rgba(5,7,15,0.7); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
-                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#4] 統合完了</h4>
-                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">顔を隠した重厚なEmperorと、謎の生物マスコット軍師ラファエルの世界観が反映されました。</p>
+                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#5] PWA実装</h4>
+                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">ホーム画面へのインストールとネイティブアプリ化の基盤が確立されました。</p>
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-muted); padding: 2px 0;">
-                    📢 <strong>通信:</strong> 帝国戦術部隊の名簿に基づき、全セクターの同期が完了しています。
+                    📢 <strong>通信:</strong> ブラウザの枠組みを取り払い、完全な司令端末として単独稼働します。
                 </div>
             </div>
 
             <div class="ticker">
-                >> [システムテレメトリー] バージョン [#4] 正常稼働中。<br>
-                >> iPhone・MacBookの双方で最新の世界観が展開されています。
+                >> [システムテレメトリー] バージョン [#5] PWA稼働中。<br>
+                >> ホーム画面追加により、ワンタップで司令システムにアクセス可能です。
             </div>
         </div>
 
@@ -204,10 +243,10 @@
                 role: "全体統括・予測分析",
                 skill: "謎の生物マスコット演算",
                 statusText: "稼働中",
-                task: "ホログラム戦術の展開と調律",
+                task: "PWAネイティブ環境の監視と調律",
                 revenue: "0円",
                 avatar: "🐰",
-                quote: "「司令官、バージョン [#4] の世界観統合を完了しました。この謎の生物ボディ、動きやすくて最高ですよ。」"
+                quote: "「司令官、バージョン [#5] でPWA化が完了しました！ホーム画面に追加すれば、もうただのWebページではありません。」"
             },
             {
                 id: "hyakunin",
@@ -218,7 +257,7 @@
                 task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「『エンペラーアイ』展開！Emperorの威光の元、実用装備で前線を死守します！」"
+                quote: "「『エンペラーアイ』展開！ホーム画面からのクイック起動で、いつでも前線に直結します！」"
             },
             {
                 id: "tokushu",
@@ -229,7 +268,7 @@
                 task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
                 avatar: "🛡️",
-                quote: "「『異世界』シミュレーション稼働中。着実に『確率博士』の称号へ潜入します！」"
+                quote: "「『異世界』シミュレーション稼働中。ネイティブアプリ感覚でデータを回し込みます！」"
             },
             {
                 id: "ai_research",
@@ -240,12 +279,12 @@
                 task: "新しい技術の調査と実験",
                 revenue: "0円",
                 avatar: "📡",
-                quote: "「通信および情報支援、万全であります。バージョン [#4] の全セクターを同期中！」"
+                quote: "「通信バックエンドの安定化を確認。全セクター、いつでもオフライン同期可能です！」"
             }
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🐰", text: "「バージョン [#4] システムが起動しました。Emperorの絶対的威厳と各部隊の連携が完璧にシンクロしています。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🐰", text: "「バージョン [#5] PWAシステムが起動しました。スマホの『ホーム画面に追加』を実行してください！」", time: "たった今" }
         ];
 
         function renderTroops() {
