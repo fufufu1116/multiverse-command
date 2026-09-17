@@ -3,360 +3,773 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MULTIVERSE - 本城司令システム [#7]</title>
+    <title>MULTIVERSE - 司令システム</title>
     
-    <!-- PWA / iOS専用メタタグ -->
+    <!-- PWA用メタタグ (将来用) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="MULTIVERSE">
-    <meta name="theme-color" content="#05070f">
-
-    <!-- インライン・Web App Manifest -->
-    <script>
-        const manifestData = {
-            "name": "MULTIVERSE 本城司令",
-            "short_name": "MULTIVERSE",
-            "start_url": "./",
-            "display": "standalone",
-            "background_color": "#05070f",
-            "theme_color": "#05070f",
-            "icons": [{ "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>", "sizes": "192x192", "type": "image/svg+xml" }]
-        };
-        const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
-        const link = document.createElement('link');
-        link.rel = 'manifest'; link.href = URL.createObjectURL(blob); document.head.appendChild(link);
-    </script>
+    <meta name="theme-color" content="#050914">
 
     <style>
-        :root { 
-            --bg-dark: #05070f; --panel-bg: rgba(13, 19, 33, 0.95); 
-            --gold: #d4af37; --gold-light: #f3e5ab; --gold-glow: rgba(212, 175, 55, 0.35);
-            --text-main: #e2e8f0; --text-muted: #8c9bae; 
-            --border-gold: rgba(212, 175, 55, 0.4); 
-            --success: #4ade80; --danger: #f87171; --warning: #fbbf24;
+        /* ==========================================
+           1. 世界観・テーマ設定 (Theme Variables)
+           ここを変更することでアプリ全体のカラーリングを変更可能
+        ========================================== */
+        :root {
+            --theme-bg: #050914;                   /* ベース背景色 */
+            --theme-panel: rgba(13, 19, 33, 0.85); /* パネル背景色 (グラスモーフィズム) */
+            --theme-primary: #55dcff;              /* サイバーブルー */
+            --theme-secondary: #9b7cff;            /* アクセントパープル */
+            --theme-gold: #ffd36a;                 /* 戦国ゴールド */
+            --theme-border: rgba(255, 211, 106, 0.3); /* ゴールドの枠線 */
+            
+            --theme-text: #e2e8f0;                 /* メインテキスト */
+            --theme-text-muted: #8c9bae;           /* サブテキスト */
+            
+            --color-success: #4ade80;
+            --color-danger: #f87171;
+            --color-warning: #fbbf24;
         }
+
+        /* ==========================================
+           2. ベーススタイル & レイアウト
+        ========================================== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background-color: var(--bg-dark); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; min-height: 100vh; padding-bottom: 90px; }
-        header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: rgba(5, 7, 15, 0.98); border-bottom: 2px solid var(--gold); box-shadow: 0 4px 20px rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 1001; }
-        header h1 { margin: 0; font-size: 1rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
-        .version-tag { font-size: 0.75rem; color: var(--gold); font-weight: bold; background: rgba(212,175,55,0.15); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-gold); box-shadow: 0 0 10px var(--gold-glow); }
-        .container { max-width: 1100px; margin: 16px auto; padding: 0 16px; display: grid; gap: 16px; }
-        .view-section { display: none; } .view-section.active { display: grid; gap: 16px; animation: fadeIn 0.25s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 12px; padding: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
-        .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; }
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--theme-bg);
+            color: var(--theme-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(85, 220, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(255, 211, 106, 0.05) 0%, transparent 50%);
+        }
+
+        /* グリッドコンテナ (PC: 3カラム / SP: 1カラム) */
+        .app-layout {
+            display: grid;
+            gap: 16px;
+            padding: 16px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* ==========================================
+           3. コンポーネント (Panels, Avatars, etc)
+        ========================================== */
+        .panel {
+            background: var(--theme-panel);
+            border: 1px solid var(--theme-border);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin-bottom: 16px;
+        }
+        .panel h3 {
+            margin: 0 0 12px 0;
+            color: var(--theme-gold);
+            font-size: 1rem;
+            border-bottom: 1px solid var(--theme-border);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* アバター共通フレーム */
+        .avatar-frame {
+            border: 2px solid var(--theme-gold);
+            border-radius: 50%;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(255, 211, 106, 0.2);
+        }
+        .avatar-frame img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .avatar-fallback {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100%;
+        }
+
+        /* プログレスバー */
+        .progress-bar-container {
+            width: 100%; height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px; overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%; background: var(--theme-primary);
+            transition: width 0.3s ease;
+        }
+
+        /* ==========================================
+           4. 各セクションのスタイル
+        ========================================== */
+        /* 左サイドバー (ナビゲーション) */
+        .sidebar {
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .brand-logo {
+            font-size: 1.2rem; font-weight: bold; color: var(--theme-primary);
+            text-align: center; padding: 10px; border: 1px dashed var(--theme-primary);
+            border-radius: 8px; letter-spacing: 2px;
+        }
+        .nav-menu button {
+            width: 100%; background: transparent; border: none;
+            color: var(--theme-text-muted); text-align: left;
+            padding: 12px 16px; font-size: 0.95rem; cursor: pointer;
+            border-radius: 8px; transition: 0.2s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .nav-menu button:hover { background: rgba(255,255,255,0.05); color: var(--theme-text); }
         
-        .emperor-hero-card { background: linear-gradient(135deg, rgba(18,26,48,0.98), rgba(8,12,22,0.95)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 20px var(--gold-glow); }
-        .avatar-frame { width: 70px; height: 70px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 15px var(--gold-glow); position: relative; }
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: var(--success); border-radius: 50%; border: 2px solid #030408; }
-        .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; }
-        .emperor-details p { margin: 3px 0; font-size: 0.8rem; color: var(--text-muted); }
+        .sys-status {
+            font-size: 0.8rem; display: flex; justify-content: space-between;
+            padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .status-dot {
+            width: 8px; height: 8px; background: var(--color-success);
+            border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--color-success);
+        }
 
-        .badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-        .badge-tag { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold-light); padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
-        .badge-tag.locked { background: rgba(13, 19, 33, 0.6); border-color: rgba(140,155,174,0.3); color: var(--text-muted); opacity: 0.5; font-weight: normal; }
+        /* 中央コンテンツ (ホーム、部隊、参謀) */
+        .hero-card {
+            display: flex; gap: 16px; align-items: center;
+        }
+        .hero-card .avatar-frame { width: 80px; height: 80px; font-size: 2.5rem; }
+        .hero-info h2 { margin: 0 0 4px 0; color: var(--theme-primary); font-size: 1.4rem; }
+        .hero-info p { margin: 0; font-size: 0.9rem; color: var(--theme-text-muted); }
 
-        .troop-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-        @media(min-width: 768px) { .troop-grid { grid-template-columns: repeat(2, 1fr); } }
-        .troop-card { background: rgba(5, 7, 15, 0.85); border: 1px solid var(--border-gold); border-radius: 10px; padding: 12px; display: flex; gap: 12px; transition: 0.2s; }
-        .troop-info { flex: 1; }
-        .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
-        .troop-info p { margin: 2px 0; font-size: 0.75rem; color: var(--text-muted); }
-        .dialogue-box { background: rgba(3, 4, 8, 0.9); border-left: 3px solid var(--gold); padding: 6px 10px; margin-top: 6px; font-size: 0.75rem; color: var(--gold-light); font-style: italic; border-radius: 0 4px 4px 0; cursor: pointer; }
+        .eye-quote {
+            font-style: italic; color: var(--theme-gold); font-size: 0.95rem;
+            padding: 10px; background: rgba(0,0,0,0.4); border-left: 3px solid var(--theme-gold);
+            margin: 10px 0; border-radius: 0 4px 4px 0;
+        }
+        .eye-history { font-family: monospace; font-size: 0.8rem; color: var(--theme-text-muted); }
 
-        /* 入力UI群 */
-        .action-row { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
-        .action-row input { background: #030408; border: 1px solid var(--border-gold); color: var(--gold-light); padding: 6px; border-radius: 4px; font-size: 0.75rem; width: 100px; }
-        .action-row button { background: rgba(212,175,55,0.2); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
+        .input-group { display: flex; gap: 8px; margin-top: 10px; }
+        .input-group input {
+            flex: 1; background: #000; border: 1px solid var(--theme-border);
+            color: var(--theme-text); padding: 10px; border-radius: 6px; font-size: 0.9rem;
+        }
+        .input-group button, .btn-primary {
+            background: rgba(255, 211, 106, 0.15); border: 1px solid var(--theme-gold);
+            color: var(--theme-gold); padding: 10px 16px; border-radius: 6px;
+            font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .input-group button:hover, .btn-primary:hover {
+            background: var(--theme-gold); color: #000;
+        }
+
+        /* 部隊 (Units) グリッド */
+        .units-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;
+        }
+        .unit-card {
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 12px;
+        }
+        .unit-header { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+        .unit-header .avatar-frame { width: 50px; height: 50px; font-size: 1.5rem; }
+        .unit-info h4 { margin: 0 0 2px 0; font-size: 1rem; color: var(--theme-text); }
+        .unit-role { font-size: 0.75rem; color: var(--theme-primary); padding: 2px 6px; background: rgba(85,220,255,0.1); border-radius: 4px; }
         
-        /* 確率部隊用特殊グリッド */
-        .prob-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
-        .prob-grid input { background: #030408; border: 1px solid var(--border-gold); color: var(--text-main); padding: 6px; border-radius: 4px; font-size: 0.75rem; width: 100%; }
-        .prob-btn { grid-column: span 2; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); padding: 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; cursor: pointer; }
+        /* 参謀 (Advisor) 入力フォーム */
+        .adv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .adv-grid input {
+            background: #000; border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; padding: 10px; border-radius: 6px;
+        }
+        .adv-result { margin-top: 16px; padding: 12px; background: #000; border-radius: 6px; border-left: 4px solid var(--theme-primary); }
 
-        .chat-stream { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
-        .chat-bubble { background: rgba(5, 7, 15, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 10px 12px; font-size: 0.8rem; }
-        .chat-bubble h5 { margin: 0 0 3px; color: var(--gold); font-size: 0.85rem; display: flex; justify-content: space-between; }
-        .chat-bubble.RED { border-color: var(--danger); background: rgba(248, 113, 113, 0.1); }
-        .chat-bubble.YELLOW { border-color: var(--warning); background: rgba(251, 191, 36, 0.1); }
-        .chat-bubble.GREEN { border-color: var(--success); background: rgba(74, 222, 128, 0.1); }
+        /* 右サイドバー (Tasks, Roadmap, Logs) */
+        .task-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+        .task-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px; background: rgba(0,0,0,0.3); border-radius: 6px;
+            cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+        }
+        .task-item:hover { border-color: rgba(255,255,255,0.2); }
+        .task-item.completed { opacity: 0.5; text-decoration: line-through; }
+        .task-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
 
-        nav.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5, 7, 15, 0.98); border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
-        nav.bottom-nav button { background: none; border: none; color: var(--text-muted); font-size: 0.65rem; display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; cursor: pointer; }
-        nav.bottom-nav button.active { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
-        nav.bottom-nav span.icon { font-size: 1.2rem; }
-        .ticker { background: rgba(0,0,0,0.6); border-left: 3px solid var(--gold); padding: 10px 12px; font-size: 0.8rem; font-family: monospace; color: var(--text-muted); border-radius: 0 6px 6px 0; }
+        .log-list { display: flex; flex-direction: column; gap: 4px; max-height: 200px; overflow-y: auto; }
+        .log-item { font-size: 0.75rem; display: flex; gap: 8px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .log-time { color: var(--theme-text-muted); font-family: monospace; }
+        .log-msg { color: var(--theme-text); }
+
+        /* スマホ用ボトムナビゲーション */
+        .bottom-nav-sp { display: none; }
+
+        /* ==========================================
+           5. レスポンシブ設計 (Media Queries)
+        ========================================== */
+        /* PC用 (1024px以上) */
+        @media (min-width: 1024px) {
+            .app-layout {
+                grid-template-columns: 240px 1fr 300px;
+                grid-template-areas: "nav main right";
+                align-items: start;
+            }
+            .sidebar { grid-area: nav; position: sticky; top: 16px; }
+            .center-column { grid-area: main; display: flex; flex-direction: column; gap: 16px; }
+            .right-column { grid-area: right; position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+            
+            /* PCでは全セクションを常に表示 */
+            .tab-content { display: block !important; }
+        }
+
+        /* スマホ・タブレット用 (1023px以下) */
+        @media (max-width: 1023px) {
+            .app-layout { grid-template-columns: 1fr; padding-bottom: 70px; }
+            .sidebar { display: none; } /* SPでは左サイドバー非表示 */
+            
+            /* タブ切り替え制御 */
+            .tab-content { display: none; animation: fadeIn 0.3s; }
+            .tab-content.active { display: block; }
+            
+            /* 右カラム(Tasks等)は個別のタブにするため、ラップを解除したかのように振る舞う */
+            .right-column { display: contents; }
+            .center-column { display: contents; }
+
+            /* ボトムナビゲーション */
+            .bottom-nav-sp {
+                display: flex; position: fixed; bottom: 0; left: 0; width: 100%;
+                background: rgba(5, 9, 20, 0.95); border-top: 1px solid var(--theme-border);
+                backdrop-filter: blur(10px); z-index: 1000; padding: 10px 0 20px 0;
+            }
+            .bottom-nav-sp button {
+                flex: 1; background: none; border: none; color: var(--theme-text-muted);
+                font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px;
+            }
+            .bottom-nav-sp button.active { color: var(--theme-gold); }
+            .bottom-nav-sp span.icon { font-size: 1.2rem; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <header>
-        <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <span class="version-tag">称号: 初陣の指揮官 [#7]</span>
-    </header>
 
-    <div class="container">
-        <!-- 🏰 【本城】 -->
-        <div id="view-home" class="view-section active">
-            <div class="emperor-hero-card">
-                <div class="avatar-frame">🛡️<div class="status-dot"></div></div>
-                <div class="emperor-details">
-                    <h4>司令官 Emperor</h4>
-                    <p>総資産基盤: <strong id="display-total-revenue" style="color:var(--gold-light);">0円</strong></p>
-                    <p>システム進化度: <strong>フェーズ 7 [#7] (オフライン参謀実装)</strong></p>
+<div class="app-layout">
+
+    <!-- =====================================
+         左サイドバー (PCのみ)
+    ====================================== -->
+    <aside class="sidebar">
+        <div class="brand-logo">MULTIVERSE</div>
+        
+        <nav class="nav-menu">
+            <button onclick="switchTab('sec-home')">🏯 司令塔 (Home)</button>
+            <button onclick="switchTab('sec-units')">⚔️ 部隊 (Units)</button>
+            <button onclick="switchTab('sec-adv')">🧠 参謀 (Advisor)</button>
+            <button onclick="switchTab('sec-tasks')">📋 任務 (Tasks)</button>
+        </nav>
+
+        <div class="panel" style="margin-top:auto; margin-bottom:0; padding:12px;">
+            <div class="sys-status"><span>TOTAL PROFIT</span> <strong id="sidebar-total-profit" style="color:var(--theme-gold)">0 円</strong></div>
+            <div class="sys-status"><span>OFFLINE CORE</span> <span><i class="status-dot"></i> 正常</span></div>
+            <div class="sys-status"><span>STORAGE</span> <span>Active</span></div>
+        </div>
+    </aside>
+
+    <!-- =====================================
+         中央カラム (メイン情報)
+    ====================================== -->
+    <div class="center-column">
+        
+        <!-- ▼ タブ: 司令塔 (Home) ▼ -->
+        <section id="sec-home" class="tab-content active">
+            <!-- ヒーローカード (OWNER情報) -->
+            <div class="panel hero-card">
+                <div class="avatar-frame">
+                    <img id="owner-avatar-img" src="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Owner">
+                    <div class="avatar-fallback" id="owner-emoji">👑</div>
+                </div>
+                <div class="hero-info">
+                    <h2 id="owner-name">OWNER</h2>
+                    <p id="owner-title">MULTIVERSE 司令官</p>
                 </div>
             </div>
 
-            <!-- エンペラーアイ状態表示パネル -->
-            <div class="panel" style="border-color: var(--accent-blue); box-shadow: inset 0 0 20px rgba(56,189,248,0.1);">
-                <h3 style="color: var(--accent-blue); border-color: rgba(56,189,248,0.3);">👁️ エンペラーアイ戦況分析</h3>
-                <div id="emperorStatus" style="font-size: 0.8rem; color: var(--text-main); white-space: pre-line; line-height: 1.4;">
-                    分析データを待機中...
+            <!-- エンペラーアイ & 収益 -->
+            <div class="panel" style="border-color: var(--theme-primary); box-shadow: inset 0 0 20px rgba(85,220,255,0.05);">
+                <h3 style="color: var(--theme-primary);">👁️ エンペラーアイ 戦況分析</h3>
+                <div id="emperor-eye-display">
+                    <!-- JSで描画 -->
+                </div>
+                
+                <h3 style="margin-top:20px;">💰 収益記録 (LocalStorage永続化)</h3>
+                <div class="input-group">
+                    <input type="number" id="profit-input" placeholder="収益額を入力 (マイナスも可)">
+                    <button onclick="addProfit()">記録追加</button>
                 </div>
             </div>
+        </section>
 
+        <!-- ▼ タブ: 部隊 (Units) ▼ -->
+        <section id="sec-units" class="tab-content">
             <div class="panel">
-                <h3>🏆 獲得称号 & 実績録</h3>
-                <div class="badge-list" id="badge-container"></div>
+                <h3>⚔️ 配置部隊ステータス</h3>
+                <div class="units-grid" id="units-container">
+                    <!-- JSで描画 -->
+                </div>
             </div>
-            
-            <div class="ticker">
-                >> [参謀テレメトリー] バージョン [#7] 正常。<br>
-                >> 外部AI非依存の自律推論エンジン稼働開始。
-            </div>
-        </div>
+        </section>
 
-        <!-- 🛡️ 円卓 -->
-        <div id="view-war" class="view-section">
-            <div class="panel">
-                <h3>作戦報告・リアルタイム会話ログ</h3>
-                <div class="chat-stream" id="chat-stream-container"></div>
+        <!-- ▼ タブ: 参謀 (Advisor) ▼ -->
+        <section id="sec-adv" class="tab-content">
+            <div class="panel" style="border-color: var(--theme-secondary);">
+                <h3 style="color: var(--theme-secondary);">🧠 オフライン参謀 (確率・EVシミュレータ)</h3>
+                <p style="font-size:0.8rem; color:var(--theme-text-muted);">
+                    外部AI・API非依存。入力値に基づくケリー基準・期待値のローカル演算を実行。
+                </p>
+                
+                <div class="adv-grid">
+                    <input type="number" id="adv-odds" placeholder="オッズ (例: 3.0)" step="0.1">
+                    <input type="number" id="adv-winrate" placeholder="想定勝率 % (例: 40)">
+                    <input type="number" id="adv-bank" placeholder="総資金 (例: 100000)">
+                    <input type="number" id="adv-stake" placeholder="予定掛金 (例: 5000)">
+                </div>
+                <button class="btn-primary" style="width:100%; margin-top:10px; border-color:var(--theme-secondary); color:var(--theme-secondary);" onclick="calculateEV()">
+                    📊 期待値・適正資金の算出
+                </button>
+                
+                <div id="adv-result" class="adv-result" style="display:none;"></div>
             </div>
-        </div>
-
-        <!-- ⚔️ 部隊 -->
-        <div id="view-troops" class="view-section">
-            <div class="panel">
-                <h3>全部隊・固有スキル & 収益管理</h3>
-                <div class="troop-grid" id="troop-list-container"></div>
-            </div>
-        </div>
+        </section>
+        
     </div>
 
-    <nav class="bottom-nav">
-        <button id="nav-home" class="active" onclick="switchTab('home')"><span class="icon">🏯</span><span>本城</span></button>
-        <button id="nav-war" onclick="switchTab('war')"><span class="icon">🛡️</span><span>円卓</span></button>
-        <button id="nav-troops" onclick="switchTab('troops')"><span class="icon">⚔️</span><span>部隊</span></button>
-    </nav>
-
-    <script>
-        // -----------------------------------------
-        // 1. データベース・状態管理
-        // -----------------------------------------
-        let profitHistory = []; 
-        let troopsData = [
-            { id: "raphael", name: "ラファエル（主席軍師）", role: "統括", skill: "自律マスコット演算", revenue: 0, avatar: "🐰", quote: "「司令官、オフラインでの自律推論機能が実装されました。外部AIなしでも我々は戦えます！」" },
-            { id: "hyakunin", name: "百人将プロジェクト", role: "ビジネス", skill: "「エンペラーアイ」", revenue: 0, avatar: "⚔️", quote: "「『エンペラーアイ』により直近の戦果を自動分析中。収益を報告してください！」" },
-            { id: "tokushu", name: "特殊部隊（公営競技）", role: "特務", skill: "「異世界エンジン」 (EV計算)", revenue: 0, avatar: "🛡️", quote: "「オッズと勝率を入力せよ。期待値(EV)とケリー基準から、出撃の可否を瞬時に判定する。」" },
-            { id: "ai_research", name: "AI研究班", role: "通信", skill: "プロバイダ解析", revenue: 0, avatar: "📡", quote: "「スタンドアロン状態での稼働を確認。いつでも作戦実行可能です！」" }
-        ];
-
-        let chatMessages = [{ name: "ラファエル", avatar: "🐰", text: "「バージョン [#7] 起動。ケリー基準および戦況分析アルゴリズムの稼働を確認。」", time: "たった今" }];
-
-        function loadSavedData() {
-            try {
-                const savedTroops = localStorage.getItem('multiverse_troops');
-                if (savedTroops) {
-                    const parsed = JSON.parse(savedTroops);
-                    troopsData.forEach((t, i) => { if (parsed[i]) t.revenue = Number(parsed[i].revenue) || 0; });
-                }
-                const savedHistory = localStorage.getItem('multiverse_profit_history');
-                if (savedHistory) profitHistory = JSON.parse(savedHistory);
-            } catch(e) {}
-        }
-
-        function saveData() {
-            localStorage.setItem('multiverse_troops', JSON.stringify(troopsData));
-            localStorage.setItem('multiverse_profit_history', JSON.stringify(profitHistory));
-        }
-
-        // -----------------------------------------
-        // 2. オフライン参謀エンジン (ChatGPT提供)
-        // -----------------------------------------
+    <!-- =====================================
+         右カラム (タスク・ロードマップ・ログ)
+    ====================================== -->
+    <div class="right-column">
         
-        // 異世界シミュレーション（確率部隊）
-        function calculateProbabilityTactics({ odds, winRate, bankroll, stake }) {
-            odds = Number(odds); winRate = Number(winRate); bankroll = Number(bankroll); stake = Number(stake);
-            if (!Number.isFinite(odds) || !Number.isFinite(winRate) || !Number.isFinite(bankroll) || !Number.isFinite(stake) || odds <= 1 || winRate <= 0 || winRate >= 1 || bankroll <= 0 || stake < 0) {
-                return { decision: "INVALID", level: "RED", message: "【参謀】入力値が不正です。出撃を停止します。" };
-            }
-            const ev = winRate * odds - 1;
-            const b = odds - 1, q = 1 - winRate;
-            const fullKelly = (b * winRate - q) / b;
-            const halfKelly = Math.max(0, fullKelly * 0.5);
-            const cappedFraction = Math.min(halfKelly, 0.10);
-            const recommendedStake = bankroll * cappedFraction;
+        <!-- ▼ タブ: 任務 (Tasks) SP用統合タブ ▼ -->
+        <section id="sec-tasks" class="tab-content">
             
-            let decision, level, message;
-            if (ev <= 0) { decision = "RETREAT"; level = "RED"; message = "【特殊部隊】期待値がマイナス。出撃を中止し、直ちに撤退せよ。"; }
-            else if (fullKelly <= 0) { decision = "RETREAT"; level = "RED"; message = "【特殊部隊】ケリー基準がマイナス。資金投入は許可できない。"; }
-            else if (stake > recommendedStake) { decision = "REDUCE"; level = "YELLOW"; message = `【特殊部隊】期待値はプラスだが掛け金が過大だ。推奨上限: ${Math.floor(recommendedStake).toLocaleString()}円に減額せよ。`; }
-            else { decision = "ATTACK"; level = "GREEN"; message = "【特殊部隊】正の期待値を確認。資金管理も適正範囲内。出撃を許可する！"; }
-            
-            return { decision, level, evPercent: ev * 100, fullKelly, halfKelly, recommendedStake, message };
-        }
-
-        // エンペラーアイ（収益分析）
-        function emperorEye() {
-            if (profitHistory.length < 3) {
-                return { title: "戦況観測中", quote: "【百人将】戦況データが不足しています。売上データの蓄積（3回以上）を待ちます。" };
-            }
-            const recent = profitHistory.slice(-3);
-            const allPositive = recent.every(v => v > 0);
-            const allNegative = recent.every(v => v < 0);
-            const latest = recent[2], previous = recent[1];
-            
-            if (allPositive) {
-                return { title: "🔥 強気攻勢", quote: latest > previous ? "【百人将】三連続黒字、かつ勢力拡大中！このまま強気攻勢を維持せよ！" : "【百人将】三連続黒字を確認。慢心は禁物だが、現在の戦略を維持せよ！" };
-            } else if (allNegative) {
-                return { title: "🛡️ 戦略見直し", quote: latest < previous ? "【百人将】三連続損失、かつ被害拡大中。即座に攻勢を停止し、戦略を根本から見直せ！" : "【百人将】三連続損失。現在の戦略を再点検し、一時守勢へ移行せよ。" };
-            } else {
-                if (latest > 0 && previous < 0) return { title: "🔎 戦況偵察", quote: "【百人将】損失から反転の兆候。まだ本格攻勢には早い、偵察を継続せよ。" };
-                if (latest < 0 && previous > 0) return { title: "🔎 戦況監視", quote: "【百人将】黒字から失速。攻勢を急がず、次の戦況を監視せよ。" };
-                return { title: "⚖️ 混戦状態", quote: "【百人将】収益が混戦状態。攻守を固定せず、柔軟に立ち回れ。" };
-            }
-        }
-
-        // -----------------------------------------
-        // 3. UI連携・レンダリング
-        // -----------------------------------------
-        function renderDashboard() {
-            loadSavedData();
-            const total = troopsData.reduce((sum, t) => sum + t.revenue, 0);
-            document.getElementById('display-total-revenue').innerText = total.toLocaleString() + '円';
-
-            const badges = [
-                { name: "⚔️ 初陣の指揮官 [#7]", unlocked: true },
-                { name: "🎓 確率博士 (収益1万円超)", unlocked: total >= 10000 },
-                { name: "👨‍🎓 確率の支配者 (収益5万円超)", unlocked: total >= 50000 },
-                { name: "💰 黄金の錬金術師 (利益10万超)", unlocked: total >= 100000 }
-            ];
-            document.getElementById('badge-container').innerHTML = badges.map(b => `<span class="badge-tag ${b.unlocked ? '' : 'locked'}">${b.name} ${b.unlocked ? '✨' : ''}</span>`).join('');
-
-            updateEmperorEyeUI();
-            renderTroops();
-            renderChatStream();
-        }
-
-        function updateEmperorEyeUI() {
-            const result = emperorEye();
-            document.getElementById('emperorStatus').innerText = `【分析】${result.title}\n${result.quote}\n\n▶︎ 直近3回の収益動向: [ ${profitHistory.slice(-3).map(v => v>0?'+'+v:v).join(' / ') || 'データなし'} ]`;
-            troopsData[1].quote = result.quote; // 百人将のセリフも書き換える
-        }
-
-        function renderTroops() {
-            const container = document.getElementById('troop-list-container');
-            if (!container) return;
-            
-            container.innerHTML = troopsData.map((t, index) => {
-                // 特殊部隊（tokushu）だけはEV計算用UIにする
-                let actionHTML = '';
-                if (t.id === 'tokushu') {
-                    actionHTML = `
-                        <div class="prob-grid">
-                            <input type="number" id="prob-odds" placeholder="ｵｯｽﾞ (例:3.0)" step="0.1">
-                            <input type="number" id="prob-win" placeholder="勝率% (例:40)">
-                            <input type="number" id="prob-bank" placeholder="総資金 (例:100000)">
-                            <input type="number" id="prob-stake" placeholder="掛金 (例:5000)">
-                            <button class="prob-btn" onclick="runProbability()">📊 期待値(EV)・ケリー判定</button>
-                        </div>
-                    `;
-                } else {
-                    actionHTML = `
-                        <div class="action-row">
-                            <span>売上加算:</span>
-                            <input type="number" id="rev-${index}" placeholder="金額を入力">
-                            <button onclick="addRevenue(${index})">記録</button>
-                            <span style="font-size:0.7rem; color:var(--gold-light); margin-left:auto;">累計: ${t.revenue.toLocaleString()}</span>
-                        </div>
-                    `;
-                }
-
-                return `
-                    <div class="troop-card">
-                        <div class="avatar-frame" style="width: 50px; height: 50px; font-size: 1.4rem;">${t.avatar}<div class="status-dot"></div></div>
-                        <div class="troop-info">
-                            <h4>${t.name}</h4>
-                            <p>スキル: <strong style="color:var(--gold-light);">${t.skill}</strong></p>
-                            ${actionHTML}
-                            <div class="dialogue-box" onclick="triggerTroopChat('${t.id}')">
-                                ${t.quote} (タップで円卓へ)
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function addRevenue(index) {
-            const inputVal = document.getElementById(`rev-${index}`).value;
-            const val = parseInt(inputVal, 10) || 0;
-            if(val === 0) return;
-            
-            troopsData[index].revenue += val;
-            profitHistory.push(val); // 履歴を追加
-            saveData();
-            renderDashboard();
-
-            addChatMessage(troopsData[index].name, troopsData[index].avatar, `「収益データを記録！ ${val > 0 ? '+'+val : val}円。累計: ${troopsData[index].revenue.toLocaleString()}円です。」`, "GREEN");
-        }
-
-        function runProbability() {
-            const result = calculateProbabilityTactics({
-                odds: document.getElementById('prob-odds').value,
-                winRate: Number(document.getElementById('prob-win').value) / 100,
-                bankroll: document.getElementById('prob-bank').value,
-                stake: document.getElementById('prob-stake').value
-            });
-
-            let text = `${result.message}`;
-            if(result.decision !== "INVALID") {
-                text += `\n▶︎ 期待値(EV): ${result.evPercent.toFixed(1)}%`;
-                text += `\n▶︎ 推奨掛金上限(ハーフケリー): ${Math.floor(result.recommendedStake).toLocaleString()}円`;
-            }
-            addChatMessage("特殊部隊", "🛡️", text, result.level);
-            switchTab('war'); // 計算したらすぐ円卓（結果画面）へ飛ぶ
-        }
-
-        function addChatMessage(name, avatar, text, level="NONE") {
-            chatMessages.unshift({ name, avatar, text, level, time: "たった今" });
-            if (chatMessages.length > 15) chatMessages.pop();
-            renderChatStream();
-        }
-
-        function renderChatStream() {
-            const container = document.getElementById('chat-stream-container');
-            if (!container) return;
-            container.innerHTML = chatMessages.map(m => `
-                <div class="chat-bubble ${m.level}">
-                    <h5><span>${m.avatar} ${m.name}</span> <span style="font-size:0.6rem; color:var(--text-muted);">${m.time}</span></h5>
-                    <p style="margin: 4px 0 0; color: ${m.level === 'RED' ? 'var(--danger)' : m.level === 'YELLOW' ? 'var(--warning)' : 'var(--gold-light)'};">${m.text}</p>
+            <!-- ロードマップ -->
+            <div class="panel">
+                <h3>🗺️ 戦略ロードマップ</h3>
+                <div id="roadmap-container">
+                    <!-- JSで描画 -->
                 </div>
-            `).join('');
+            </div>
+
+            <!-- タスク管理 -->
+            <div class="panel">
+                <h3>📋 今日の最重要任務</h3>
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <input type="text" id="new-task-input" placeholder="新規タスクを入力">
+                    <button onclick="addTask()">追加</button>
+                </div>
+                <div class="task-list" id="tasks-container">
+                    <!-- JSで描画 -->
+                </div>
+            </div>
+
+            <!-- システムログ -->
+            <div class="panel">
+                <h3>📡 通信ログ (Offline Core)</h3>
+                <div class="log-list" id="logs-container">
+                    <!-- JSで描画 -->
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<!-- =====================================
+     スマホ用ボトムナビゲーション
+====================================== -->
+<nav class="bottom-nav-sp">
+    <button onclick="switchTab('sec-home')" id="nav-sec-home" class="active">
+        <span class="icon">🏯</span><span>司令塔</span>
+    </button>
+    <button onclick="switchTab('sec-units')" id="nav-sec-units">
+        <span class="icon">⚔️</span><span>部隊</span>
+    </button>
+    <button onclick="switchTab('sec-adv')" id="nav-sec-adv">
+        <span class="icon">🧠</span><span>参謀</span>
+    </button>
+    <button onclick="switchTab('sec-tasks')" id="nav-sec-tasks">
+        <span class="icon">📋</span><span>任務</span>
+    </button>
+</nav>
+
+<!-- =====================================
+     メインスクリプト (機能・データ統合)
+====================================== -->
+<script>
+    /**
+     * ==========================================
+     * 【データ層】 MV_DATA
+     * このオブジェクトがアプリ全体の「状態(State)」です。
+     * 後からアバターのパス(assets/...)や世界観を変更する場合は、
+     * ここを直接編集するか、今後のアップデートで設定画面から書き換えます。
+     * ==========================================
+     */
+    const DEFAULT_DATA = {
+        owner: {
+            name: "OWNER",
+            title: "MULTIVERSE 第一司令官",
+            avatar: "assets/avatars/owner.png", // 実画像がある場合はここへ
+            emoji: "👑"
+        },
+        roadmap: {
+            currentPhase: "Phase 7 : 自律型オフライン参謀統合",
+            progress: 68,
+            nextMilestone: "外部AIモジュールとの選択式連携基盤構築"
+        },
+        tasks: [
+            { id: 1, title: "PWA基盤とUI/UXの構築", status: "pending", completed: true },
+            { id: 2, title: "エンペラーアイの自律化", status: "pending", completed: true },
+            { id: 3, title: "新規プロジェクトの収益化テスト", status: "pending", completed: false }
+        ],
+        units: [
+            { id: "business", name: "百人将", role: "事業・機会探索", avatar: "assets/avatars/business.png", emoji: "⚔️", state: "探索中", progress: 40, quote: "エンペラーアイ待機中。収益データを入れよ。" },
+            { id: "keirin", name: "確率部隊", role: "競輪研究・EV計算", avatar: "assets/avatars/keirin.png", emoji: "🛡️", state: "待機", progress: 80, quote: "計算の準備はできている。参謀タブへ急行せよ。" },
+            { id: "ai", name: "研究軍師", role: "AI連携研究", avatar: "assets/avatars/ai.png", emoji: "🧠", state: "稼働中", progress: 90, quote: "完全オフラインでの自律稼働、正常です。" },
+            { id: "asset", name: "資産軍師", role: "投資・資産管理", avatar: "assets/avatars/asset.png", emoji: "💰", state: "安定", progress: 60, quote: "資産防衛ライン維持。" }
+        ],
+        profits: [], // 日々の収益配列 [5000, -2000, 10000, ...]
+        logs: []
+    };
+
+    let MV_DATA = {};
+
+    // ==========================================
+    // 1. 初期化とデータ管理 (LocalStorage)
+    // ==========================================
+    function init() {
+        const saved = localStorage.getItem('MV_DATA_V1');
+        if (saved) {
+            try {
+                // 既存のセーブデータとデフォルト構造をマージ
+                MV_DATA = { ...DEFAULT_DATA, ...JSON.parse(saved) };
+            } catch(e) { MV_DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+        } else {
+            MV_DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+            addLog("システム初期起動完了。LocalStorage初期化済。", "success");
+        }
+        
+        // 初回のみエンペラーアイを空回しして状態を最新化
+        if(MV_DATA.profits.length > 0) processEmperorEye();
+        
+        renderAll();
+    }
+
+    function saveData() {
+        localStorage.setItem('MV_DATA_V1', JSON.stringify(MV_DATA));
+    }
+
+    // ==========================================
+    // 2. レンダリング関数群 (UI更新)
+    // ==========================================
+    function renderAll() {
+        renderOwner();
+        renderHome();
+        renderUnits();
+        renderTasks();
+        renderLogs();
+    }
+
+    function renderOwner() {
+        document.getElementById('owner-name').textContent = MV_DATA.owner.name;
+        document.getElementById('owner-title').textContent = MV_DATA.owner.title;
+        document.getElementById('owner-avatar-img').src = MV_DATA.owner.avatar;
+        document.getElementById('owner-emoji').textContent = MV_DATA.owner.emoji;
+    }
+
+    function renderHome() {
+        const totalProfit = MV_DATA.profits.reduce((a,b) => a+b, 0);
+        document.getElementById('sidebar-total-profit').textContent = totalProfit.toLocaleString() + " 円";
+        
+        const businessUnit = MV_DATA.units.find(u => u.id === 'business');
+        let eyeHTML = `<div style="font-size:0.9rem; color:var(--theme-text-muted);">収益データを入力してください。</div>`;
+        
+        if (businessUnit && MV_DATA.profits.length >= 3) {
+            const recent = MV_DATA.profits.slice(-3);
+            eyeHTML = `
+                <div style="font-weight:bold; margin-bottom:4px;">状態: <span style="color:var(--theme-gold)">${businessUnit.state}</span></div>
+                <div class="eye-quote">「${businessUnit.quote}」</div>
+                <div class="eye-history">直近3回の戦果: [ ${recent.map(v => v>0?'+'+v:v).join(', ')} ]</div>
+                <div class="eye-history">累計総資産: ${totalProfit.toLocaleString()} 円</div>
+            `;
+        }
+        document.getElementById('emperor-eye-display').innerHTML = eyeHTML;
+    }
+
+    function renderUnits() {
+        const html = MV_DATA.units.map(unit => `
+            <div class="unit-card">
+                <div class="unit-header">
+                    <div class="avatar-frame">
+                        <img src="${unit.avatar}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="">
+                        <div class="avatar-fallback" style="display:none;">${unit.emoji}</div>
+                    </div>
+                    <div class="unit-info">
+                        <h4>${unit.name}</h4>
+                        <span class="unit-role">${unit.role}</span>
+                    </div>
+                </div>
+                <div class="eye-quote" style="font-size:0.8rem; margin:8px 0;">「${unit.quote}」</div>
+                <div style="font-size:0.75rem; color:var(--theme-text-muted); margin-bottom:4px; display:flex; justify-content:space-between;">
+                    <span>状態: ${unit.state}</span>
+                    <span>任務進捗 ${unit.progress}%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: ${unit.progress}%"></div>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('units-container').innerHTML = html;
+    }
+
+    function renderTasks() {
+        // Roadmap
+        const rm = MV_DATA.roadmap;
+        document.getElementById('roadmap-container').innerHTML = `
+            <div style="font-weight:bold; color:var(--theme-primary); margin-bottom:4px;">${rm.currentPhase}</div>
+            <div style="font-size:0.85rem; margin-bottom:8px;">次目標: ${rm.nextMilestone}</div>
+            <div class="progress-bar-container"><div class="progress-bar" style="width: ${rm.progress}%"></div></div>
+            <div style="text-align:right; font-size:0.75rem; color:var(--theme-text-muted); margin-top:4px;">全体進捗: ${rm.progress}%</div>
+        `;
+
+        // Tasks
+        const activeTasks = MV_DATA.tasks.filter(t => !t.completed);
+        const completedTasks = MV_DATA.tasks.filter(t => t.completed);
+        
+        const renderList = (list) => list.map(t => `
+            <div class="task-item ${t.completed ? 'completed' : ''}" onclick="toggleTask(${t.id})">
+                <input type="checkbox" ${t.completed ? 'checked' : ''} onclick="event.stopPropagation(); toggleTask(${t.id})">
+                <span>${t.title}</span>
+            </div>
+        `).join('');
+        
+        document.getElementById('tasks-container').innerHTML = `
+            <div style="font-size:0.8rem; color:var(--theme-text-muted); margin-bottom:4px;">進行中 (${activeTasks.length})</div>
+            ${renderList(activeTasks)}
+            <div style="font-size:0.8rem; color:var(--theme-text-muted); margin:12px 0 4px 0;">完了済 (${completedTasks.length})</div>
+            ${renderList(completedTasks)}
+        `;
+    }
+
+    function renderLogs() {
+        document.getElementById('logs-container').innerHTML = MV_DATA.logs.map(log => `
+            <div class="log-item">
+                <span class="log-time">[${log.time}]</span>
+                <span class="log-msg" style="${log.type==='success'?'color:var(--color-success)': log.type==='danger'?'color:var(--color-danger)':''}">${log.msg}</span>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // 3. アクション関数 (タスク, 収益, ログ)
+    // ==========================================
+    function addLog(msg, type='info') {
+        const time = new Date().toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+        MV_DATA.logs.unshift({ time, msg, type });
+        if(MV_DATA.logs.length > 15) MV_DATA.logs.pop(); // 直近15件まで保存
+        saveData();
+        renderLogs();
+    }
+
+    function toggleTask(id) {
+        const task = MV_DATA.tasks.find(t => t.id === id);
+        if(task) {
+            task.completed = !task.completed;
+            saveData();
+            renderTasks();
+            addLog(`任務「${task.title}」を${task.completed ? '完了' : '未完了'}に変更`, 'info');
+        }
+    }
+
+    function addTask() {
+        const input = document.getElementById('new-task-input');
+        const val = input.value.trim();
+        if(!val) return;
+        
+        MV_DATA.tasks.push({ id: Date.now(), title: val, status: "pending", priority: "medium", completed: false });
+        input.value = '';
+        saveData();
+        renderTasks();
+        addLog(`新任務追加: ${val}`, 'info');
+    }
+
+    function addProfit() {
+        const input = document.getElementById('profit-input');
+        const val = parseInt(input.value, 10);
+        if(isNaN(val)) return;
+        
+        MV_DATA.profits.push(val);
+        input.value = '';
+        
+        addLog(`収益記録: ${val > 0 ? '+'+val : val}円`, val > 0 ? 'success' : 'danger');
+        processEmperorEye();
+        saveData();
+        
+        // 必要な部分だけ再描画
+        renderHome();
+        renderUnits();
+    }
+
+    // ==========================================
+    // 4. ロジック: エンペラーアイ
+    // ==========================================
+    function processEmperorEye() {
+        const p = MV_DATA.profits;
+        if (p.length < 3) return; // 3回分のデータが無ければスキップ
+
+        const recent = p.slice(-3);
+        const allPos = recent.every(v => v > 0);
+        const allNeg = recent.every(v => v < 0);
+        
+        let state = "混戦";
+        let quote = "【エンペラーアイ】収益が混戦状態。攻守を固定せず、追加データを収集せよ。";
+
+        if (allPos) {
+            state = "強気攻勢";
+            quote = "【エンペラーアイ】三連続黒字。現在の作戦を維持し、次の一手を準備せよ。";
+        } else if (allNeg) {
+            state = "戦略見直し";
+            quote = "【エンペラーアイ】三連続損失。ただちに攻勢を停止し、戦略を根本から見直せ。";
         }
 
-        function triggerTroopChat(id) {
-            const troop = troopsData.find(t => t.id === id);
-            if (troop) { addChatMessage(troop.name, troop.avatar, troop.quote); switchTab('war'); }
+        // 百人将のデータを更新
+        const businessUnit = MV_DATA.units.find(u => u.id === 'business');
+        if (businessUnit) {
+            businessUnit.state = state;
+            businessUnit.quote = quote;
+        }
+    }
+
+    // ==========================================
+    // 5. ロジック: オフライン参謀 (EV / Kelly 計算)
+    // ==========================================
+    function calculateEV() {
+        const odds = parseFloat(document.getElementById('adv-odds').value);
+        const winRate = parseFloat(document.getElementById('adv-winrate').value) / 100;
+        const bankroll = parseFloat(document.getElementById('adv-bank').value);
+        const stake = parseFloat(document.getElementById('adv-stake').value);
+        const resultDiv = document.getElementById('adv-result');
+        
+        if(isNaN(odds) || isNaN(winRate) || isNaN(bankroll) || isNaN(stake) || odds <= 1 || winRate <= 0) {
+            resultDiv.style.display = 'block';
+            resultDiv.style.borderLeftColor = "var(--color-danger)";
+            resultDiv.innerHTML = `<span style="color:var(--color-danger)">[エラー] 有効な数値を入力してください。</span>`;
+            return;
+        }
+        
+        // EV = (勝率 * オッズ) - 1
+        const ev = (winRate * odds) - 1;
+        
+        // Kelly = (b * p - q) / b  [ b = odds-1, p = winRate, q = 1-winRate ]
+        const b = odds - 1;
+        const q = 1 - winRate;
+        const fullKelly = (b * winRate - q) / b;
+        const halfKelly = Math.max(0, fullKelly / 2);
+        
+        // 推奨掛金上限 (最大でも資金の10%に制限する安全措置)
+        const recommended = bankroll * Math.min(halfKelly, 0.1); 
+        
+        let decision, msg, color;
+        if (ev <= 0) {
+            decision = "RETREAT (撤退)"; msg = "期待値がマイナス。出撃を中止せよ。"; color = "var(--color-danger)";
+        } else if (fullKelly <= 0) {
+            decision = "RETREAT (撤退)"; msg = "ケリー基準がマイナス。資金投入不可。"; color = "var(--color-danger)";
+        } else if (stake > recommended) {
+            decision = "REDUCE (減額)"; msg = `資金配分過大。掛金を下げよ。`; color = "var(--color-warning)";
+        } else {
+            decision = "ATTACK (出撃)"; msg = "正の期待値・適正資金。出撃を許可する。"; color = "var(--color-success)";
+        }
+        
+        resultDiv.style.display = 'block';
+        resultDiv.style.borderLeftColor = color;
+        resultDiv.innerHTML = `
+            <div style="color:${color}; font-weight:bold; font-size:1.1rem; margin-bottom:8px;">[判定] ${decision}</div>
+            <div style="margin-bottom:8px;">${msg}</div>
+            <div style="font-family:monospace; color:var(--theme-text-muted); font-size:0.9rem;">
+                ▶ モデル上期待値(EV): ${(ev * 100).toFixed(2)}%<br>
+                ▶ フルケリー: ${(fullKelly * 100).toFixed(2)}%<br>
+                ▶ ハーフケリー: ${(halfKelly * 100).toFixed(2)}%<br>
+                ▶ 推奨掛金上限: <strong style="color:var(--theme-text)">${Math.floor(recommended).toLocaleString()} 円</strong>
+            </div>
+            <div style="font-size:0.7em; color:var(--theme-text-muted); margin-top:12px; border-top:1px solid rgba(255,255,255,0.1); padding-top:4px;">
+                ※ 本計算は入力値に基づく純粋な数学的モデル（オフライン処理）であり、ギャンブル等の結果を保証するものではありません。
+            </div>
+        `;
+        
+        addLog(`参謀システム: EV計算実行 [判定: ${decision}]`, 'info');
+    }
+
+    // ==========================================
+    // 6. UI制御: タブ切り替え (スマホ用)
+    // ==========================================
+    function switchTab(tabId) {
+        // PCレイアウト時(1024px以上)はアンカーリンクのようにスクロールさせる
+        if(window.innerWidth >= 1024) {
+            const target = document.getElementById(tabId);
+            if(target) {
+                // ヘッダーや余白を考慮してスクロール
+                const y = target.getBoundingClientRect().top + window.scrollY - 20;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }
+            return;
         }
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.view-section, nav.bottom-nav button').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + tabName)?.classList.add('active');
-            document.getElementById('nav-' + tabName)?.classList.add('active');
-            window.scrollTo(0, 0);
-        }
+        // スマホレイアウト時: activeクラスの付け替えによる表示切替
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.bottom-nav-sp button').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        document.getElementById('nav-' + tabId).classList.add('active');
+        window.scrollTo(0, 0);
+    }
 
-        window.onload = renderDashboard;
-    </script>
+    // アプリ起動
+    window.onload = init;
+
+    /*
+     * =========================================================================
+     * 【カスタマイズ・拡張ガイド】
+     * 
+     * 1. 世界観・背景色の変更
+     *    -> HTML上部の `<style>` 内にある `:root` の CSS変数を変更してください。
+     *    (例: --theme-bg を赤黒系にすればダークシスの司令部になります)
+     * 
+     * 2. アバター画像の差し替え
+     *    -> 以下のフォルダ構造を作成し、画像を配置した上で、
+     *       `MV_DATA.units` の `avatar` プロパティのパスを書き換えてください。
+     *       (例: `avatar: "assets/avatars/keirin.png"`)
+     *    ※画像が存在しない場合は、自動的に `emoji` に設定された文字がフォールバック表示されます。
+     * 
+     * 3. 部隊やタスクの初期データ変更
+     *    -> コード中盤の `DEFAULT_DATA` オブジェクトを書き換えてください。
+     *    ※一度ブラウザで開くとLocalStorageに保存されるため、
+     *      初期データを強制的に上書きしたい場合は、ブラウザの開発者ツールから
+     *      Application > Local Storage の `MV_DATA_V1` を削除してリロードしてください。
+     * 
+     * 4. 外部AI(ChatGPT/Claude等)との連携 (将来拡張)
+     *    -> 既存のコードを壊さず、新しい関数(例: `fetchAIAssistant()`)を作成し、
+     *       UIにボタンを追加して発火させる設計を推奨します。本ファイルは
+     *       「AIが落ちていても単体で動く」アーキテクチャを維持しています。
+     * =========================================================================
+     */
+</script>
+
 </body>
 </html>
