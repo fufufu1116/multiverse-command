@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULTIVERSE - 本城司令システム [#3]</title>
+    <title>MULTIVERSE - 本城司令システム [#4]</title>
     <style>
         :root { 
             --bg-dark: #05070f; 
@@ -45,14 +45,12 @@
         .panel { background: var(--panel-bg); border: 1px solid var(--border-gold); border-radius: 12px; padding: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
         .panel h3 { margin-top: 0; color: var(--gold-light); border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px; }
 
-        /* 本城ヒーローカード (AIアバター対応枠) */
+        /* 本城ヒーローカード (Emperor: フルアーマー・顔非公開モデル) */
         .emperor-hero-card { background: linear-gradient(135deg, rgba(18,26,48,0.98), rgba(8,12,22,0.95)); border: 1px solid var(--gold); border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 20px var(--gold-glow); }
         .avatar-frame { width: 75px; height: 75px; background: #030408; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; flex-shrink: 0; box-shadow: 0 0 15px var(--gold-glow); position: relative; overflow: hidden; }
+        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #030408; z-index: 2; }
         
-        /* Microsoft Designer等で生成した画像を当てる場合のimgタグ用スタイル */
-        .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
-
-        .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; }
+        .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
         .emperor-details p { margin: 3px 0; font-size: 0.8rem; color: var(--text-muted); }
 
         /* 実績称号バッジ */
@@ -65,8 +63,6 @@
         @media(min-width: 768px) { .troop-grid { grid-template-columns: repeat(2, 1fr); } }
         .troop-card { background: rgba(5, 7, 15, 0.85); border: 1px solid var(--border-gold); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; cursor: pointer; transition: 0.2s; }
         .troop-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); transform: translateY(-2px); }
-        
-        .status-dot { position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background: #4ade80; border-radius: 50%; border: 2px solid #030408; z-index: 2; }
         
         .troop-info { flex: 1; }
         .troop-info h4 { margin: 0 0 3px; color: var(--gold); font-size: 0.9rem; display: flex; justify-content: space-between; }
@@ -104,19 +100,18 @@
 <body>
     <header>
         <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <span class="version-tag">称号: 初陣の指揮官 [#3]</span>
+        <span class="version-tag">称号: 初陣の指揮官 [#4]</span>
     </header>
 
     <div class="container">
         <!-- 🏰 【本城】司令官個室 -->
         <div id="view-home" class="view-section active">
             <div class="emperor-hero-card">
-                <!-- ここにAI生成画像を組み込む場合: <img src="あなたの画像ファイル名.png" alt="Emperor"> を中に入れます -->
-                <div class="avatar-frame">👑<div class="status-dot"></div></div>
+                <div class="avatar-frame">🛡️<div class="status-dot"></div></div>
                 <div class="emperor-details">
-                    <h4>司令官 Emperor</h4>
+                    <h4>司令官 Emperor <span style="font-size:0.65rem; background:rgba(212,175,55,0.2); padding:2px 6px; border-radius:4px; color:var(--gold-light);">フルアーマー・絶対君主</span></h4>
                     <p>総資産基盤: <strong>0円</strong> (基盤構築中)</p>
-                    <p>システム進化度: <strong>フェーズ 3 [#3] (AIアバター連携対応)</strong></p>
+                    <p>システム進化度: <strong>フェーズ 4 [#4] (コンセプトアート統合)</strong></p>
                 </div>
             </div>
 
@@ -124,7 +119,7 @@
                 <h3>🏆 獲得称号 & 実績録</h3>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
                 <div class="badge-list">
-                    <span class="badge-tag">⚔️ 初陣の指揮官 [#3]</span>
+                    <span class="badge-tag">⚔️ 初陣の指揮官 [#4]</span>
                     <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
                     <span class="badge-tag locked">👨‍🎓 確率の支配者 (安定収益未達成)</span>
                     <span class="badge-tag locked">💰 黄金の錬金術師 (利益10万超え未達成)</span>
@@ -134,17 +129,17 @@
             <div class="panel">
                 <h3>📌 現在の最優先タスク & 通知</h3>
                 <div style="background: rgba(5,7,15,0.7); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; margin-bottom: 8px;">
-                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#3] 稼働開始</h4>
-                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">Microsoft Designer連携によるAIアバター導入フレームが有効化されました。</p>
+                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョン [#4] 統合完了</h4>
+                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">顔を隠した重厚なEmperorと、謎の生物マスコット軍師ラファエルの世界観が反映されました。</p>
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-muted); padding: 2px 0;">
-                    📢 <strong>通信:</strong> 外部AIで作成した画像をリポジトリに配置すれば、即座に専用アバターとして反映されます。
+                    📢 <strong>通信:</strong> 帝国戦術部隊の名簿に基づき、全セクターの同期が完了しています。
                 </div>
             </div>
 
             <div class="ticker">
-                >> [システムテレメトリー] バージョン [#3] 正常稼働中。<br>
-                >> Microsoft Designerとの連動により、ビジュアルの拡張性が最大化されました。
+                >> [システムテレメトリー] バージョン [#4] 正常稼働中。<br>
+                >> iPhone・MacBookの双方で最新の世界観が展開されています。
             </div>
         </div>
 
@@ -205,52 +200,52 @@
         const troopsData = [
             {
                 id: "raphael",
-                name: "ラファエル（統括）",
-                role: "全体統括・設計",
-                skill: "論理構築・システム調律",
+                name: "ラファエル（主席軍師）",
+                role: "全体統括・予測分析",
+                skill: "謎の生物マスコット演算",
                 statusText: "稼働中",
-                task: "システム全体の最適化と調整",
+                task: "ホログラム戦術の展開と調律",
                 revenue: "0円",
-                avatar: "🧠",
-                quote: "「司令官、バージョン [#3] へ突入しました。Microsoft Designer製のビジュアルを組み込む準備も万全です！」"
+                avatar: "🐰",
+                quote: "「司令官、バージョン [#4] の世界観統合を完了しました。この謎の生物ボディ、動きやすくて最高ですよ。」"
             },
             {
                 id: "hyakunin",
-                name: "百人将プロジェクト",
+                name: "百人将プロジェクト (Kensei / Yariashi)",
                 role: "前線ビジネス探索",
-                skill: "「エンペラーアイ」 (市場調査・機会看破)",
+                skill: "「エンペラーアイ」 (実用部隊連携)",
                 statusText: "探索中",
                 task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「『エンペラーアイ』起動中！バージョン [#3] の戦果にご期待ください！」
+                quote: "「『エンペラーアイ』展開！Emperorの威光の元、実用装備で前線を死守します！」"
             },
             {
                 id: "tokushu",
-                name: "特殊部隊（公営競技）",
-                role: "特務・データ処理",
-                skill: "「異世界」 (仮想世界シミュレーション)",
+                name: "特殊部隊（公営競技 / Hayate）",
+                role: "特務・潜入データ処理",
+                skill: "「異世界」 (シミュレーション)",
                 statusText: "待機・準備中",
                 task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
                 avatar: "🛡️",
-                quote: "「『異世界』シミュレーション稼働中。『確率博士』の称号を手に入れましょう！」"
+                quote: "「『異世界』シミュレーション稼働中。着実に『確率博士』の称号へ潜入します！」"
             },
             {
                 id: "ai_research",
-                name: "AI研究班",
-                role: "先端技術解析",
-                skill: "プロバイダ解析・知見抽出",
+                name: "AI研究班 (Yumihi / Kikyo)",
+                role: "通信・先端技術解析",
+                skill: "プロバイダ解析・通信支援",
                 statusText: "解析中",
                 task: "新しい技術の調査と実験",
                 revenue: "0円",
-                avatar: "🔮",
-                quote: "「AIによる画像生成や解析知見を常時フィードバック中です！」"
+                avatar: "📡",
+                quote: "「通信および情報支援、万全であります。バージョン [#4] の全セクターを同期中！」"
             }
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「バージョン [#3] システムが起動しました。AIアバターとの連携基盤が整っています。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🐰", text: "「バージョン [#4] システムが起動しました。Emperorの絶対的威厳と各部隊の連携が完璧にシンクロしています。」", time: "たった今" }
         ];
 
         function renderTroops() {
