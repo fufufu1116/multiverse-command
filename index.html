@@ -10,7 +10,7 @@
             --panel-bg: rgba(15, 22, 38, 0.95); 
             --gold: #d4af37; 
             --gold-light: #f3e5ab; 
-            --gold-glow: rgba(212, 175, 55, 0.2);
+            --gold-glow: rgba(212, 175, 55, 0.25);
             --text-main: #e2e8f0; 
             --text-muted: #94a3b8; 
             --border-gold: rgba(212, 175, 55, 0.4); 
@@ -25,9 +25,8 @@
             background: rgba(7, 9, 19, 0.98); border-bottom: 2px solid var(--gold); 
             box-shadow: 0 4px 20px rgba(0,0,0,0.6); position: sticky; top: 0; z-index: 1001;
         }
-        header h1 { margin: 0; font-size: 1.1rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
+        header h1 { margin: 0; font-size: 1.05rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
         
-        /* レスポンシブ対応コンテナ（MacBookでは広く、iPhoneではジャストフィット） */
         .container { max-width: 1100px; margin: 16px auto; padding: 0 16px; display: grid; gap: 16px; }
         
         .view-section { display: none; }
@@ -40,7 +39,7 @@
 
         /* 本城ヒーローカード */
         .emperor-hero-card { background: linear-gradient(135deg, rgba(20,28,48,0.98), rgba(10,14,26,0.95)); border: 1px solid var(--gold); border-radius: 10px; padding: 16px; display: flex; gap: 16px; align-items: center; box-shadow: 0 0 15px var(--gold-glow); }
-        .emperor-avatar-large { width: 70px; height: 70px; background: #0b0f19; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; flex-shrink: 0; box-shadow: 0 0 10px var(--gold-glow); }
+        .emperor-avatar-large { width: 70px; height: 70px; background: #0b0f19; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; flex-shrink: 0; box-shadow: 0 0 12px var(--gold-glow); }
         .emperor-details h4 { margin: 0 0 4px; color: var(--gold); font-size: 1.1rem; }
         .emperor-details p { margin: 3px 0; font-size: 0.8rem; color: var(--text-muted); }
 
@@ -49,14 +48,14 @@
         .badge-tag { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold-light); padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
         .badge-tag.locked { background: rgba(15, 22, 38, 0.6); border-color: rgba(148,163,184,0.3); color: var(--text-muted); opacity: 0.5; font-weight: normal; }
 
-        /* クイック切替グリッド（PCでは3〜4列、スマホでは2列に自動可変） */
+        /* クイック切替グリッド */
         .project-switch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
         .project-switch-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
         .project-switch-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); transform: translateY(-2px); }
         .project-switch-card h5 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.85rem; }
         .project-switch-card p { margin: 0; font-size: 0.7rem; color: var(--text-muted); }
 
-        /* 部隊グリッド（PCでは2カラム並び、スマホでは1カラム） */
+        /* 部隊グリッド */
         .troop-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
         @media(min-width: 768px) { .troop-grid { grid-template-columns: repeat(2, 1fr); } }
         .troop-card { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border-gold); border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center; }
@@ -89,7 +88,7 @@
         .archive-item h4 { margin: 0 0 4px; color: var(--gold-light); font-size: 0.9rem; }
         .archive-item p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
 
-        /* ボトムナビゲーション（iPhoneでの親指操作に最適化） */
+        /* ボトムナビゲーション */
         nav.bottom-nav { 
             position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(7, 9, 19, 0.98); 
             border-top: 1px solid var(--border-gold); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; 
@@ -108,7 +107,8 @@
 <body>
     <header>
         <h1>⚔️ MULTIVERSE 本城司令</h1>
-        <span style="font-size: 0.75rem; color: var(--gold);">称号: 初陣の指揮官</span>
+        <!-- バージョンカウンター：上書き毎にインクリメントされます -->
+        <span style="font-size: 0.75rem; color: var(--gold); font-weight: bold; background: rgba(212,175,55,0.15); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-gold);">称号: 初陣の指揮官 [#1]</span>
     </header>
 
     <div class="container">
@@ -119,7 +119,7 @@
                 <div class="emperor-details">
                     <h4>司令官 Emperor</h4>
                     <p>総資産基盤: <strong>0円</strong> (基盤構築中)</p>
-                    <p>環境同期: <strong>iPhone / Mac対応 (無課金ローカル)</strong></p>
+                    <p>システム進化度: <strong>フェーズ 1 [#1]</strong></p>
                 </div>
             </div>
 
@@ -127,7 +127,7 @@
                 <h3>🏆 獲得称号 & 実績録</h3>
                 <p style="font-size: 0.75rem; color: var(--text-muted); margin-top:0;">成果や資金の獲得に伴い、称号が自動解放されます。</p>
                 <div class="badge-list">
-                    <span class="badge-tag">⚔️ 初陣の指揮官</span>
+                    <span class="badge-tag">⚔️ 初陣の指揮官 [#1]</span>
                     <span class="badge-tag locked">🎓 確率博士 (競輪収益未達成)</span>
                     <span class="badge-tag locked">👨‍🎓 確率の支配者 (安定収益未達成)</span>
                     <span class="badge-tag locked">💰 黄金の錬金術師 (利益10万超え未達成)</span>
@@ -137,11 +137,11 @@
             <div class="panel">
                 <h3>📌 現在の最優先タスク & 通知</h3>
                 <div style="background: rgba(7,9,19,0.7); border: 1px solid var(--border-gold); border-radius: 6px; padding: 12px; margin-bottom: 8px;">
-                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: マルチデバイス環境最適化</h4>
-                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">iPhoneおよびMacBookのどちらからでも完全同期するレスポンシブUIを適用完了。</p>
+                    <h4 style="margin:0 0 4px; color:var(--gold-light); font-size:0.85rem;">最優先作戦: バージョンインクリメント実装着手</h4>
+                    <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">ヘッダーおよび称号部分にシステムの進捗を示すカウンター（#1）を統合完了。</p>
                 </div>
                 <div style="font-size: 0.75rem; color: var(--text-muted); padding: 2px 0;">
-                    📢 <strong>通信:</strong> サーバーコスト0円の完全無課金体制にて正常稼働中。
+                    📢 <strong>通信:</strong> 更新回数に応じたバージョン管理体制へ移行。
                 </div>
             </div>
 
@@ -168,8 +168,8 @@
             </div>
 
             <div class="ticker">
-                >> [システムテレメトリー] Emperor専用ローカル完結型・全デバイス適応完了。<br>
-                >> iPhoneでの片手操作、MacBookの大画面閲覧の双方に完全対応しています。
+                >> [システムテレメトリー] バージョン [#1] 正常稼働中。<br>
+                >> コードの更新に伴い、進捗インジケーターが順次繰り上がっていきます。
             </div>
         </div>
 
@@ -221,8 +221,8 @@
             <div class="panel">
                 <h3>これまでの歩み・歴史記録</h3>
                 <div class="archive-item">
-                    <h4>MacBook & iPhone レスポンシブ最適化</h4>
-                    <p>ステータス: 完了 / 無課金かつマルチデバイス対応のレイアウト自動可変システム実装</p>
+                    <h4>バージョン進捗カウンター [#1] の実装</h4>
+                    <p>ステータス: 完了 / 称号部分にシステム更新回数を示すインジケーターを統合</p>
                 </div>
             </div>
         </div>
@@ -262,7 +262,7 @@
                 task: "システム全体の最適化と調整",
                 revenue: "0円",
                 avatar: "🧠",
-                quote: "「司令官、iPhoneでもMacBookでも完璧に美しく映えるレイアウトに調律しました。」"
+                quote: "「司令官、バージョン [#1] の刻印を確認しました。さらなる高みへ進みましょう。」"
             },
             {
                 id: "hyakunin",
@@ -273,7 +273,7 @@
                 task: "収益機会のスクリーニング",
                 revenue: "0円",
                 avatar: "⚔️",
-                quote: "「『エンペラーアイ』起動中！大画面でもスマホでも、利益チャンスは見逃しません！」"
+                quote: "「『エンペラーアイ』起動中！バージョン [#1] の前線も死角なしであります！」"
             },
             {
                 id: "tokushu",
@@ -284,7 +284,7 @@
                 task: "公営競技のV8エンジン事前登録",
                 revenue: "0円",
                 avatar: "🛡️",
-                quote: "「『異世界』シミュレーション稼働中。収益化で『確率博士』の称号をつかみ取りましょう！」"
+                quote: "「『異世界』シミュレーション稼働中。バージョン [#1] から確率博士の称号を狙います！」"
             },
             {
                 id: "ai_research",
@@ -295,7 +295,7 @@
                 task: "新しい技術の調査と実験",
                 revenue: "0円",
                 avatar: "🔮",
-                quote: "「AIの挙動や新たな知見を常時解析中。次なる進化の種を収穫します！」"
+                quote: "「AIの挙動や新たな知見を常時解析中。バージョン [#1] の知見を蓄積します！」"
             },
             {
                 id: "system",
@@ -306,12 +306,12 @@
                 task: "インフラとアプリの保守",
                 revenue: "0円",
                 avatar: "⚙️",
-                quote: "「エラーゼロを継続中。安全な基盤を維持しています。」"
+                quote: "「バージョン [#1] のインフラ安定稼働中。安全な基盤を維持しています。」"
             }
         ];
 
         let chatMessages = [
-            { name: "ラファエル", avatar: "🧠", text: "「マルチデバイス対応の司令システムが起動しました。快適な指揮をお楽しみください。」", time: "たった今" }
+            { name: "ラファエル", avatar: "🧠", text: "「バージョン [#1] システムが起動しました。進捗インジケーターが正常に同期されています。」", time: "たった今" }
         ];
 
         function renderTroops() {
@@ -395,3 +395,4 @@
     </script>
 </body>
 </html>
+
