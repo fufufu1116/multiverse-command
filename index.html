@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MULTIVERSE 司令端末</title>
     
-    <!-- PWA Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#050914">
 
-    <!-- Web App Manifest (Inline) -->
     <script>
         const manifestData = {
             "name": "MULTIVERSE 司令端末",
@@ -41,7 +39,7 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background-color: var(--mv-bg); color: var(--mv-text); font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding-bottom: 70px; overflow-x: hidden; }
+        body { margin: 0; background-color: var(--mv-bg); color: var(--mv-text); font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding-bottom: 80px; overflow-x: hidden; }
         
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -53,9 +51,8 @@
         header h1 { margin: 0; font-size: 1.1rem; color: var(--mv-primary); letter-spacing: 2px; text-transform: uppercase; }
         .sys-badge { font-size: 0.65rem; border: 1px solid var(--sys-online); padding: 2px 6px; border-radius: 4px; color: var(--sys-online); }
 
-        .container { padding: 12px; max-width: 800px; margin: 0 auto; display: none; animation: fadeIn 0.3s; }
+        .container { padding: 12px; max-width: 800px; margin: 0 auto; display: none; }
         .container.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .panel { background: var(--mv-panel); border: 1px solid var(--mv-border); border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         .panel-header { font-size: 0.9rem; color: var(--mv-gold); border-bottom: 1px solid var(--mv-border); padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
@@ -82,7 +79,7 @@
         .data-item { padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
         .data-item.done { opacity: 0.5; text-decoration: line-through; }
 
-        nav.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5, 9, 20, 0.98); border-top: 1px solid var(--mv-border); display: flex; justify-content: space-around; padding: 10px 0 16px 0; z-index: 1000; }
+        nav.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5, 9, 20, 0.98); border-top: 1px solid var(--mv-border); display: flex; justify-content: space-around; padding: 10px 0 16px 0; z-index: 9999; }
         nav.bottom-nav button { background: none; border: none; color: var(--mv-muted); font-size: 0.65rem; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 25%; cursor: pointer; }
         nav.bottom-nav button.active { color: var(--mv-gold); text-shadow: 0 0 8px rgba(255, 211, 106, 0.5); }
         nav.bottom-nav span.icon { font-size: 1.2rem; }
@@ -95,7 +92,7 @@
         <span class="sys-badge" id="hdr-sys-status">端末接続中</span>
     </header>
 
-    <!-- VIEW: 本城 / 司令塔 -->
+    <!-- VIEW: 本城 -->
     <main id="view-commander" class="container active">
         <div class="panel">
             <div class="avatar-box">
@@ -113,7 +110,6 @@
             </div>
         </div>
 
-        <!-- 観測モニター（旧エンペラーアイ） -->
         <div class="panel" style="border-color: var(--mv-primary); box-shadow: inset 0 0 20px rgba(85,220,255,0.05);">
             <div class="panel-header" style="color: var(--mv-primary); border-color: rgba(85,220,255,0.3);">📊 戦況観測モニター</div>
             <div id="ui-emperor-eye" style="font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap;">[観測データ待機中]</div>
@@ -139,7 +135,7 @@
         </div>
     </main>
 
-    <!-- VIEW: 任務・データ -->
+    <!-- VIEW: 任務・DB -->
     <main id="view-tasks" class="container">
         <div class="panel">
             <div class="panel-header">📋 任務一覧</div>
@@ -182,7 +178,6 @@
         </div>
     </main>
 
-    <!-- ボトムナビゲーション（確実に各画面へ遷移するように修正） -->
     <nav class="bottom-nav">
         <button id="nav-commander" class="active" onclick="UI.switchTab('commander')"><span class="icon">🏯</span>本城</button>
         <button id="nav-units" onclick="UI.switchTab('units')"><span class="icon">⚔️</span>部隊</button>
@@ -192,7 +187,7 @@
 
 <script>
 const RuntimeState = {
-    key: "MULTIVERSE_RUNTIME_STATE_V5",
+    key: "MULTIVERSE_RUNTIME_STATE_V6",
     data: { tasks: [], revenues: [] },
     load: () => {
         const saved = localStorage.getItem(RuntimeState.key);
@@ -206,7 +201,6 @@ const RuntimeState = {
     }
 };
 
-// ご指定の通り整理された部隊・参謀構成
 const AvatarRegistry = {
     emperor: { name: "Emperor", role: "第一司令官", image: "assets/avatars/emperor.gif", fallback: "👑" },
     strategist: { name: "軍師 (ラファエル)", role: "主席軍師・全体統括", image: "assets/avatars/raphael.gif", fallback: "🐰" },
@@ -303,8 +297,8 @@ const Tools = {
             const recStake = bankroll * Math.min(Math.max(0, fullKelly / 2), 0.1);
             
             let dec = "期待値プラス (推奨)", col = "var(--sys-online)";
-            if(ev <= 0 || fullKelly <= 0) { dec = "期待値マイナス (非推奨)", col = "var(--sys-offline)"; }
-            else if(stake > recStake) { dec = "モデル推奨掛金オーバー", col = "var(--sys-warning)"; }
+            if(ev <= 0 || fullKelly <= 0) { dec = "期待値マイナス (非推奨)"; col = "var(--sys-offline)"; }
+            else if(stake > recStake) { dec = "モデル推奨掛金オーバー"; col = "var(--sys-warning)"; }
             
             res.style.display = 'block'; res.style.borderColor = col;
             res.innerHTML = `
@@ -342,14 +336,25 @@ const UI = {
         UI.renderAll();
     },
     switchTab: (tabId) => {
-        document.querySelectorAll('main.container').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('nav.bottom-nav button').forEach(el => el.classList.remove('active'));
+        // すべてのコンテナからactiveクラスを外す
+        document.querySelectorAll('main.container').forEach(el => {
+            el.classList.remove('active');
+        });
+        // すべてのナビボタンからactiveクラスを外す
+        document.querySelectorAll('nav.bottom-nav button').forEach(el => {
+            el.classList.remove('active');
+        });
         
+        // 指定されたビューとボタンをアクティブにする
         const targetView = document.getElementById(`view-${tabId}`);
         const targetNav = document.getElementById(`nav-${tabId}`);
         
-        if(targetView) targetView.classList.add('active');
-        if(targetNav) targetNav.classList.add('active');
+        if(targetView) {
+            targetView.classList.add('active');
+        }
+        if(targetNav) {
+            targetNav.classList.add('active');
+        }
         window.scrollTo(0,0);
     },
     addChat: (msg, type="owner") => {
@@ -394,7 +399,6 @@ const UI = {
             </div>
         `).join('') || '<div class="data-item">記録なし</div>';
 
-        // 司令（自分）を除いた、ご指定の5つの部隊・参謀をリスト化
         const unitsHtml = Object.entries(AvatarRegistry).filter(([key]) => key !== 'emperor').map(([_, a]) => `
             <div class="data-item" style="justify-content: flex-start; gap:16px;">
                 <div class="avatar-frame" style="width:40px; height:40px; font-size:1.2rem;">
