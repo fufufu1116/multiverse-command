@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>MULTIVERSE Command Surface v1.3</title>
+    <title>MULTIVERSE Command Surface v1.4</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -104,7 +104,7 @@
         <h1>MULTIVERSE COMMAND SURFACE</h1>
         <div class="status-indicators">
             <span id="status-ui" class="sys-badge online">UI: ONLINE</span>
-            <span id="status-backend" class="sys-badge online">AUTO-FEED READY</span>
+            <span id="status-backend" class="sys-badge online">PHASE 3 AUTO-FEED ACTIVE</span>
         </div>
     </header>
 
@@ -123,7 +123,7 @@
         </button>
     </nav>
 
-    <!-- VIEW: 本城（現在地・タスク・収益・モニターを統合） -->
+    <!-- VIEW: 本城 -->
     <main id="view-commander" class="view-container active" role="tabpanel">
         <div class="panel">
             <div class="avatar-box">
@@ -134,7 +134,7 @@
                 </div>
             </div>
             <div class="asset-summary">
-                <span>マルチ現在地: <strong style="color:var(--mv-primary)">Phase 1 完了 / Phase 2 移行期</strong></span>
+                <span>マルチ現在地: <strong style="color:var(--mv-primary)">Phase 3 稼働中</strong></span>
                 <span>総資産: <strong style="color:var(--mv-gold)" id="ui-total-assets">0</strong> 円</span>
             </div>
         </div>
@@ -152,16 +152,16 @@
         <div class="panel">
             <div class="panel-header">📟 司令ターミナル</div>
             <div class="chat-box" id="ui-chat-box">
-                <div class="msg system">【System】 Command Surface v1.3 稼働中。外部AIからの自動フィードを待機しています。</div>
+                <div class="msg system">【System】 Command Surface v1.4 (Phase 3 Auto-Feed Enabled) 稼働中。</div>
             </div>
             <div class="input-group">
-                <input type="text" id="cmd-input" placeholder="コマンドを入力 (例: タスク追加 〇〇)">
+                <input type="text" id="cmd-input" placeholder="コマンドを入力...">
                 <button type="button" class="btn" id="btn-send-cmd">送信</button>
             </div>
         </div>
     </main>
 
-    <!-- VIEW: 部隊（各部隊の役割・進捗一覧） -->
+    <!-- VIEW: 部隊 -->
     <main id="view-units" class="view-container hidden" role="tabpanel">
         <div class="panel">
             <div class="panel-header">⚔️ 司令・精鋭部隊レジストリ</div>
@@ -170,7 +170,7 @@
         </div>
     </main>
 
-    <!-- VIEW: 任務・DB（全件管理・自動フィード対応） -->
+    <!-- VIEW: 任務・DB -->
     <main id="view-tasks" class="view-container hidden" role="tabpanel">
         <div class="panel">
             <div class="panel-header">📋 任務管理 (全件 CRUD)</div>
@@ -200,26 +200,23 @@
         </div>
     </main>
 
-    <!-- VIEW: 参謀（AI自動レポート ＆ ロードマップ進捗） -->
+    <!-- VIEW: 参謀 -->
     <main id="view-advisor" class="view-container hidden" role="tabpanel">
         <div class="panel">
             <div class="panel-header">🗺️ MULTIVERSE 統括ロードマップ進捗</div>
             <div id="roadmap-container">
-                <div class="roadmap-card active">
+                <div class="roadmap-card">
                     <div style="color:var(--mv-primary); font-weight:bold;">Phase 1: UI自動化 ＆ モニター化 [完了]</div>
-                    <div style="font-size:0.75rem; color:var(--mv-muted);">手動計算機を排除し、本城へのタスク統合およびJSON自動フィード基盤を構築。</div>
                 </div>
                 <div class="roadmap-card">
-                    <div style="color:var(--mv-gold); font-weight:bold;">Phase 2: GitHub & Drive ブリッジ構築 [次段階]</div>
-                    <div style="font-size:0.75rem; color:var(--mv-muted);">複数AI（ChatGPT/Claude/Gemini）が連動するための共同作業規約（CONSTITUTION.md）の策定。</div>
+                    <div style="color:var(--mv-primary); font-weight:bold;">Phase 2: GitHub & Drive ブリッジ構築 [完了]</div>
                 </div>
-                <div class="roadmap-card">
-                    <div style="color:var(--mv-muted); font-weight:bold;">Phase 3: 複数AI分業・自動監査プロトコル稼働</div>
-                    <div style="font-size:0.75rem; color:var(--mv-muted);">予測モデルやエージェントの出力を自動同期させるパイプラインの結合。</div>
+                <div class="roadmap-card active">
+                    <div style="color:var(--mv-gold); font-weight:bold;">Phase 3: 複数AI分業・自動監査・JSONフィード [進行中]</div>
+                    <div style="font-size:0.75rem; color:var(--mv-muted);">外部AIや予測モデルからの自動データパケットを端末に統合中。</div>
                 </div>
                 <div class="roadmap-card">
                     <div style="color:var(--mv-muted); font-weight:bold;">Phase 4: 完全自律エコシステム (完成系)</div>
-                    <div style="font-size:0.75rem; color:var(--mv-muted);">スマホを開くだけで全進捗・収益・AI提案が自動同期・決裁される究極の稼働状態。</div>
                 </div>
             </div>
         </div>
@@ -282,14 +279,14 @@
         emperorEye: {
             analyze: () => {
                 const revs = RuntimeState.data.revenues.map(r => r.amount);
-                if (revs.length < 3) return "観測：データ不足（直近3件の収益データが必要です）\n現在地：Phase 1 完了 / 安定稼働中\n状態：自動フィード待機状態";
+                if (revs.length < 3) return "観測：データ不足\n現在地：Phase 3 稼働中 (Auto-Feed Ready)\n状態：外部フィード待機中";
                 const recent = revs.slice(-3);
                 const allPos = recent.every(v => v > 0);
                 const allNeg = recent.every(v => v < 0);
                 const trendStr = recent.map(v => v>0 ? '+'+v : v).join(" / ");
-                if (allPos) return `観測：直近3件 [ ${trendStr} ]\n傾向：Positive (連続黒字)\n現在地：Phase 1 完了`;
-                if (allNeg) return `観測：直近3件 [ ${trendStr} ]\n傾向：Negative (連続損失)\n現在地：Phase 1 完了`;
-                return `観測：直近3件 [ ${trendStr} ]\n傾向：Mixed (変動あり)\n現在地：Phase 1 完了`;
+                if (allPos) return `観測：直近3件 [ ${trendStr} ]\n傾向：Positive (連続黒字)\n現在地：Phase 3 稼働中`;
+                if (allNeg) return `観測：直近3件 [ ${trendStr} ]\n傾向：Negative (連続損失)\n現在地：Phase 3 稼働中`;
+                return `観測：直近3件 [ ${trendStr} ]\n傾向：Mixed (変動あり)\n現在地：Phase 3 稼働中`;
             }
         },
         exportImport: {
@@ -302,9 +299,32 @@
             importJSON: (jsonString) => {
                 try {
                     const parsed = JSON.parse(jsonString);
-                    if (parsed.protocol_version !== "1.0" || !parsed.state || !RuntimeState.validate(parsed.state)) return alert("無効なフォーマットまたはスキーマ不一致です。(Fail Closed)");
-                    RuntimeState.backup(); RuntimeState.data = parsed.state; RuntimeState.save();
-                    UI.addChat("【System】AI自動フィードおよびデータを同期・復旧しました。", "system");
+                    // Phase 3: 自動フィードパケット (ai_reportsやsuggested_tasksを含む形式) にも対応
+                    let targetState = parsed;
+                    if (parsed.protocol_version === "1.0" && parsed.state) {
+                        targetState = parsed.state;
+                    }
+                    // もし直接パケットデータなら自動展開
+                    if (parsed.ai_reports && Array.isArray(parsed.ai_reports)) {
+                        RuntimeState.backup();
+                        if(!RuntimeState.data.ai_reports) RuntimeState.data.ai_reports = [];
+                        RuntimeState.data.ai_reports.push(...parsed.ai_reports);
+                        if(parsed.suggested_tasks && Array.isArray(parsed.suggested_tasks)) {
+                            parsed.suggested_tasks.forEach(st => {
+                                RuntimeState.data.tasks.push({ id: Date.now().toString() + Math.random(), title: st.title, done: false, created_at: new Date().toISOString() });
+                            });
+                        }
+                        RuntimeState.save();
+                        UI.addChat("【System】外部AI自動フィードパケットを取り込みました。", "system");
+                        return;
+                    }
+
+                    if (targetState && RuntimeState.validate(targetState)) {
+                        RuntimeState.backup(); RuntimeState.data = targetState; RuntimeState.save();
+                        UI.addChat("【System】Runtime Stateを同期・復旧しました。", "system");
+                    } else {
+                        alert("無効なフォーマットまたはスキーマ不一致です。(Fail Closed)");
+                    }
                 } catch (e) { alert("JSON解析エラー。(Fail Closed)"); }
             },
             handleFileImport: (e) => {
@@ -347,9 +367,9 @@
             const input = document.getElementById('cmd-input'); const msg = input.value.trim(); if (!msg) return; input.value = ""; UI.addChat(msg, "owner");
             if (msg.match(/^タスク追加\s+(.+)/)) Tools.task.add(msg.match(/^タスク追加\s+(.+)/)[1]);
             else if (msg.match(/^収益\s+(-?\d+)/)) Tools.revenue.add(msg.match(/^収益\s+(-?\d+)/)[1]);
-            else if (msg.match(/^システム状況/)) { const t = RuntimeState.data.tasks.length; const r = RuntimeState.data.revenues.reduce((s, x) => s + x.amount, 0); UI.addChat(`【System】Runtime v6 稼働中。タスク:${t}, 資産:${r}円`, "system"); } 
+            else if (msg.match(/^システム状況/)) { const t = RuntimeState.data.tasks.length; const r = RuntimeState.data.revenues.reduce((s, x) => s + x.amount, 0); UI.addChat(`【System】Runtime v1.4 稼働中。タスク:${t}, 資産:${r}円`, "system"); } 
             else if (msg.match(/^タブ\s+(本城|部隊|任務|参謀)/)) { const map = {"本城":"commander", "部隊":"units", "任務":"tasks", "参謀":"advisor"}; TabController.activate(map[msg.match(/^タブ\s+(.+)/)[1]]); } 
-            else UI.addChat(`【System】UNKNOWN_COMMAND. 外部連携フィード待機中。(Fail Closed)`, "system");
+            else UI.addChat(`【System】UNKNOWN_COMMAND. Phase 3 外部フィード待機中。(Fail Closed)`, "system");
         },
         renderTasksInto: (containerId, isInteractive = true) => {
             const taskList = document.getElementById(containerId);
@@ -416,10 +436,10 @@
             }
 
             const avatars = [
-                { name: "軍師 (ラファエル)", role: "主席軍師・全体統括 / 統率・プロトコル管理", fallback: "🐰", status: "稼働中 (Active)" },
+                { name: "軍師 (ラファエル)", role: "主席軍師・全体統括 / プロトコル管理", fallback: "🐰", status: "稼働中 (Phase 3)" },
                 { name: "百人将", role: "事業探索・前線制圧 / ポイ活・リサーチ", fallback: "⚔️", status: "待機 / 探索中" },
                 { name: "特殊部隊", role: "確率・EV・データ分析 / 株式・競輪モデル", fallback: "🛡️", status: "待機 / モデリング" },
-                { name: "システム改善", role: "インフラ・アーキテクチャ / パイプライン制御", fallback: "⚙️", status: "稼働中 (Surface v1.3)" },
+                { name: "システム改善", role: "インフラ・アーキテクチャ / 自動フィード制御", fallback: "⚙️", status: "稼働中 (Surface v1.4)" },
                 { name: "AI研究", role: "モデル構築・検証 / マルチエージェント調停", fallback: "🔬", status: "待機 / 監査中" }
             ];
             const uList = document.getElementById('units-list');
