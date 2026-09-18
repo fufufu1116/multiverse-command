@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>MULTIVERSE Command Surface v1.1</title>
+    <title>MULTIVERSE Command Surface v1.2</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -80,12 +80,12 @@
         .btn { background: rgba(255, 211, 106, 0.15); border: 1px solid var(--mv-gold); color: var(--mv-gold); padding: 12px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; min-height: 48px; touch-action: manipulation; }
         .btn-danger { border-color: var(--sys-offline); color: var(--sys-offline); background: rgba(248, 113, 113, 0.1); }
 
-        .chat-box { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; font-size: 0.85rem; }
+        .chat-box { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; font-size: 0.85rem; }
         .msg { padding: 10px; border-radius: 6px; max-width: 90%; word-break: break-word; }
         .msg.owner { align-self: flex-end; background: rgba(85, 220, 255, 0.1); border: 1px solid rgba(85, 220, 255, 0.3); }
         .msg.system { align-self: flex-start; background: rgba(255, 211, 106, 0.1); border: 1px solid rgba(255, 211, 106, 0.3); border-left: 3px solid var(--mv-gold); }
 
-        .data-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
+        .data-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
         .data-item { padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
         .data-item.done { opacity: 0.5; text-decoration: line-through; }
         .task-content { flex: 1; word-break: break-word; font-size: 0.9rem; }
@@ -121,7 +121,7 @@
         </button>
     </nav>
 
-    <!-- VIEW: 本城 -->
+    <!-- VIEW: 本城（タスク・収益概要を統合して常時表示） -->
     <main id="view-commander" class="view-container active" role="tabpanel">
         <div class="panel">
             <div class="avatar-box">
@@ -141,10 +141,16 @@
             <div id="ui-emperor-eye" class="obs-box">[観測データ待機中]</div>
         </div>
 
+        <!-- 本城内への任務概要統合表示 -->
+        <div class="panel">
+            <div class="panel-header">📋 進行中任務 (本城ハイライト)</div>
+            <div class="data-list" id="ui-commander-tasks-list"></div>
+        </div>
+
         <div class="panel">
             <div class="panel-header">📟 司令ターミナル</div>
             <div class="chat-box" id="ui-chat-box">
-                <div class="msg system">【System】 Command Surface v1.1 Active. 手動計算機を廃止し、外部フィード待機モードに移行しました。</div>
+                <div class="msg system">【System】 本城に任務モニターを統合しました。</div>
             </div>
             <div class="input-group">
                 <input type="text" id="cmd-input" placeholder="コマンドを入力...">
@@ -164,7 +170,7 @@
     <!-- VIEW: 任務・DB -->
     <main id="view-tasks" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">📋 任務一覧</div>
+            <div class="panel-header">📋 任務管理 (全件)</div>
             <div class="input-group">
                 <input type="text" id="new-task-input" placeholder="新しい任務...">
                 <button type="button" class="btn" id="btn-add-task">追加</button>
@@ -191,15 +197,15 @@
         </div>
     </main>
 
-    <!-- VIEW: 参謀（手動計算機完全廃止・AI自動レポート表示パネル） -->
+    <!-- VIEW: 参謀 -->
     <main id="view-advisor" class="view-container hidden" role="tabpanel">
         <div class="panel">
             <div class="panel-header">🧠 AI参謀・自動分析レポート (Auto-Feed)</div>
-            <p class="muted-text">※外部AIや予測モデル（LightGBM/Keirin等）が自動生成した分析データがここにリアルタイム反映されます。</p>
+            <p class="muted-text">※外部AIや予測モデルが自動生成した分析データがここにリアルタイム反映されます。</p>
             <div id="ai-auto-reports">
                 <div class="auto-report-card">
                     <div style="color:var(--mv-gold); font-weight:bold;">[待機中] AI予測フィード未接続</div>
-                    <div style="margin-top:4px; color:var(--mv-muted);">JSONインポートまたは将来のバックエンド連携により、ここに自動解析レポートが表示されます。</div>
+                    <div style="margin-top:4px; color:var(--mv-muted);">JSONインポートまたはバックエンド連携により、ここに自動解析レポートが表示されます。</div>
                 </div>
             </div>
         </div>
@@ -321,10 +327,37 @@
             else if (msg.match(/^タブ\s+(本城|部隊|任務|参謀)/)) { const map = {"本城":"commander", "部隊":"units", "任務":"tasks", "参謀":"advisor"}; TabController.activate(map[msg.match(/^タブ\s+(.+)/)[1]]); } 
             else UI.addChat(`【System】UNKNOWN_COMMAND. 外部連携フィード待機中。(Fail Closed)`, "system");
         },
+        renderTasksInto: (containerId, isInteractive = true) => {
+            const taskList = document.getElementById(containerId);
+            if (!taskList) return;
+            taskList.innerHTML = '';
+            if (RuntimeState.data.tasks.length === 0) {
+                taskList.innerHTML = '<div class="data-item">任務なし</div>';
+            } else {
+                RuntimeState.data.tasks.forEach(t => {
+                    const d = document.createElement('div'); d.className = `data-item ${t.done ? 'done' : ''}`;
+                    const c = document.createElement('div'); c.className = "task-content"; c.textContent = t.title;
+                    d.appendChild(c);
+                    
+                    if (isInteractive) {
+                        const a = document.createElement('div'); a.className = "task-actions";
+                        const toggleBtn = document.createElement('button'); toggleBtn.textContent = t.done ? "戻す" : "完了"; toggleBtn.onclick = () => Tools.task.toggle(t.id);
+                        const delBtn = document.createElement('button'); delBtn.textContent = "削除"; delBtn.onclick = () => Tools.task.delete(t.id);
+                        a.append(toggleBtn, delBtn);
+                        d.appendChild(a);
+                    }
+                    taskList.appendChild(d);
+                });
+            }
+        },
         renderAll: () => {
             const totalRev = RuntimeState.data.revenues.reduce((s, r) => s + r.amount, 0);
             document.getElementById('ui-total-assets').textContent = totalRev.toLocaleString();
             document.getElementById('ui-emperor-eye').textContent = Tools.emperorEye.analyze();
+
+            // 本城と任務・DBの両方にタスクリストを描画
+            UI.renderTasksInto('ui-commander-tasks-list', false); // 本城はシンプル表示
+            UI.renderTasksInto('ui-tasks-list', true);           // 任務・DBは操作可能
 
             // AIレポートの自動描画
             const reportContainer = document.getElementById('ai-auto-reports');
@@ -340,23 +373,10 @@
                 reports.forEach(rep => {
                     const card = document.createElement('div');
                     card.className = "auto-report-card";
-                    const title = document.createElement('div'); title.style.color = "var(--mv-gold)"; title.style.fontWeight = "bold"; title.textContent = rep.title || "AI自動分析レポート";
+                    const title = document.createElement('div'); title.style.color = "var(--mv-gold); font-weight:bold;"; title.textContent = rep.title || "AI自動分析レポート";
                     const content = document.createElement('div'); content.style.marginTop = "4px"; content.textContent = rep.body || "";
                     card.append(title, content);
                     reportContainer.appendChild(card);
-                });
-            }
-
-            const taskList = document.getElementById('ui-tasks-list'); taskList.innerHTML = '';
-            if (RuntimeState.data.tasks.length === 0) taskList.innerHTML = '<div class="data-item">任務なし</div>';
-            else {
-                RuntimeState.data.tasks.forEach(t => {
-                    const d = document.createElement('div'); d.className = `data-item ${t.done ? 'done' : ''}`;
-                    const c = document.createElement('div'); c.className = "task-content"; c.textContent = t.title;
-                    const a = document.createElement('div'); a.className = "task-actions";
-                    const toggleBtn = document.createElement('button'); toggleBtn.textContent = t.done ? "戻す" : "完了"; toggleBtn.onclick = () => Tools.task.toggle(t.id);
-                    const delBtn = document.createElement('button'); delBtn.textContent = "削除"; delBtn.onclick = () => Tools.task.delete(t.id);
-                    a.append(toggleBtn, delBtn); d.append(c, a); taskList.appendChild(d);
                 });
             }
 
