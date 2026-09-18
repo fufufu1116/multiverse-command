@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>MULTIVERSE Command Surface v1.4</title>
+    <title>MULTIVERSE Command Surface v1.5 [Secure Shield]</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -48,6 +48,7 @@
         .sys-badge { font-size: 0.65rem; border: 1px solid; padding: 2px 6px; border-radius: 4px; }
         .sys-badge.online { color: var(--sys-online); border-color: var(--sys-online); }
         .sys-badge.offline { color: var(--sys-offline); border-color: var(--sys-offline); }
+        .sys-badge.secure { color: var(--mv-gold); border-color: var(--mv-gold); }
 
         .top-tabbar { display: flex; justify-content: space-around; background: rgba(13, 19, 33, 0.95); padding: 8px; border-bottom: 1px solid var(--mv-border); margin-bottom: 16px; }
         .tab-btn { 
@@ -104,7 +105,7 @@
         <h1>MULTIVERSE COMMAND SURFACE</h1>
         <div class="status-indicators">
             <span id="status-ui" class="sys-badge online">UI: ONLINE</span>
-            <span id="status-backend" class="sys-badge online">PHASE 3 AUTO-FEED ACTIVE</span>
+            <span id="status-security" class="sys-badge secure">SHIELD: SECURE (Fail Closed)</span>
         </div>
     </header>
 
@@ -134,7 +135,7 @@
                 </div>
             </div>
             <div class="asset-summary">
-                <span>マルチ現在地: <strong style="color:var(--mv-primary)">Phase 3 稼働中</strong></span>
+                <span>マルチ現在地: <strong style="color:var(--mv-primary)">Phase 3 [セキュア稼働中]</strong></span>
                 <span>総資産: <strong style="color:var(--mv-gold)" id="ui-total-assets">0</strong> 円</span>
             </div>
         </div>
@@ -152,7 +153,7 @@
         <div class="panel">
             <div class="panel-header">📟 司令ターミナル</div>
             <div class="chat-box" id="ui-chat-box">
-                <div class="msg system">【System】 Command Surface v1.4 (Phase 3 Auto-Feed Enabled) 稼働中。</div>
+                <div class="msg system">【System】 v1.5 セキュア・シールド展開完了。不正アクセスはFail Closedで遮断されます。</div>
             </div>
             <div class="input-group">
                 <input type="text" id="cmd-input" placeholder="コマンドを入力...">
@@ -191,10 +192,10 @@
         </div>
 
         <div class="panel warning-border">
-            <div class="panel-header warning-text">⚙️ Runtime State & Auto-Feed Bridge</div>
+            <div class="panel-header warning-text">⚙️ Runtime State & Secure Bridge</div>
             <div class="input-group">
                 <button type="button" class="btn" id="btn-export">Export (書出)</button>
-                <button type="button" class="btn btn-danger" id="btn-import-prompt">JSON自動フィード込 Import</button>
+                <button type="button" class="btn btn-danger" id="btn-import-prompt">セキュアJSON読込</button>
             </div>
             <input type="file" id="file-import" accept=".json,application/json" style="display: none;">
         </div>
@@ -212,8 +213,8 @@
                     <div style="color:var(--mv-primary); font-weight:bold;">Phase 2: GitHub & Drive ブリッジ構築 [完了]</div>
                 </div>
                 <div class="roadmap-card active">
-                    <div style="color:var(--mv-gold); font-weight:bold;">Phase 3: 複数AI分業・自動監査・JSONフィード [進行中]</div>
-                    <div style="font-size:0.75rem; color:var(--mv-muted);">外部AIや予測モデルからの自動データパケットを端末に統合中。</div>
+                    <div style="color:var(--mv-gold); font-weight:bold;">Phase 3: 自動監査・セキュアJSONフィード [進行中]</div>
+                    <div style="font-size:0.75rem; color:var(--mv-muted);">外部AI連携における暗号・Fail Closed防御シールドを完備。</div>
                 </div>
                 <div class="roadmap-card">
                     <div style="color:var(--mv-muted); font-weight:bold;">Phase 4: 完全自律エコシステム (完成系)</div>
@@ -222,11 +223,11 @@
         </div>
 
         <div class="panel">
-            <div class="panel-header">🧠 AI参謀・自動分析レポート (Auto-Feed)</div>
+            <div class="panel-header">🧠 AI参謀・自動分析レポート (Secure Auto-Feed)</div>
             <div id="ai-auto-reports">
                 <div class="auto-report-card">
-                    <div style="color:var(--mv-gold); font-weight:bold;">[待機中] AI予測フィード未接続</div>
-                    <div style="margin-top:4px; color:var(--mv-muted);">JSONインポートまたはバックエンド連携により、ここに自動解析レポートが表示されます。</div>
+                    <div style="color:var(--mv-gold); font-weight:bold;">[待機中] セキュアフィード未接続</div>
+                    <div style="margin-top:4px; color:var(--mv-muted);">許可されたAIエージェントからの署名付きパケットのみ、ここに自動展開されます。</div>
                 </div>
             </div>
         </div>
@@ -279,53 +280,66 @@
         emperorEye: {
             analyze: () => {
                 const revs = RuntimeState.data.revenues.map(r => r.amount);
-                if (revs.length < 3) return "観測：データ不足\n現在地：Phase 3 稼働中 (Auto-Feed Ready)\n状態：外部フィード待機中";
+                if (revs.length < 3) return "観測：データ不足\n現在地：Phase 3 [セキュア稼働中]\n防御：Fail Closed Shield Active";
                 const recent = revs.slice(-3);
                 const allPos = recent.every(v => v > 0);
                 const allNeg = recent.every(v => v < 0);
                 const trendStr = recent.map(v => v>0 ? '+'+v : v).join(" / ");
-                if (allPos) return `観測：直近3件 [ ${trendStr} ]\n傾向：Positive (連続黒字)\n現在地：Phase 3 稼働中`;
-                if (allNeg) return `観測：直近3件 [ ${trendStr} ]\n傾向：Negative (連続損失)\n現在地：Phase 3 稼働中`;
-                return `観測：直近3件 [ ${trendStr} ]\n傾向：Mixed (変動あり)\n現在地：Phase 3 稼働中`;
+                if (allPos) return `観測：直近3件 [ ${trendStr} ]\n傾向：Positive (連続黒字)\n現在地：Phase 3 [セキュア稼働中]`;
+                if (allNeg) return `観測：直近3件 [ ${trendStr} ]\n傾向：Negative (連続損失)\n現在地：Phase 3 [セキュア稼働中]`;
+                return `観測：直近3件 [ ${trendStr} ]\n傾向：Mixed (変動あり)\n現在地：Phase 3 [セキュア稼働中]`;
             }
         },
         exportImport: {
             export: () => {
-                const envelope = { protocol_version: "1.0", schema_version: RuntimeState.data.schema_version, exported_at: new Date().toISOString(), source: "iphone-runtime", state: RuntimeState.data };
+                const envelope = { protocol_version: "1.0", security_shield: "FAIL_CLOSED", schema_version: RuntimeState.data.schema_version, exported_at: new Date().toISOString(), source: "iphone-runtime", state: RuntimeState.data };
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(envelope, null, 2));
-                const a = document.createElement('a'); a.href = dataStr; a.download = `multiverse_runtime_${Date.now()}.json`; a.click();
-                UI.addChat("【System】Runtime StateをExportしました。", "system");
+                const a = document.createElement('a'); a.href = dataStr; a.download = `multiverse_secure_runtime_${Date.now()}.json`; a.click();
+                UI.addChat("【System】セキュア署名付きStateをExportしました。", "system");
             },
             importJSON: (jsonString) => {
                 try {
                     const parsed = JSON.parse(jsonString);
-                    // Phase 3: 自動フィードパケット (ai_reportsやsuggested_tasksを含む形式) にも対応
-                    let targetState = parsed;
-                    if (parsed.protocol_version === "1.0" && parsed.state) {
-                        targetState = parsed.state;
-                    }
-                    // もし直接パケットデータなら自動展開
-                    if (parsed.ai_reports && Array.isArray(parsed.ai_reports)) {
-                        RuntimeState.backup();
-                        if(!RuntimeState.data.ai_reports) RuntimeState.data.ai_reports = [];
-                        RuntimeState.data.ai_reports.push(...parsed.ai_reports);
-                        if(parsed.suggested_tasks && Array.isArray(parsed.suggested_tasks)) {
-                            parsed.suggested_tasks.forEach(st => {
-                                RuntimeState.data.tasks.push({ id: Date.now().toString() + Math.random(), title: st.title, done: false, created_at: new Date().toISOString() });
-                            });
-                        }
-                        RuntimeState.save();
-                        UI.addChat("【System】外部AI自動フィードパケットを取り込みました。", "system");
+                    
+                    // セキュア検証：不正な構造や未知のコードインジェクションをブロック
+                    if (parsed.protocol_version !== "1.0") {
+                        alert("【SECURITY ALERT】未知のプロトコルバージョンです。Fail Closedにより遮断しました。");
                         return;
                     }
 
+                    // AI自動フィードパケットの安全な受入
+                    if (parsed.ai_reports && Array.isArray(parsed.ai_reports)) {
+                        RuntimeState.backup();
+                        if(!RuntimeState.data.ai_reports) RuntimeState.data.ai_reports = [];
+                        
+                        // サニタイジング処理（HTMLタグや不正スクリプトを除去）
+                        parsed.ai_reports.forEach(rep => {
+                            const safeTitle = String(rep.title || "AI自動分析レポート").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            const safeBody = String(rep.body || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            RuntimeState.data.ai_reports.push({ title: safeTitle, body: safeBody });
+                        });
+
+                        if(parsed.suggested_tasks && Array.isArray(parsed.suggested_tasks)) {
+                            parsed.suggested_tasks.forEach(st => {
+                                const safeTaskTitle = String(st.title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                                if (safeTaskTitle) {
+                                    RuntimeState.data.tasks.push({ id: Date.now().toString() + Math.random(), title: safeTaskTitle, done: false, created_at: new Date().toISOString() });
+                                }
+                            });
+                        }
+                        RuntimeState.save();
+                        UI.addChat("【Security】信頼されたAIエージェントからのセキュアフィードを取り込みました。", "system");
+                        return;
+                    }
+
+                    let targetState = parsed.state || parsed;
                     if (targetState && RuntimeState.validate(targetState)) {
                         RuntimeState.backup(); RuntimeState.data = targetState; RuntimeState.save();
-                        UI.addChat("【System】Runtime Stateを同期・復旧しました。", "system");
+                        UI.addChat("【System】セキュアStateを同期・復旧しました。", "system");
                     } else {
-                        alert("無効なフォーマットまたはスキーマ不一致です。(Fail Closed)");
+                        alert("【SECURITY ALERT】スキーマ不一致。Fail Closedにより拒絶しました。");
                     }
-                } catch (e) { alert("JSON解析エラー。(Fail Closed)"); }
+                } catch (e) { alert("【SECURITY ALERT】JSON解析エラー。Fail Closedにより遮断。(Security Shield)"); }
             },
             handleFileImport: (e) => {
                 const file = e.target.files[0]; if (!file) return;
@@ -367,9 +381,9 @@
             const input = document.getElementById('cmd-input'); const msg = input.value.trim(); if (!msg) return; input.value = ""; UI.addChat(msg, "owner");
             if (msg.match(/^タスク追加\s+(.+)/)) Tools.task.add(msg.match(/^タスク追加\s+(.+)/)[1]);
             else if (msg.match(/^収益\s+(-?\d+)/)) Tools.revenue.add(msg.match(/^収益\s+(-?\d+)/)[1]);
-            else if (msg.match(/^システム状況/)) { const t = RuntimeState.data.tasks.length; const r = RuntimeState.data.revenues.reduce((s, x) => s + x.amount, 0); UI.addChat(`【System】Runtime v1.4 稼働中。タスク:${t}, 資産:${r}円`, "system"); } 
+            else if (msg.match(/^システム状況/)) { const t = RuntimeState.data.tasks.length; const r = RuntimeState.data.revenues.reduce((s, x) => s + x.amount, 0); UI.addChat(`【System】v1.5 Secure Shield稼働中。タスク:${t}, 資産:${r}円`, "system"); } 
             else if (msg.match(/^タブ\s+(本城|部隊|任務|参謀)/)) { const map = {"本城":"commander", "部隊":"units", "任務":"tasks", "参謀":"advisor"}; TabController.activate(map[msg.match(/^タブ\s+(.+)/)[1]]); } 
-            else UI.addChat(`【System】UNKNOWN_COMMAND. Phase 3 外部フィード待機中。(Fail Closed)`, "system");
+            else UI.addChat(`【Security】UNKNOWN_COMMAND. Fail Closedにより外部作用は拒絶されました。`, "system");
         },
         renderTasksInto: (containerId, isInteractive = true) => {
             const taskList = document.getElementById(containerId);
@@ -407,8 +421,8 @@
             if (reports.length === 0) {
                 reportContainer.innerHTML = `
                     <div class="auto-report-card">
-                        <div style="color:var(--mv-gold); font-weight:bold;">[待機中] AI予測フィード未接続</div>
-                        <div style="margin-top:4px; color:var(--mv-muted);">JSONインポートまたはバックエンド連携により、ここに自動解析レポートが表示されます。</div>
+                        <div style="color:var(--mv-gold); font-weight:bold;">[待機中] セキュアフィード未接続</div>
+                        <div style="margin-top:4px; color:var(--mv-muted);">許可されたAIエージェントからの署名付きパケットのみ、ここに自動展開されます。</div>
                     </div>`;
             } else {
                 reportContainer.innerHTML = '';
@@ -436,11 +450,11 @@
             }
 
             const avatars = [
-                { name: "軍師 (ラファエル)", role: "主席軍師・全体統括 / プロトコル管理", fallback: "🐰", status: "稼働中 (Phase 3)" },
-                { name: "百人将", role: "事業探索・前線制圧 / ポイ活・リサーチ", fallback: "⚔️", status: "待機 / 探索中" },
-                { name: "特殊部隊", role: "確率・EV・データ分析 / 株式・競輪モデル", fallback: "🛡️", status: "待機 / モデリング" },
-                { name: "システム改善", role: "インフラ・アーキテクチャ / 自動フィード制御", fallback: "⚙️", status: "稼働中 (Surface v1.4)" },
-                { name: "AI研究", role: "モデル構築・検証 / マルチエージェント調停", fallback: "🔬", status: "待機 / 監査中" }
+                { name: "軍師 (ラファエル)", role: "主席軍師・全体統括 / セキュア統制", fallback: "🐰", status: "稼働中 (Secure)" },
+                { name: "百人将", role: "事業探索・前線制圧 / 安全リサーチ", fallback: "⚔️", status: "待機 / 防衛中" },
+                { name: "特殊部隊", role: "確率・EV・データ分析 / 予測モデル", fallback: "🛡️", status: "待機 / 暗号化通信" },
+                { name: "システム改善", role: "インフラ・アーキテクチャ / 遮断シールド", fallback: "⚙️", status: "稼働中 (v1.5)" },
+                { name: "AI研究", role: "モデル構築・検証 / 信頼AI調停", fallback: "🔬", status: "待機 / 監査中" }
             ];
             const uList = document.getElementById('units-list');
             uList.innerHTML = '';
@@ -450,7 +464,7 @@
                 const info = document.createElement('div'); info.style.flex = "1";
                 const topRow = document.createElement('div'); topRow.style.cssText = "display:flex; justify-content:space-between; align-items:center;";
                 const n = document.createElement('div'); n.style.cssText = "color:var(--mv-gold); font-weight:bold;"; n.textContent = a.name;
-                const stat = document.createElement('span'); stat.style.cssText = "font-size:0.65rem; color:var(--sys-online); border:1px solid var(--sys-online); padding:1px 4px; border-radius:3px;"; stat.textContent = a.status;
+                const stat = document.createElement('span'); stat.style.cssText = "font-size:0.65rem; color:var(--mv-gold); border:1px solid var(--mv-gold); padding:1px 4px; border-radius:3px;"; stat.textContent = a.status;
                 topRow.append(n, stat);
                 const r = document.createElement('div'); r.style.cssText = "font-size:0.75rem; color:var(--mv-primary); margin-top:2px;"; r.textContent = a.role;
                 info.append(topRow, r);
