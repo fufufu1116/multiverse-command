@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>MULTIVERSE Command Surface v1.2</title>
+    <title>MULTIVERSE Command Surface v1.3</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -73,14 +73,14 @@
         .avatar-frame { width: 64px; height: 64px; border: 2px solid var(--mv-gold); border-radius: 50%; background: #000; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
         .avatar-info h2 { margin: 0; font-size: 1.2rem; color: var(--mv-primary); }
         .avatar-info p { margin: 2px 0 0 0; font-size: 0.8rem; color: var(--mv-muted); }
-        .asset-summary { margin-top: 12px; font-size: 0.8rem; border-top: 1px dashed var(--mv-border); padding-top: 8px; }
+        .asset-summary { margin-top: 12px; font-size: 0.80rem; border-top: 1px dashed var(--mv-border); padding-top: 8px; display: flex; justify-content: space-between; align-items: center; }
 
         .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
         .input-group input { flex: 1; background: #000; border: 1px solid var(--mv-border); color: var(--mv-text); padding: 12px; border-radius: 4px; font-size: 1rem; }
         .btn { background: rgba(255, 211, 106, 0.15); border: 1px solid var(--mv-gold); color: var(--mv-gold); padding: 12px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; min-height: 48px; touch-action: manipulation; }
         .btn-danger { border-color: var(--sys-offline); color: var(--sys-offline); background: rgba(248, 113, 113, 0.1); }
 
-        .chat-box { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; font-size: 0.85rem; }
+        .chat-box { max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; font-size: 0.85rem; }
         .msg { padding: 10px; border-radius: 6px; max-width: 90%; word-break: break-word; }
         .msg.owner { align-self: flex-end; background: rgba(85, 220, 255, 0.1); border: 1px solid rgba(85, 220, 255, 0.3); }
         .msg.system { align-self: flex-start; background: rgba(255, 211, 106, 0.1); border: 1px solid rgba(255, 211, 106, 0.3); border-left: 3px solid var(--mv-gold); }
@@ -94,6 +94,8 @@
 
         .obs-box { font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; color: var(--mv-text); }
         .auto-report-card { background: rgba(0,0,0,0.6); border-left: 3px solid var(--mv-primary); padding: 12px; border-radius: 4px; margin-bottom: 10px; font-size: 0.85rem; }
+        .roadmap-card { font-size: 0.8rem; padding: 8px 10px; background: rgba(255,211,106,0.05); border: 1px solid var(--mv-border); border-radius: 4px; margin-bottom: 6px; }
+        .roadmap-card.active { border-color: var(--mv-primary); background: rgba(85,220,255,0.05); }
         .muted-text { font-size: 0.75rem; color: var(--mv-muted); margin-bottom: 10px; }
     </style>
 </head>
@@ -102,7 +104,7 @@
         <h1>MULTIVERSE COMMAND SURFACE</h1>
         <div class="status-indicators">
             <span id="status-ui" class="sys-badge online">UI: ONLINE</span>
-            <span id="status-backend" class="sys-badge offline">Backend: AUTO-FEED WAITING</span>
+            <span id="status-backend" class="sys-badge online">AUTO-FEED READY</span>
         </div>
     </header>
 
@@ -121,56 +123,57 @@
         </button>
     </nav>
 
-    <!-- VIEW: 本城（タスク・収益概要を統合して常時表示） -->
+    <!-- VIEW: 本城（現在地・タスク・収益・モニターを統合） -->
     <main id="view-commander" class="view-container active" role="tabpanel">
         <div class="panel">
             <div class="avatar-box">
                 <div class="avatar-frame">👑</div>
                 <div class="avatar-info">
                     <h2>Emperor</h2>
-                    <p>第一司令官</p>
+                    <p>第一司令官 (Owner 主権)</p>
                 </div>
             </div>
             <div class="asset-summary">
-                総資産: <strong id="ui-total-assets">0</strong> 円
+                <span>マルチ現在地: <strong style="color:var(--mv-primary)">Phase 1 完了 / Phase 2 移行期</strong></span>
+                <span>総資産: <strong style="color:var(--mv-gold)" id="ui-total-assets">0</strong> 円</span>
             </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header">📊 戦況観測モニター</div>
+            <div class="panel-header">📊 戦況観測モニター (自動集計)</div>
             <div id="ui-emperor-eye" class="obs-box">[観測データ待機中]</div>
         </div>
 
-        <!-- 本城内への任務概要統合表示 -->
         <div class="panel">
-            <div class="panel-header">📋 進行中任務 (本城ハイライト)</div>
+            <div class="panel-header">📋 進行中任務ハイライト (自動反映)</div>
             <div class="data-list" id="ui-commander-tasks-list"></div>
         </div>
 
         <div class="panel">
             <div class="panel-header">📟 司令ターミナル</div>
             <div class="chat-box" id="ui-chat-box">
-                <div class="msg system">【System】 本城に任務モニターを統合しました。</div>
+                <div class="msg system">【System】 Command Surface v1.3 稼働中。外部AIからの自動フィードを待機しています。</div>
             </div>
             <div class="input-group">
-                <input type="text" id="cmd-input" placeholder="コマンドを入力...">
+                <input type="text" id="cmd-input" placeholder="コマンドを入力 (例: タスク追加 〇〇)">
                 <button type="button" class="btn" id="btn-send-cmd">送信</button>
             </div>
         </div>
     </main>
 
-    <!-- VIEW: 部隊 -->
+    <!-- VIEW: 部隊（各部隊の役割・進捗一覧） -->
     <main id="view-units" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">⚔️ 司令・部隊レジストリ</div>
+            <div class="panel-header">⚔️ 司令・精鋭部隊レジストリ</div>
+            <p class="muted-text">MULTIVERSEを支えるマルチAI・エージェント体制の編成と進捗状況。</p>
             <div class="data-list" id="units-list"></div>
         </div>
     </main>
 
-    <!-- VIEW: 任務・DB -->
+    <!-- VIEW: 任務・DB（全件管理・自動フィード対応） -->
     <main id="view-tasks" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">📋 任務管理 (全件)</div>
+            <div class="panel-header">📋 任務管理 (全件 CRUD)</div>
             <div class="input-group">
                 <input type="text" id="new-task-input" placeholder="新しい任務...">
                 <button type="button" class="btn" id="btn-add-task">追加</button>
@@ -179,7 +182,7 @@
         </div>
         
         <div class="panel">
-            <div class="panel-header">💰 収益記録</div>
+            <div class="panel-header">💰 収益記録ログ</div>
             <div class="input-group">
                 <input type="number" id="new-rev-input" placeholder="収益額 (例: 5000)">
                 <button type="button" class="btn" id="btn-add-rev">記録</button>
@@ -188,7 +191,7 @@
         </div>
 
         <div class="panel warning-border">
-            <div class="panel-header warning-text">⚙️ Runtime State & Auto-Feed Management</div>
+            <div class="panel-header warning-text">⚙️ Runtime State & Auto-Feed Bridge</div>
             <div class="input-group">
                 <button type="button" class="btn" id="btn-export">Export (書出)</button>
                 <button type="button" class="btn btn-danger" id="btn-import-prompt">JSON自動フィード込 Import</button>
@@ -197,11 +200,32 @@
         </div>
     </main>
 
-    <!-- VIEW: 参謀 -->
+    <!-- VIEW: 参謀（AI自動レポート ＆ ロードマップ進捗） -->
     <main id="view-advisor" class="view-container hidden" role="tabpanel">
         <div class="panel">
+            <div class="panel-header">🗺️ MULTIVERSE 統括ロードマップ進捗</div>
+            <div id="roadmap-container">
+                <div class="roadmap-card active">
+                    <div style="color:var(--mv-primary); font-weight:bold;">Phase 1: UI自動化 ＆ モニター化 [完了]</div>
+                    <div style="font-size:0.75rem; color:var(--mv-muted);">手動計算機を排除し、本城へのタスク統合およびJSON自動フィード基盤を構築。</div>
+                </div>
+                <div class="roadmap-card">
+                    <div style="color:var(--mv-gold); font-weight:bold;">Phase 2: GitHub & Drive ブリッジ構築 [次段階]</div>
+                    <div style="font-size:0.75rem; color:var(--mv-muted);">複数AI（ChatGPT/Claude/Gemini）が連動するための共同作業規約（CONSTITUTION.md）の策定。</div>
+                </div>
+                <div class="roadmap-card">
+                    <div style="color:var(--mv-muted); font-weight:bold;">Phase 3: 複数AI分業・自動監査プロトコル稼働</div>
+                    <div style="font-size:0.75rem; color:var(--mv-muted);">予測モデルやエージェントの出力を自動同期させるパイプラインの結合。</div>
+                </div>
+                <div class="roadmap-card">
+                    <div style="color:var(--mv-muted); font-weight:bold;">Phase 4: 完全自律エコシステム (完成系)</div>
+                    <div style="font-size:0.75rem; color:var(--mv-muted);">スマホを開くだけで全進捗・収益・AI提案が自動同期・決裁される究極の稼働状態。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
             <div class="panel-header">🧠 AI参謀・自動分析レポート (Auto-Feed)</div>
-            <p class="muted-text">※外部AIや予測モデルが自動生成した分析データがここにリアルタイム反映されます。</p>
             <div id="ai-auto-reports">
                 <div class="auto-report-card">
                     <div style="color:var(--mv-gold); font-weight:bold;">[待機中] AI予測フィード未接続</div>
@@ -258,14 +282,14 @@
         emperorEye: {
             analyze: () => {
                 const revs = RuntimeState.data.revenues.map(r => r.amount);
-                if (revs.length < 3) return "観測：データ不足\n傾向：不明\nデータ数：" + revs.length + "\n注意：作戦評価には直近3件のデータが必要です。";
+                if (revs.length < 3) return "観測：データ不足（直近3件の収益データが必要です）\n現在地：Phase 1 完了 / 安定稼働中\n状態：自動フィード待機状態";
                 const recent = revs.slice(-3);
                 const allPos = recent.every(v => v > 0);
                 const allNeg = recent.every(v => v < 0);
                 const trendStr = recent.map(v => v>0 ? '+'+v : v).join(" / ");
-                if (allPos) return `観測：直近3件 [ ${trendStr} ]\n傾向：Positive\nデータ数：${revs.length}\n注意：連続黒字を観測。`;
-                if (allNeg) return `観測：直近3件 [ ${trendStr} ]\n傾向：Negative\nデータ数：${revs.length}\n注意：連続損失を観測。ボラティリティに注意。`;
-                return `観測：直近3件 [ ${trendStr} ]\n傾向：Mixed\nデータ数：${revs.length}\n注意：収益変動あり。`;
+                if (allPos) return `観測：直近3件 [ ${trendStr} ]\n傾向：Positive (連続黒字)\n現在地：Phase 1 完了`;
+                if (allNeg) return `観測：直近3件 [ ${trendStr} ]\n傾向：Negative (連続損失)\n現在地：Phase 1 完了`;
+                return `観測：直近3件 [ ${trendStr} ]\n傾向：Mixed (変動あり)\n現在地：Phase 1 完了`;
             }
         },
         exportImport: {
@@ -280,7 +304,7 @@
                     const parsed = JSON.parse(jsonString);
                     if (parsed.protocol_version !== "1.0" || !parsed.state || !RuntimeState.validate(parsed.state)) return alert("無効なフォーマットまたはスキーマ不一致です。(Fail Closed)");
                     RuntimeState.backup(); RuntimeState.data = parsed.state; RuntimeState.save();
-                    UI.addChat("【System】AI自動レポートおよびデータを同期・復旧しました。", "system");
+                    UI.addChat("【System】AI自動フィードおよびデータを同期・復旧しました。", "system");
                 } catch (e) { alert("JSON解析エラー。(Fail Closed)"); }
             },
             handleFileImport: (e) => {
@@ -355,11 +379,9 @@
             document.getElementById('ui-total-assets').textContent = totalRev.toLocaleString();
             document.getElementById('ui-emperor-eye').textContent = Tools.emperorEye.analyze();
 
-            // 本城と任務・DBの両方にタスクリストを描画
-            UI.renderTasksInto('ui-commander-tasks-list', false); // 本城はシンプル表示
-            UI.renderTasksInto('ui-tasks-list', true);           // 任務・DBは操作可能
+            UI.renderTasksInto('ui-commander-tasks-list', false);
+            UI.renderTasksInto('ui-tasks-list', true);
 
-            // AIレポートの自動描画
             const reportContainer = document.getElementById('ai-auto-reports');
             const reports = RuntimeState.data.ai_reports || [];
             if (reports.length === 0) {
@@ -373,7 +395,7 @@
                 reports.forEach(rep => {
                     const card = document.createElement('div');
                     card.className = "auto-report-card";
-                    const title = document.createElement('div'); title.style.color = "var(--mv-gold); font-weight:bold;"; title.textContent = rep.title || "AI自動分析レポート";
+                    const title = document.createElement('div'); title.style.cssText = "color:var(--mv-gold); font-weight:bold;"; title.textContent = rep.title || "AI自動分析レポート";
                     const content = document.createElement('div'); content.style.marginTop = "4px"; content.textContent = rep.body || "";
                     card.append(title, content);
                     reportContainer.appendChild(card);
@@ -386,21 +408,34 @@
             else {
                 recentRevs.forEach(r => {
                     const d = document.createElement('div'); d.className = "data-item";
-                    const dateSpan = document.createElement('span'); dateSpan.style.fontSize = "0.7rem"; dateSpan.style.color = "var(--mv-muted)"; dateSpan.textContent = new Date(r.timestamp).toLocaleDateString();
+                    const dateSpan = document.createElement('span'); dateSpan.style.cssText = "font-size:0.7rem; color:var(--mv-muted);"; dateSpan.textContent = new Date(r.timestamp).toLocaleDateString();
                     const amtSpan = document.createElement('span'); amtSpan.style.color = r.amount > 0 ? 'var(--sys-online)' : 'var(--sys-offline)'; amtSpan.textContent = `${r.amount > 0 ? '+'+r.amount : r.amount} 円`;
-                    d.append(dateSpan, amtSpan); revList.appendChild(d);
+                    d.append(dateSpan, amtSpan);
+                    revList.appendChild(d);
                 });
             }
 
-            const avatars = [ { name: "軍師 (ラファエル)", role: "主席軍師・全体統括", fallback: "🐰" }, { name: "百人将", role: "事業探索・前線制圧", fallback: "⚔️" }, { name: "特殊部隊", role: "確率・EV・データ分析", fallback: "🛡️" }, { name: "システム改善", role: "インフラ・アーキテクチャ", fallback: "⚙️" }, { name: "AI研究", role: "モデル構築・検証", fallback: "🔬" } ];
-            const uList = document.getElementById('units-list'); uList.innerHTML = '';
+            const avatars = [
+                { name: "軍師 (ラファエル)", role: "主席軍師・全体統括 / 統率・プロトコル管理", fallback: "🐰", status: "稼働中 (Active)" },
+                { name: "百人将", role: "事業探索・前線制圧 / ポイ活・リサーチ", fallback: "⚔️", status: "待機 / 探索中" },
+                { name: "特殊部隊", role: "確率・EV・データ分析 / 株式・競輪モデル", fallback: "🛡️", status: "待機 / モデリング" },
+                { name: "システム改善", role: "インフラ・アーキテクチャ / パイプライン制御", fallback: "⚙️", status: "稼働中 (Surface v1.3)" },
+                { name: "AI研究", role: "モデル構築・検証 / マルチエージェント調停", fallback: "🔬", status: "待機 / 監査中" }
+            ];
+            const uList = document.getElementById('units-list');
+            uList.innerHTML = '';
             avatars.forEach(a => {
-                const d = document.createElement('div'); d.className = "data-item"; d.style.justifyContent = "flex-start"; d.style.gap = "16px";
-                const f = document.createElement('div'); f.className = "avatar-frame"; f.style.width = "40px"; f.style.height = "40px"; f.style.fontSize = "1.2rem"; f.textContent = a.fallback;
-                const info = document.createElement('div');
-                const n = document.createElement('div'); n.style.color = "var(--mv-gold)"; n.style.fontWeight = "bold"; n.textContent = a.name;
-                const r = document.createElement('div'); r.style.fontSize = "0.7rem"; r.style.color = "var(--mv-primary)"; r.textContent = a.role;
-                info.append(n, r); d.append(f, info); uList.appendChild(d);
+                const d = document.createElement('div'); d.className = "data-item"; d.style.cssText = "justify-content: flex-start; gap:16px; align-items: flex-start;";
+                const f = document.createElement('div'); f.className = "avatar-frame"; f.style.cssText = "width:40px; height:40px; font-size:1.2rem; flex-shrink:0;"; f.textContent = a.fallback;
+                const info = document.createElement('div'); info.style.flex = "1";
+                const topRow = document.createElement('div'); topRow.style.cssText = "display:flex; justify-content:space-between; align-items:center;";
+                const n = document.createElement('div'); n.style.cssText = "color:var(--mv-gold); font-weight:bold;"; n.textContent = a.name;
+                const stat = document.createElement('span'); stat.style.cssText = "font-size:0.65rem; color:var(--sys-online); border:1px solid var(--sys-online); padding:1px 4px; border-radius:3px;"; stat.textContent = a.status;
+                topRow.append(n, stat);
+                const r = document.createElement('div'); r.style.cssText = "font-size:0.75rem; color:var(--mv-primary); margin-top:2px;"; r.textContent = a.role;
+                info.append(topRow, r);
+                d.append(f, info);
+                uList.appendChild(d);
             });
         }
     };
