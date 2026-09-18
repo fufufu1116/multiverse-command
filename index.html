@@ -2,419 +2,127 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MULTIVERSE 司令端末 #5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>MULTIVERSE Command Surface v1</title>
     
+    <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#050914">
-
-    <script>
-        const manifestData = {
-            "name": "MULTIVERSE 司令端末 #5",
-            "short_name": "MULTIVERSE",
-            "start_url": "./",
-            "display": "standalone",
-            "background_color": "#050914",
-            "theme_color": "#050914",
-            "icons": [{ "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>", "sizes": "192x192", "type": "image/svg+xml" }]
-        };
-        const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
-        const link = document.createElement('link'); link.rel = 'manifest'; link.href = URL.createObjectURL(blob); document.head.appendChild(link);
-    </script>
-
-    <style>
-        :root {
-            --mv-bg: #050914;
-            --mv-panel: rgba(13, 19, 33, 0.9);
-            --mv-primary: #55dcff;
-            --mv-gold: #ffd36a;
-            --mv-border: rgba(255, 211, 106, 0.3);
-            --mv-text: #e2e8f0;
-            --mv-muted: #8c9bae;
-            --sys-online: #4ade80;
-            --sys-offline: #f87171;
-            --sys-warning: #fbbf24;
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background-color: var(--mv-bg); color: var(--mv-text); font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding-top: 10px; padding-bottom: 40px; overflow-x: hidden; }
-        
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: linear-gradient(rgba(85, 220, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(85, 220, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px; z-index: -1;
-        }
-
-        header { background: rgba(5, 9, 20, 0.95); padding: 10px 16px; border-bottom: 1px solid var(--mv-gold); display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        header h1 { margin: 0; font-size: 1rem; color: var(--mv-primary); letter-spacing: 2px; text-transform: uppercase; }
-        .sys-badge { font-size: 0.6rem; border: 1px solid var(--sys-online); padding: 2px 6px; border-radius: 4px; color: var(--sys-online); }
-
-        /* タブナビゲーションを画面上部に「通常のブロック要素」として配置し、スマホの重なりバグを物理回避 */
-        nav.tab-selector { display: flex; gap: 6px; padding: 0 12px; margin-bottom: 16px; width: 100%; }
-        nav.tab-selector button { flex: 1; background: rgba(13, 19, 33, 0.9); border: 1px solid var(--mv-border); color: var(--mv-muted); font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 10px 4px; border-radius: 6px; }
-        nav.tab-selector button.active { color: var(--mv-gold); background: rgba(255, 211, 106, 0.15); border-color: var(--mv-gold); font-weight: bold; }
-        nav.tab-selector span.icon { font-size: 1.1rem; }
-
-        .container { padding: 0 12px; max-width: 800px; margin: 0 auto; display: none !important; }
-        .container.active { display: block !important; }
-
-        .panel { background: var(--mv-panel); border: 1px solid var(--mv-border); border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-        .panel-header { font-size: 0.9rem; color: var(--mv-gold); border-bottom: 1px solid var(--mv-border); padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-
-        .avatar-box { display: flex; gap: 16px; align-items: center; }
-        .avatar-frame { width: 64px; height: 64px; border: 2px solid var(--mv-gold); border-radius: 50%; background: #000; display: flex; align-items: center; justify-content: center; font-size: 2rem; overflow: hidden; box-shadow: 0 0 10px rgba(255, 211, 106, 0.2); flex-shrink: 0; }
-        .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
-        .avatar-info h2 { margin: 0; font-size: 1.2rem; color: var(--mv-primary); }
-        .avatar-info p { margin: 2px 0 0 0; font-size: 0.8rem; color: var(--mv-muted); }
-
-        .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
-        .input-group input { flex: 1; background: #000; border: 1px solid var(--mv-border); color: var(--mv-text); padding: 10px; border-radius: 4px; font-size: 0.9rem; }
-        .btn { background: rgba(255, 211, 106, 0.15); border: 1px solid var(--mv-gold); color: var(--mv-gold); padding: 10px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .btn:active { background: var(--mv-gold); color: #000; }
-        .btn-primary { background: rgba(85, 220, 255, 0.15); border-color: var(--mv-primary); color: var(--mv-primary); }
-        .btn-danger { border-color: var(--sys-offline); color: var(--sys-offline); background: rgba(248, 113, 113, 0.1); }
-
-        .chat-box { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; font-size: 0.85rem; }
-        .msg { padding: 10px; border-radius: 6px; max-width: 90%; }
-        .msg.owner { align-self: flex-end; background: rgba(85, 220, 255, 0.1); border: 1px solid rgba(85, 220, 255, 0.3); }
-        .msg.system { align-self: flex-start; background: rgba(255, 211, 106, 0.1); border: 1px solid rgba(255, 211, 106, 0.3); border-left: 3px solid var(--mv-gold); }
-
-        .data-list { display: flex; flex-direction: column; gap: 8px; }
-        .data-item { padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
-        .data-item.done { opacity: 0.5; text-decoration: line-through; }
-    </style>
+    
+    <link rel="stylesheet" href="./css/commander.css">
 </head>
 <body>
-
-    <header>
-        <h1>MULTIVERSE #5</h1>
-        <span class="sys-badge" id="hdr-sys-status">端末接続中</span>
+    <header class="app-header">
+        <h1>MULTIVERSE COMMAND SURFACE</h1>
+        <div class="status-indicators">
+            <span id="status-ui" class="sys-badge online">UI: ONLINE</span>
+            <span id="status-backend" class="sys-badge offline">Backend: NOT CONNECTED</span>
+        </div>
     </header>
 
-    <!-- タブ切り替え（画面上部に配置し、干渉を完全に排除） -->
-    <nav class="tab-selector">
-        <button id="nav-commander" class="active" onclick="UI.switchTab('commander')"><span class="icon">🏯</span>本城</button>
-        <button id="nav-units" onclick="UI.switchTab('units')"><span class="icon">⚔️</span>部隊</button>
-        <button id="nav-tasks" onclick="UI.switchTab('tasks')"><span class="icon">📋</span>任務・DB</button>
-        <button id="nav-advisor" onclick="UI.switchTab('advisor')"><span class="icon">🧠</span>参謀</button>
+    <!-- タブ切り替え（スマホの干渉を受けない上部配置） -->
+    <nav class="top-tabbar" aria-label="Main Navigation">
+        <button type="button" class="tab-btn active" data-tab="commander" aria-selected="true" aria-controls="view-commander">
+            <span class="icon">🏯</span><span class="label">本城</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="units" aria-selected="false" aria-controls="view-units">
+            <span class="icon">⚔️</span><span class="label">部隊</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tasks" aria-selected="false" aria-controls="view-tasks">
+            <span class="icon">📋</span><span class="label">任務・DB</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="advisor" aria-selected="false" aria-controls="view-advisor">
+            <span class="icon">🧠</span><span class="label">参謀</span>
+        </button>
     </nav>
 
     <!-- VIEW: 本城 -->
-    <main id="view-commander" class="container active">
+    <main id="view-commander" class="view-container active" role="tabpanel">
         <div class="panel">
             <div class="avatar-box">
-                <div class="avatar-frame">
-                    <img id="ui-emperor-img" src="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Emperor">
-                    <div id="ui-emperor-emoji" style="display:none;">👑</div>
-                </div>
+                <div class="avatar-frame">👑</div>
                 <div class="avatar-info">
-                    <h2 id="ui-emperor-name">Emperor</h2>
-                    <p id="ui-emperor-role">第一司令官</p>
+                    <h2>Emperor</h2>
+                    <p>第一司令官</p>
                 </div>
             </div>
-            <div style="margin-top: 12px; font-size: 0.8rem; border-top: 1px dashed var(--mv-border); padding-top: 8px;">
-                <span>総資産: <strong style="color:var(--mv-gold)" id="ui-total-assets">0</strong> 円</span>
+            <div class="asset-summary">
+                総資産: <strong id="ui-total-assets">0</strong> 円
             </div>
         </div>
 
-        <div class="panel" style="border-color: var(--mv-primary); box-shadow: inset 0 0 20px rgba(85,220,255,0.05);">
-            <div class="panel-header" style="color: var(--mv-primary); border-color: rgba(85,220,255,0.3);">📊 戦況観測モニター</div>
-            <div id="ui-emperor-eye" style="font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap;">[観測データ待機中]</div>
+        <div class="panel">
+            <div class="panel-header">📊 戦況観測モニター</div>
+            <div id="ui-emperor-eye" class="obs-box">[観測データ待機中]</div>
         </div>
 
         <div class="panel">
             <div class="panel-header">📟 司令ターミナル</div>
             <div class="chat-box" id="ui-chat-box">
-                <div class="msg system">【システム】 司令端末 #5 接続完了。<br>入力例: 「タスク追加 〇〇」「収益 5000」</div>
+                <div class="msg system">【System】 Command Surface v1 Initialized.</div>
             </div>
             <div class="input-group">
                 <input type="text" id="cmd-input" placeholder="コマンドを入力...">
-                <button class="btn" onclick="UI.execCommand()">送信</button>
+                <button type="button" class="btn" id="btn-send-cmd">送信</button>
             </div>
         </div>
     </main>
 
     <!-- VIEW: 部隊 -->
-    <main id="view-units" class="container">
+    <main id="view-units" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">⚔️ 部隊・参謀構成</div>
+            <div class="panel-header">⚔️ 司令・部隊レジストリ</div>
             <div class="data-list" id="units-list"></div>
         </div>
     </main>
 
     <!-- VIEW: 任務・DB -->
-    <main id="view-tasks" class="container">
+    <main id="view-tasks" class="view-container hidden" role="tabpanel">
         <div class="panel">
             <div class="panel-header">📋 任務一覧</div>
-            <div class="input-group" style="margin-bottom: 12px;">
+            <div class="input-group">
                 <input type="text" id="new-task-input" placeholder="新しい任務...">
-                <button class="btn" onclick="Tools.task.addFromInput()">追加</button>
+                <button type="button" class="btn" id="btn-add-task">追加</button>
             </div>
             <div class="data-list" id="ui-tasks-list"></div>
         </div>
+        
         <div class="panel">
             <div class="panel-header">💰 収益記録</div>
-            <div class="input-group" style="margin-bottom: 12px;">
-                <input type="number" id="new-rev-input" placeholder="収益額 (例: 5000)">
-                <button class="btn" onclick="Tools.revenue.addFromInput()">記録</button>
-            </div>
-            <div class="data-list" id="ui-rev-list" style="max-height: 150px; overflow-y:auto;"></div>
-        </div>
-        <div class="panel" style="border-color: var(--sys-warning);">
-            <div class="panel-header" style="color: var(--sys-warning);">⚙️ データ管理 (バックアップ・復旧)</div>
             <div class="input-group">
-                <button class="btn" onclick="Tools.system.exportState()" style="flex:1;">データ書き出し</button>
-                <button class="btn btn-danger" onclick="Tools.system.importState()" style="flex:1;">データ読み込み</button>
+                <input type="number" id="new-rev-input" placeholder="収益額 (例: 5000)">
+                <button type="button" class="btn" id="btn-add-rev">記録</button>
             </div>
+            <div class="data-list" id="ui-rev-list"></div>
+        </div>
+
+        <div class="panel warning-border">
+            <div class="panel-header warning-text">⚙️ Runtime State Management</div>
+            <div class="input-group">
+                <button type="button" class="btn" id="btn-export">Export (書出)</button>
+                <button type="button" class="btn btn-danger" id="btn-import-prompt">Import (読込)</button>
+            </div>
+            <input type="file" id="file-import" accept=".json,application/json" style="display: none;">
         </div>
     </main>
 
     <!-- VIEW: 参謀 -->
-    <main id="view-advisor" class="container">
+    <main id="view-advisor" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">🛡️ 確率計算モデル (期待値・配分)</div>
-            <p style="font-size:0.75rem; color:var(--mv-muted);">※モデル上の計算結果です。最終的な判断は司令官が行います。</p>
-            <div class="input-group" style="flex-direction: column;">
+            <div class="panel-header">🛡️ 確率計算モデル (客観観測)</div>
+            <p class="muted-text">※モデル上の計算結果です。最終的な作戦決定(Owner Decision)は司令官が行います。</p>
+            <div class="input-group vertical">
                 <input type="number" id="ev-odds" placeholder="オッズ (例: 3.0)" step="0.1">
-                <input type="number" id="ev-winrate" placeholder="想定勝率 % (例: 40)" value="40">
-                <input type="number" id="ev-bank" placeholder="総資金 (例: 100000)" value="100000">
-                <input type="number" id="ev-stake" placeholder="予定掛金 (例: 5000)" value="5000">
-                <button class="btn btn-primary" onclick="Tools.ev.calculate()">計算実行</button>
+                <input type="number" id="ev-winrate" placeholder="想定勝率 % (例: 40)">
+                <input type="number" id="ev-bank" placeholder="総資金 (例: 100000)">
+                <input type="number" id="ev-stake" placeholder="予定掛金 (例: 5000)">
+                <button type="button" class="btn btn-primary" id="btn-calc-ev">計算実行</button>
             </div>
-            <div id="ev-result" style="margin-top: 12px; font-size: 0.85rem; display:none; padding:10px; background:rgba(0,0,0,0.5); border-left:3px solid var(--mv-gold);"></div>
+            <div id="ev-result" class="result-box hidden"></div>
         </div>
     </main>
 
-<script>
-const RuntimeState = {
-    key: "MULTIVERSE_RUNTIME_STATE_V5",
-    data: { tasks: [], revenues: [] },
-    load: () => {
-        const saved = localStorage.getItem(RuntimeState.key);
-        if (saved) {
-            try { RuntimeState.data = JSON.parse(saved); } catch(e) {}
-        }
-    },
-    save: () => {
-        localStorage.setItem(RuntimeState.key, JSON.stringify(RuntimeState.data));
-        UI.renderAll();
-    }
-};
-
-const AvatarRegistry = {
-    emperor: { name: "Emperor", role: "第一司令官", image: "assets/avatars/emperor.gif", fallback: "👑" },
-    strategist: { name: "軍師 (ラファエル)", role: "主席軍師・全体統括", image: "assets/avatars/raphael.gif", fallback: "🐰" },
-    business: { name: "百人将", role: "事業探索・前線制圧", image: "assets/avatars/business.gif", fallback: "⚔️" },
-    keirin: { name: "特殊部隊", role: "確率・EV・データ分析", image: "assets/avatars/keirin.gif", fallback: "🛡️" },
-    system: { name: "システム改善", role: "インフラ・アーキテクチャ", image: "assets/avatars/system.gif", fallback: "⚙️" },
-    research: { name: "AI研究", role: "モデル構築・検証", image: "assets/avatars/research.gif", fallback: "🔬" }
-};
-
-const Tools = {
-    task: {
-        add: (title) => {
-            if(!title) return;
-            RuntimeState.data.tasks.push({ id: Date.now(), title, done: false });
-            RuntimeState.save();
-            UI.addChat(`【任務】「${title}」を登録しました。`, "system");
-        },
-        addFromInput: () => {
-            const input = document.getElementById('new-task-input');
-            Tools.task.add(input.value.trim());
-            input.value = '';
-        },
-        toggle: (id) => {
-            const t = RuntimeState.data.tasks.find(x => x.id === id);
-            if(t) { t.done = !t.done; RuntimeState.save(); }
-        }
-    },
-    revenue: {
-        add: (amt) => {
-            const val = parseInt(amt, 10);
-            if(isNaN(val)) return;
-            RuntimeState.data.revenues.push({ id: Date.now(), amount: val, timestamp: new Date().toISOString() });
-            RuntimeState.save();
-            UI.addChat(`【収益】${val > 0 ? '+'+val : val} 円を記録しました。`, "system");
-        },
-        addFromInput: () => {
-            const input = document.getElementById('new-rev-input');
-            Tools.revenue.add(input.value);
-            input.value = '';
-        }
-    },
-    emperorEye: {
-        analyze: () => {
-            const revs = RuntimeState.data.revenues.map(r => r.amount);
-            if (revs.length < 3) return "【観測データ不足】\n戦況を判断するための収益データ（3回分）が不足しています。";
-            const recent = revs.slice(-3);
-            const allPos = recent.every(v => v > 0);
-            const allNeg = recent.every(v => v < 0);
-            const trend = recent.map(v => v>0 ? '+'+v : v).join(" / ");
-            
-            if (allPos) return `【観測モデル】連続黒字トレンド検知\n【データ】直近3回: [ ${trend} ]\n【状態】収益傾向は正の方向です。作戦継続をご検討ください。`;
-            if (allNeg) return `【観測モデル】連続損失トレンド検知\n【データ】直近3回: [ ${trend} ]\n【状態】収益傾向は負の方向です。戦略の見直しを推奨します。`;
-            return `【観測モデル】混戦・フラットトレンド\n【データ】直近3回: [ ${trend} ]\n【状態】収益は上下しています。追加データの収集を推奨します。`;
-        }
-    },
-    system: {
-        status: () => {
-            const t = RuntimeState.data.tasks.length;
-            const r = RuntimeState.data.revenues.reduce((sum, item) => sum + item.amount, 0);
-            return `【システム状況】端末ランタイム稼働中 (#5)。\n総タスク: ${t}\n総資産: ${r}円`;
-        },
-        exportState: () => {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(RuntimeState.data, null, 2));
-            const a = document.createElement('a'); a.href = dataStr; a.download = "multiverse_runtime_state_v5.json"; a.click();
-            UI.addChat("【システム】データを書き出しました。", "system");
-        },
-        importState: () => {
-            const jsonStr = prompt("JSON文字列を貼り付けてください");
-            if (jsonStr) {
-                try {
-                    const parsed = JSON.parse(jsonStr);
-                    if(parsed.tasks && parsed.revenues) {
-                        RuntimeState.data = parsed; RuntimeState.save();
-                        UI.addChat("【システム】データを読み込み、復旧しました。", "system");
-                    } else { alert("不正なフォーマットです。"); }
-                } catch(e) { alert("JSON解析エラー"); }
-            }
-        }
-    },
-    ev: {
-        calculate: () => {
-            const odds = parseFloat(document.getElementById('ev-odds').value);
-            const winRate = parseFloat(document.getElementById('ev-winrate').value) / 100;
-            const bankroll = parseFloat(document.getElementById('ev-bank').value);
-            const stake = parseFloat(document.getElementById('ev-stake').value);
-            const res = document.getElementById('ev-result');
-            if(isNaN(odds) || isNaN(winRate) || isNaN(bankroll) || isNaN(stake) || odds <= 1 || winRate <= 0) {
-                res.style.display = 'block'; res.style.borderColor = "var(--sys-offline)";
-                res.innerHTML = "<span style='color:var(--sys-offline)'>[エラー] 入力値が不正です。</span>";
-                return;
-            }
-            const ev = (winRate * odds) - 1;
-            const fullKelly = ((odds - 1) * winRate - (1 - winRate)) / (odds - 1);
-            const recStake = bankroll * Math.min(Math.max(0, fullKelly / 2), 0.1);
-            
-            let dec = "期待値プラス (推奨)", col = "var(--sys-online)";
-            if(ev <= 0 || fullKelly <= 0) { dec = "期待値マイナス (非推奨)"; col = "var(--sys-offline)"; }
-            else if(stake > recStake) { dec = "モデル推奨掛金オーバー"; col = "var(--sys-warning)"; }
-            
-            res.style.display = 'block'; res.style.borderColor = col;
-            res.innerHTML = `
-                <div style="color:${col}; font-weight:bold;">モデル判定: ${dec}</div>
-                <div style="margin-top:6px;">期待値(EV): ${(ev*100).toFixed(2)}%</div>
-                <div>ケリー基準(半分): ${(Math.max(0, fullKelly/2)*100).toFixed(2)}%</div>
-                <div>モデル推奨掛金上限: ${Math.floor(recStake).toLocaleString()} 円</div>
-            `;
-            UI.addChat(`【参謀】計算完了。判定:[${dec}]`, "system");
-        }
-    }
-};
-
-const Commander = {
-    execute: (msg) => {
-        if (msg.match(/^タスク追加\s+(.+)/)) {
-            Tools.task.add(msg.match(/^タスク追加\s+(.+)/)[1]);
-            return;
-        }
-        if (msg.match(/^収益\s+(-?\d+)/)) {
-            Tools.revenue.add(msg.match(/^収益\s+(-?\d+)/)[1]);
-            return;
-        }
-        if (msg.match(/^システム状況/)) {
-            UI.addChat(Tools.system.status(), "system");
-            return;
-        }
-        UI.addChat(`【システム】コマンドを解釈できませんでした: 「${msg}」`, "system");
-    }
-};
-
-const UI = {
-    init: () => {
-        RuntimeState.load();
-        UI.renderAll();
-    },
-    switchTab: (tabId) => {
-        document.querySelectorAll('main.container').forEach(el => {
-            el.classList.remove('active');
-        });
-        document.querySelectorAll('nav.tab-selector button').forEach(el => {
-            el.classList.remove('active');
-        });
-        
-        const targetView = document.getElementById(`view-${tabId}`);
-        const targetNav = document.getElementById(`nav-${tabId}`);
-        
-        if(targetView) {
-            targetView.classList.add('active');
-        }
-        if(targetNav) {
-            targetNav.classList.add('active');
-        }
-        window.scrollTo(0, 0);
-    },
-    addChat: (msg, type="owner") => {
-        const box = document.getElementById('ui-chat-box');
-        const div = document.createElement('div');
-        div.className = `msg ${type}`;
-        div.innerText = msg;
-        box.appendChild(div);
-        box.scrollTop = box.scrollHeight;
-    },
-    execCommand: () => {
-        const input = document.getElementById('cmd-input');
-        const msg = input.value.trim();
-        if(!msg) return;
-        input.value = "";
-        UI.addChat(msg, "owner");
-        Commander.execute(msg);
-    },
-    renderAll: () => {
-        const emp = AvatarRegistry.emperor;
-        document.getElementById('ui-emperor-name').innerText = emp.name;
-        document.getElementById('ui-emperor-role').innerText = emp.role;
-        document.getElementById('ui-emperor-img').src = emp.image;
-        document.getElementById('ui-emperor-emoji').innerText = emp.fallback;
-        
-        const totalRev = RuntimeState.data.revenues.reduce((s, r) => s + r.amount, 0);
-        document.getElementById('ui-total-assets').innerText = totalRev.toLocaleString();
-        document.getElementById('ui-emperor-eye').innerText = Tools.emperorEye.analyze();
-
-        document.getElementById('ui-tasks-list').innerHTML = RuntimeState.data.tasks.map(t => `
-            <div class="data-item ${t.done ? 'done':''}" onclick="Tools.task.toggle(${t.id})" style="cursor:pointer;">
-                <span>${t.title}</span>
-                <input type="checkbox" ${t.done ? 'checked':''} onclick="event.stopPropagation(); Tools.task.toggle(${t.id})">
-            </div>
-        `).join('') || '<div class="data-item">任務なし</div>';
-
-        const revs = [...RuntimeState.data.revenues].reverse().slice(0, 5);
-        document.getElementById('ui-rev-list').innerHTML = revs.map(r => `
-            <div class="data-item">
-                <span style="font-size:0.7rem; color:var(--mv-muted)">${new Date(r.timestamp).toLocaleDateString()}</span>
-                <span style="color:${r.amount > 0 ? 'var(--sys-online)' : 'var(--sys-offline)}">${r.amount > 0 ? '+'+r.amount : r.amount} 円</span>
-            </div>
-        `).join('') || '<div class="data-item">記録なし</div>';
-
-        const unitsHtml = Object.entries(AvatarRegistry).filter(([key]) => key !== 'emperor').map(([_, a]) => `
-            <div class="data-item" style="justify-content: flex-start; gap:16px;">
-                <div class="avatar-frame" style="width:40px; height:40px; font-size:1.2rem;">
-                    <img src="${a.image}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div style="display:none;">${a.fallback}</div>
-                </div>
-                <div>
-                    <div style="color:var(--mv-gold); font-weight:bold;">${a.name}</div>
-                    <div style="font-size:0.7rem; color:var(--mv-primary);">${a.role}</div>
-                </div>
-            </div>
-        `).join('');
-        const unitsListEl = document.getElementById('units-list');
-        if(unitsListEl) unitsListEl.innerHTML = unitsHtml;
-    }
-};
-
-window.onload = UI.init;
-</script>
+    <script src="./js/app.js"></script>
 </body>
 </html>
