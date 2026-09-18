@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MULTIVERSE 司令端末 #1</title>
+    <title>MULTIVERSE 司令端末 #2</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -11,7 +11,7 @@
 
     <script>
         const manifestData = {
-            "name": "MULTIVERSE 司令端末 #1",
+            "name": "MULTIVERSE 司令端末 #2",
             "short_name": "MULTIVERSE",
             "start_url": "./",
             "display": "standalone",
@@ -51,8 +51,9 @@
         header h1 { margin: 0; font-size: 1.1rem; color: var(--mv-primary); letter-spacing: 2px; text-transform: uppercase; }
         .sys-badge { font-size: 0.65rem; border: 1px solid var(--sys-online); padding: 2px 6px; border-radius: 4px; color: var(--sys-online); }
 
-        .container { padding: 12px; max-width: 800px; margin: 0 auto; display: none; }
-        .container.active { display: block; }
+        /* コンテナの表示制御の確実化 */
+        .container { padding: 12px; max-width: 800px; margin: 0 auto; display: none !important; }
+        .container.active { display: block !important; }
 
         .panel { background: var(--mv-panel); border: 1px solid var(--mv-border); border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         .panel-header { font-size: 0.9rem; color: var(--mv-gold); border-bottom: 1px solid var(--mv-border); padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
@@ -79,16 +80,17 @@
         .data-item { padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
         .data-item.done { opacity: 0.5; text-decoration: line-through; }
 
-        nav.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5, 9, 20, 0.98); border-top: 1px solid var(--mv-border); display: flex; justify-content: space-around; padding: 10px 0 16px 0; z-index: 99999; }
-        nav.bottom-nav button { background: none; border: none; color: var(--mv-muted); font-size: 0.65rem; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 25%; cursor: pointer; padding: 6px 0; }
-        nav.bottom-nav button.active { color: var(--mv-gold); text-shadow: 0 0 8px rgba(255, 211, 106, 0.5); }
-        nav.bottom-nav span.icon { font-size: 1.2rem; }
+        /* ボトムナビゲーションを最前面かつ確実に反応させる */
+        nav.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5, 9, 20, 0.99); border-top: 1px solid var(--mv-gold); display: flex; justify-content: space-around; padding: 10px 0 20px 0; z-index: 999999; }
+        nav.bottom-nav button { background: none; border: none; color: var(--mv-muted); font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 25%; cursor: pointer; padding: 8px 0; }
+        nav.bottom-nav button.active { color: var(--mv-gold); text-shadow: 0 0 8px rgba(255, 211, 106, 0.5); font-weight: bold; }
+        nav.bottom-nav span.icon { font-size: 1.3rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>MULTIVERSE #1</h1>
+        <h1>MULTIVERSE #2</h1>
         <span class="sys-badge" id="hdr-sys-status">端末接続中</span>
     </header>
 
@@ -118,7 +120,7 @@
         <div class="panel">
             <div class="panel-header">📟 司令ターミナル</div>
             <div class="chat-box" id="ui-chat-box">
-                <div class="msg system">【システム】 司令端末 #1 接続完了。<br>入力例: 「タスク追加 〇〇」「収益 5000」</div>
+                <div class="msg system">【システム】 司令端末 #2 接続完了。<br>入力例: 「タスク追加 〇〇」「収益 5000」</div>
             </div>
             <div class="input-group">
                 <input type="text" id="cmd-input" placeholder="コマンドを入力...">
@@ -187,7 +189,7 @@
 
 <script>
 const RuntimeState = {
-    key: "MULTIVERSE_RUNTIME_STATE_V1",
+    key: "MULTIVERSE_RUNTIME_STATE_V2",
     data: { tasks: [], revenues: [] },
     load: () => {
         const saved = localStorage.getItem(RuntimeState.key);
@@ -260,11 +262,11 @@ const Tools = {
         status: () => {
             const t = RuntimeState.data.tasks.length;
             const r = RuntimeState.data.revenues.reduce((sum, item) => sum + item.amount, 0);
-            return `【システム状況】端末ランタイム稼働中 (#1)。\n総タスク: ${t}\n総資産: ${r}円`;
+            return `【システム状況】端末ランタイム稼働中 (#2)。\n総タスク: ${t}\n総資産: ${r}円`;
         },
         exportState: () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(RuntimeState.data, null, 2));
-            const a = document.createElement('a'); a.href = dataStr; a.download = "multiverse_runtime_state_v1.json"; a.click();
+            const a = document.createElement('a'); a.href = dataStr; a.download = "multiverse_runtime_state_v2.json"; a.click();
             UI.addChat("【システム】データを書き出しました。", "system");
         },
         importState: () => {
@@ -336,16 +338,16 @@ const UI = {
         UI.renderAll();
     },
     switchTab: (tabId) => {
-        // すべてのメインコンテナを非表示
+        // 全コンテナから active を強制剥奪
         document.querySelectorAll('main.container').forEach(el => {
             el.classList.remove('active');
         });
-        // すべてのナビボタンのactiveを解除
+        // 全ナビボタンから active を強制剥奪
         document.querySelectorAll('nav.bottom-nav button').forEach(el => {
             el.classList.remove('active');
         });
         
-        // 該当のビューとボタンを強制アクティブ化
+        // 対象のビューとボタンに active を付与
         const targetView = document.getElementById(`view-${tabId}`);
         const targetNav = document.getElementById(`nav-${tabId}`);
         
