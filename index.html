@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no, viewport-fit=cover">
-    <title>MULTIVERSE COMMANDER vNext</title>
+    <title>MULTIVERSE COMMANDER</title>
 
-    <!-- PWA Settings -->
+    <!-- PWA設定 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#050914">
@@ -40,7 +40,7 @@
         .top-tabbar { display: flex; background: rgba(13, 19, 33, 0.95); padding: 6px; border-bottom: 1px solid var(--mv-border); margin-bottom: 12px; overflow-x: auto; gap: 4px; }
         .tab-btn { 
             background: transparent; border: none; color: var(--mv-muted); font-size: 0.65rem; 
-            display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; min-width: 60px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; min-width: 50px;
             cursor: pointer; padding: 6px 2px; border-radius: 4px; transition: all 0.2s;
         }
         .tab-btn.active { color: var(--mv-gold); background: rgba(255, 211, 106, 0.1); font-weight: bold; }
@@ -52,6 +52,10 @@
 
         .panel { background: var(--mv-panel); border: 1px solid var(--mv-border); border-radius: 8px; padding: 14px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .panel-header { font-size: 0.85rem; color: var(--mv-gold); border-bottom: 1px solid var(--mv-border); padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+        
+        /* 司令官アバター領域 */
+        .commander-card { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--mv-gold); }
+        .avatar-frame { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--mv-gold); background: radial-gradient(circle, rgba(255,211,106,0.2) 0%, rgba(0,0,0,0.8) 100%); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
         
         .asset-card { display: flex; justify-content: space-between; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid rgba(85,220,255,0.2); }
         .asset-val { font-size: 1.2rem; color: var(--mv-primary); font-weight: bold; }
@@ -72,37 +76,45 @@
         .tag { font-size: 0.6rem; padding: 1px 4px; border-radius: 3px; border: 1px solid; }
         .tag-status { color: var(--mv-primary); border-color: var(--mv-primary); }
         .tag-evidence { color: var(--sys-online); border-color: var(--sys-online); }
-        
-        .evidence-box { background: rgba(0,0,0,0.5); border: 1px dashed var(--mv-border); padding: 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 6px; }
     </style>
 </head>
 <body>
     <header class="app-header">
         <h1>MULTIVERSE COMMANDER</h1>
         <div class="status-indicators">
-            <span class="sys-badge online" id="sys-status">LOCAL CORE READY</span>
-            <span class="sys-badge secure">vNext</span>
+            <span class="sys-badge online" id="sys-status">中枢稼働中</span>
+            <span class="sys-badge secure">改訂版</span>
         </div>
     </header>
 
     <nav class="top-tabbar">
         <button type="button" class="tab-btn active" data-tab="home"><span class="icon">🏠</span><span>ホーム</span></button>
         <button type="button" class="tab-btn" data-tab="troops"><span class="icon">⚔️</span><span>七部隊</span></button>
-        <button type="button" class="tab-btn" data-tab="tasks"><span class="icon">📋</span><span>任務・DB</span></button>
-        <button type="button" class="tab-btn" data-tab="memory"><span class="icon">🧠</span><span>記憶・証拠</span></button>
-        <button type="button" class="tab-btn" data-tab="sim"><span class="icon">⚙️</span><span>検証・SIM</span></button>
+        <button type="button" class="tab-btn" data-tab="tasks"><span class="icon">📋</span><span>任務台帳</span></button>
+        <button type="button" class="tab-btn" data-tab="memory"><span class="icon">🧠</span><span>記憶中枢</span></button>
+        <button type="button" class="tab-btn" data-tab="sim"><span class="icon">⚙️</span><span>防衛検証</span></button>
     </nav>
 
-    <!-- VIEW: ホーム -->
+    <!-- 視点: ホーム -->
     <main id="view-home" class="view-container active">
+        <!-- 司令官アバター＆進捗カード -->
         <div class="panel">
+            <div class="commander-card">
+                <div class="avatar-frame">👑</div>
+                <div style="flex:1;">
+                    <div style="font-size:0.65rem; color:var(--mv-muted);">最高権限者 (MASTER)</div>
+                    <div style="font-size:0.95rem; font-weight:bold; color:var(--mv-gold);">皇帝 (Emperor)</div>
+                    <div style="font-size:0.6rem; color:var(--mv-primary); margin-top:2px;">システム統合進捗: フェーズ1.8 (司令塔構築完了)</div>
+                </div>
+            </div>
+
             <div class="asset-card">
                 <div>
-                    <div style="font-size: 0.65rem; color: var(--mv-muted);">Realized Asset (確定実収益)</div>
+                    <div style="font-size: 0.65rem; color: var(--mv-muted);">確定実収益 (Realized Asset)</div>
                     <div class="asset-val" id="ui-realized-asset">¥0</div>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 0.65rem; color: var(--mv-muted);">MULTIVERSE Rank</div>
+                    <div style="font-size: 0.65rem; color: var(--mv-muted);">要塞位階 (Castle Rank)</div>
                     <div class="rank-val" id="ui-castle-rank">陣屋 Lv.1</div>
                 </div>
             </div>
@@ -110,82 +122,82 @@
             <div class="panel-header">🪽 ラファエル・司令ターミナル</div>
             <div class="chat-box" id="home-chat-box"></div>
             <div class="input-group">
-                <input type="text" id="home-chat-input" placeholder="自然言語で命令を入力 (例: 百人将、新規収益案件を探して)...">
+                <input type="text" id="home-chat-input" placeholder="自然言語で命令を下す (例: 百人将、新規収益案件を探せ)...">
                 <button type="button" class="btn" id="btn-home-send">発令</button>
             </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header">⚡ アクティブタスク・パイプライン</div>
+            <div class="panel-header">⚡ 進行中任務パイプライン</div>
             <div class="data-list" id="home-active-tasks"></div>
         </div>
     </main>
 
-    <!-- VIEW: 七部隊 -->
+    <!-- 視点: 七部隊 -->
     <main id="view-troops" class="view-container">
         <div class="panel">
-            <div class="panel-header">⚔️ MULTIVERSE Capability Registry (七部隊)</div>
+            <div class="panel-header">⚔️ 組織図：七部隊統括レジストリ</div>
             <div class="data-list" id="troops-list"></div>
         </div>
     </main>
 
-    <!-- VIEW: 任務・DB -->
+    <!-- 視点: 任務台帳 -->
     <main id="view-tasks" class="view-container">
         <div class="panel">
-            <div class="panel-header">📋 Task Lifecycle Manager</div>
+            <div class="panel-header">📋 任務ライフサイクル台帳</div>
             <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
-                <input type="text" id="task-title-input" placeholder="任務名・目標...">
+                <input type="text" id="task-title-input" placeholder="任務名・目標を入力...">
                 <div class="input-group" style="margin-bottom:0;">
                     <select id="task-capability-select">
                         <option value="Orchestrator">ラファエル (司令統括)</option>
                         <option value="Opportunity Engine">百人将 (事業・収益探索)</option>
-                        <option value="Research Engine">研究部隊 (データ分析・競輪)</option>
-                        <option value="System Evolution">システム改善 (インフラ・セキュリティ)</option>
+                        <option value="Research Engine">研究部隊 (データ分析・予測)</option>
+                        <option value="System Evolution">システム改善 (インフラ・防壁)</option>
                         <option value="AI Laboratory">AI研究 (モデル評価)</option>
                         <option value="Auditor/Guardian">監査・防衛部隊 (証跡・検証)</option>
                         <option value="Game Lab">Game Lab (コンテンツ開発)</option>
                     </select>
                     <input type="number" id="task-rev-input" placeholder="見込収益" style="max-width: 100px;">
                 </div>
-                <button type="button" class="btn" id="btn-create-task">新規タスク登録 [DRAFT]</button>
+                <button type="button" class="btn" id="btn-create-task">新規任務を起票 [下書き]</button>
             </div>
             <div class="data-list" id="tasks-full-list"></div>
         </div>
     </main>
 
-    <!-- VIEW: 記憶・証拠 -->
+    <!-- 視点: 記憶中枢 -->
     <main id="view-memory" class="view-container">
         <div class="panel">
-            <div class="panel-header">🧠 Canonical Memory & Permanent Rules</div>
+            <div class="panel-header">🧠 恒久記憶・帝国憲章 (Permanent Rules)</div>
             <div class="data-list" id="memory-rules-list"></div>
         </div>
         <div class="panel">
-            <div class="panel-header">🛡️ Evidence & Claim Verification (証拠主義)</div>
+            <div class="panel-header">🛡️ 証拠主義・検証中枢 (Evidence Layer)</div>
             <div class="data-list" id="evidence-claims-list"></div>
         </div>
     </main>
 
-    <!-- VIEW: 検証・SIM -->
+    <!-- 視点: 防衛検証 -->
     <main id="view-sim" class="view-container">
         <div class="panel">
-            <div class="panel-header">⚙️ Fail Closed & Fault Injection Simulator</div>
-            <p style="font-size:0.75rem; color:var(--mv-muted); margin-top:0;">MacBook非接続時でも各種エラー・復旧シナリオを安全にシミュレーション検証します。</p>
+            <div class="panel-header">⚙️ 異常遮断・安全防壁シミュレータ</div>
+            <p style="font-size:0.75rem; color:var(--mv-muted); margin-top:0;">外部接続なしの単体環境でも、異常検知や安全停止（Fail Closed）の挙動を検証できます。</p>
             <div class="input-group">
-                <button type="button" class="btn" id="sim-btn-timeout">Provider Timeout (高負荷)</button>
-                <button type="button" class="btn" id="sim-btn-failclosed">Fail Closed (強制遮断)</button>
+                <button type="button" class="btn" id="sim-btn-timeout">高負荷遅延テスト</button>
+                <button type="button" class="btn" id="sim-btn-failclosed">安全防壁 [緊急遮断]</button>
             </div>
             <div class="input-group">
-                <button type="button" class="btn" id="sim-btn-export">Runtime JSON Export</button>
+                <button type="button" class="btn" id="sim-btn-export">稼働状態のJSON出力</button>
             </div>
         </div>
         <div class="panel">
-            <div class="panel-header">📜 Audit Event Log</div>
+            <div class="panel-header">📜 監査イベント記録 (Audit Log)</div>
             <div class="data-list" id="audit-log-list" style="font-family:monospace; font-size:0.7rem;"></div>
         </div>
     </main>
 
     <script>
-    const RUNTIME_KEY = "MULTIVERSE_COMMANDER_VNEXT_STATE";
+    const RUNTIME_KEY = "MULTIVERSE_COMMANDER_VNEXT_JP_STATE";
 
     function checksum(str) {
         let hash = 0;
@@ -199,15 +211,14 @@
         data: {
             schema_version: "1.0",
             realized_asset: 0,
-            xp: 0,
             tasks: [],
             chat_logs: [
-                { sender: "system", text: "【ラファエル】COMMANDER vNext 起動完了。七部隊Capability統合および三段階資産管理システムが正常稼働しています。" }
+                { sender: "system", text: "【ラファエル】COMMANDER 起動完了。皇帝（MASTER）の直属部隊、全システムの統括に入ります。" }
             ],
             permanent_rules: [
-                "1. 主権はOwner（司令官）に帰属する。",
-                "2. 異常検知時はFail Closed（安全遮断）を優先する。",
-                "3. AIの申告結果はEvidence（証拠）が検証されるまで確定資産とみなさない。"
+                "1. 最高主権は皇帝（Master / Emperor）に帰属する。",
+                "2. 異常や不整合を検知した際は、直ちに安全防壁（Fail Closed）を展開する。",
+                "3. AIの申告結果は、証拠（Evidence）が検証されるまで確定資産とみなさない。"
             ],
             audit_logs: [],
             claims: []
@@ -218,7 +229,7 @@
                 try {
                     const parsed = JSON.parse(raw);
                     if (parsed.schema_version === "1.0") RuntimeState.data = parsed;
-                } catch(e) { console.error("Invalid state format"); }
+                } catch(e) { console.error("データ読込失敗"); }
             }
         },
         save: () => {
@@ -270,26 +281,23 @@
                 if (!text) return;
                 
                 RuntimeState.data.chat_logs.push({ sender: "owner", text: text });
-                RuntimeState.logAudit("COMMAND_ISSUED", { command: text });
+                RuntimeState.logAudit("命令発令", { command: text });
 
-                // Command Parser (自然言語 ➔ 構造化Command)
-                let reply = `【ラファエル】命令を受領。「${text}」を解析し、適切なCapability部隊へタスクを登録しました。`;
                 let targetCap = "Opportunity Engine";
                 if (text.includes("競輪") || text.includes("分析")) targetCap = "Research Engine";
                 if (text.includes("コード") || text.includes("修正")) targetCap = "System Evolution";
 
-                // 自動タスク生成
                 RuntimeState.data.tasks.unshift({
                     id: "task_" + Date.now(),
                     title: text,
                     capability: targetCap,
-                    status: "QUEUED",
+                    status: "待機中 (QUEUED)",
                     revenue_claimed: 1000,
                     revenue_verified: false,
-                    evidence: "AI応答ログ準備完了"
+                    evidence: "AI応答待機中"
                 });
 
-                RuntimeState.data.chat_logs.push({ sender: "system", text: reply });
+                RuntimeState.data.chat_logs.push({ sender: "system", text: `【ラファエル】命令を受領。「${text}」を解析し、担当部隊へ任務を配備しました。` });
                 input.value = "";
                 RuntimeState.save();
             });
@@ -304,39 +312,36 @@
                     id: "task_" + Date.now(),
                     title: title,
                     capability: cap,
-                    status: "DRAFT",
+                    status: "下書き (DRAFT)",
                     revenue_claimed: rev,
                     revenue_verified: false,
-                    evidence: "手動作成タスク"
+                    evidence: "手動起票任務"
                 });
-                RuntimeState.logAudit("TASK_CREATED", { title, cap, rev });
+                RuntimeState.logAudit("任務起票", { title, cap, rev });
                 document.getElementById('task-title-input').value = "";
                 document.getElementById('task-rev-input').value = "";
                 RuntimeState.save();
             });
 
-            // SIM / Verification Buttons
             document.getElementById('sim-btn-timeout').addEventListener('click', () => {
-                RuntimeState.logAudit("SIMULATION_TIMEOUT", { provider: "Claude", latency: "5000ms" });
-                alert("【SIM】Provider Timeout をシミュレートしました。");
+                RuntimeState.logAudit("シミュレーション異常", { type: "高負荷遅延" });
+                alert("【防衛検証】高負荷による応答遅延をシミュレートしました。");
                 RuntimeState.save();
             });
             document.getElementById('sim-btn-failclosed').addEventListener('click', () => {
-                RuntimeState.logAudit("SIMULATION_FAILCLOSED", { reason: "Schema Mismatch Injection" });
-                alert("【SIM】Fail Closed 防壁作動をシミュレートしました。");
+                RuntimeState.logAudit("緊急遮断発動", { reason: "手動テスト" });
+                alert("【防衛検証】安全防壁（Fail Closed）を展開し、全外部通信をロックしました。");
                 RuntimeState.save();
             });
             document.getElementById('sim-btn-export').addEventListener('click', () => {
                 const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(RuntimeState.data, null, 2));
-                const a = document.createElement('a'); a.href = str; a.download = `multiverse_vnext_${Date.now()}.json`; a.click();
+                const a = document.createElement('a'); a.href = str; a.download = `multiverse_state_${Date.now()}.json`; a.click();
             });
         },
         renderAll: () => {
-            // Asset & Rank
             document.getElementById('ui-realized-asset').textContent = `¥${RuntimeState.data.realized_asset.toLocaleString()}`;
             document.getElementById('ui-castle-rank').textContent = CastleLogic.getRank(RuntimeState.data.realized_asset);
 
-            // Chat Box
             const chatBox = document.getElementById('home-chat-box');
             chatBox.innerHTML = "";
             RuntimeState.data.chat_logs.forEach(msg => {
@@ -347,7 +352,6 @@
             });
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Tasks Render (8段階ライフサイクル & 三段階検証)
             const homeTasks = document.getElementById('home-active-tasks');
             const fullTasks = document.getElementById('tasks-full-list');
             homeTasks.innerHTML = ""; fullTasks.innerHTML = "";
@@ -361,65 +365,63 @@
                 info.innerHTML = `
                     <div><strong>${t.title}</strong></div>
                     <div style="font-size:0.65rem; color:var(--mv-muted);">
-                        <span class="tag tag-status">${t.status}</span> | 部隊: ${t.capability} | 見込: ¥${t.revenue_claimed}
+                        <span class="tag tag-status">${t.status}</span> | 担当: ${t.capability} | 見込: ¥${t.revenue_claimed}
                     </div>
                 `;
 
                 const actionArea = document.createElement('div');
                 
-                // 3段階資産確認（Claimed ➔ Verified ➔ Realized）
-                if (t.status === "QUEUED" || t.status === "DRAFT") {
+                if (t.status.includes("待機中") || t.status.includes("下書き")) {
                     const btnRun = document.createElement('button');
                     btnRun.className = "btn"; btnRun.style.cssText = "padding:2px 6px; font-size:0.65rem;";
                     btnRun.textContent = "実行 [RUN]";
-                    btnRun.onclick = () => { t.status = "RUNNING"; RuntimeState.save(); };
+                    btnRun.onclick = () => { t.status = "実行中 (RUNNING)"; RuntimeState.save(); };
                     actionArea.appendChild(btnRun);
-                } else if (t.status === "RUNNING") {
+                } else if (t.status.includes("実行中")) {
                     const btnSuccess = document.createElement('button');
                     btnSuccess.className = "btn"; btnSuccess.style.cssText = "padding:2px 6px; font-size:0.65rem;";
                     btnSuccess.textContent = "完了申告 [SUCCESS]";
-                    btnSuccess.onclick = () => { t.status = "SUCCESS"; RuntimeState.save(); };
+                    btnSuccess.onclick = () => { t.status = "完了 (SUCCESS)"; RuntimeState.save(); };
                     actionArea.appendChild(btnSuccess);
-                } else if (t.status === "SUCCESS" && !t.revenue_verified) {
+                } else if (t.status.includes("完了") && !t.revenue_verified) {
                     const btnVerify = document.createElement('button');
                     btnVerify.className = "btn"; btnVerify.style.cssText = "padding:2px 6px; font-size:0.65rem; border-color:var(--sys-online); color:var(--sys-online);";
                     btnVerify.textContent = "監査・確定 [VERIFY]";
                     btnVerify.onclick = () => { 
-                        t.status = "VERIFIED"; 
+                        t.status = "確定済 (REALIZED)"; 
                         t.revenue_verified = true;
                         RuntimeState.data.realized_asset += t.revenue_claimed;
-                        RuntimeState.logAudit("ASSET_REALIZED", { task_id: t.id, amount: t.revenue_claimed });
+                        RuntimeState.logAudit("資産確定", { task_id: t.id, amount: t.revenue_claimed });
                         RuntimeState.save(); 
                     };
                     actionArea.appendChild(btnVerify);
                 } else {
                     const verifiedTag = document.createElement('span');
                     verifiedTag.className = "tag tag-evidence";
-                    verifiedTag.textContent = "確定済 [REALIZED]";
+                    verifiedTag.textContent = "確定済";
                     actionArea.appendChild(verifiedTag);
                 }
 
                 item.append(info, actionArea);
                 fullTasks.appendChild(item);
 
-                if (t.status !== "VERIFIED") {
+                if (!t.status.includes("確定済")) {
                     homeTasks.appendChild(item.cloneNode(true));
                 }
             });
 
-            if (homeTasks.children.length === 0) homeTasks.innerHTML = '<div class="data-item">現在進行中のタスクはありません。</div>';
+            if (homeTasks.children.length === 0) homeTasks.innerHTML = '<div class="data-item">現在、進行中の任務はありません。</div>';
 
-            // 七部隊 Capability レジストリ
             const troopsList = document.getElementById('troops-list');
             troopsList.innerHTML = "";
             const capabilities = [
-                { name: "ラファエル", role: "Orchestrator / 司令統括", icon: "🪽" },
-                { name: "百人将", role: "Opportunity Engine / 事業・収益探索", icon: "⚔️" },
-                { name: "研究部隊", role: "Research Engine / 競輪・データ分析", icon: "📊" },
-                { name: "システム改善", role: "System Evolution / インフラ・Fail Closed", icon: "🔧" },
-                { name: "AI研究", role: "AI Laboratory / モデル検証", icon: "🧠" },
-                { name: "監査・防衛部隊", role: "Auditor / Guardian / 証跡・検証", icon: "🛡️" },
-                { name: "Game Lab", role: "Game Lab / コンテンツ制作", icon: "🎮" }
+                { name: "ラファエル", role: "司令統括 / オーケストレーター", icon: "🪽" },
+                { name: "百人将", role: "事業・収益探索部隊", icon: "⚔️" },
+                { name: "研究部隊", role: "データ分析・確率予測部隊", icon: "📊" },
+                { name: "システム改善", role: "インフラ・防壁維持部隊", icon: "🔧" },
+                { name: "AI研究", role: "次世代モデル検証部隊", icon: "🧠" },
+                { name: "監査・防衛部隊", role: "証跡監査・セキュリティ部隊", icon: "🛡️" },
+                { name: "Game Lab", role: "コンテンツ・ゲーム開発部隊", icon: "🎮" }
             ];
             capabilities.forEach(c => {
                 const item = document.createElement('div'); item.className = "data-item";
@@ -427,7 +429,6 @@
                 troopsList.appendChild(item);
             });
 
-            // Rules & Audit Render
             const rulesList = document.getElementById('memory-rules-list');
             rulesList.innerHTML = "";
             RuntimeState.data.permanent_rules.forEach(r => {
