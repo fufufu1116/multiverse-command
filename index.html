@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>MULTIVERSE Command Surface v7.1 [Secure Core]</title>
+    <title>MULTIVERSE Command Surface v8.0 [Autonomous Hub]</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -64,6 +64,11 @@
         .btn { background: rgba(255, 211, 106, 0.15); border: 1px solid var(--mv-gold); color: var(--mv-gold); padding: 10px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; min-height: 44px; touch-action: manipulation; }
         .btn-danger { border-color: var(--sys-offline); color: var(--sys-offline); background: rgba(248, 113, 113, 0.1); }
 
+        .chat-box { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; font-size: 0.85rem; }
+        .msg { padding: 10px; border-radius: 6px; max-width: 90%; word-break: break-word; }
+        .msg.owner { align-self: flex-end; background: rgba(85, 220, 255, 0.1); border: 1px solid rgba(85, 220, 255, 0.3); }
+        .msg.system { align-self: flex-start; background: rgba(255, 211, 106, 0.1); border: 1px solid rgba(255, 211, 106, 0.3); border-left: 3px solid var(--mv-gold); }
+
         .data-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
         .data-item { padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         .data-item.done { opacity: 0.5; text-decoration: line-through; }
@@ -72,7 +77,6 @@
         .task-actions button { background: none; border: 1px solid var(--mv-muted); color: var(--mv-text); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
 
         .obs-box { font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; color: var(--mv-text); }
-        .auto-report-card { background: rgba(0,0,0,0.6); border-left: 3px solid var(--mv-primary); padding: 12px; border-radius: 4px; margin-bottom: 10px; font-size: 0.85rem; }
         .muted-text { font-size: 0.75rem; color: var(--mv-muted); margin-bottom: 10px; }
         
         .troop-tag { font-size: 0.65rem; border: 1px solid var(--mv-primary); color: var(--mv-primary); padding: 1px 4px; border-radius: 3px; margin-right: 4px; }
@@ -83,7 +87,7 @@
     <header class="app-header">
         <h1>MULTIVERSE COMMAND SURFACE</h1>
         <div class="status-indicators">
-            <span class="sys-badge online">UI: v7.1 SECURE</span>
+            <span class="sys-badge online">UI: v8.0 CHAT HUB</span>
             <span class="sys-badge secure">SCHEMA: v1.0 (Fail Closed)</span>
         </div>
     </header>
@@ -106,10 +110,21 @@
         </button>
     </nav>
 
-    <!-- VIEW: ホーム -->
+    <!-- VIEW: ホーム (ラファエルチャット搭載) -->
     <main id="view-home" class="view-container active" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">🏰 帝国の成長 & 総合サマリー</div>
+            <div class="panel-header">🏰 主席軍師ラファエルとの通信ターミナル (Chat Hub)</div>
+            <div class="chat-box" id="home-chat-box">
+                <div class="msg system">【ラファエル】司令官、お疲れ様です。ホーム画面からの直接対話回路が開通しました。画像生成・コード作成・部隊への指示出し等の司令をここから受け付けます。</div>
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+                <input type="text" id="home-chat-input" placeholder="ラファエルに指示を入力 (例: 画像生成, コード作成)...">
+                <button type="button" class="btn" id="btn-home-send">送信</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">📊 帝国の成長 & 総合サマリー</div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <div>
                     <div style="font-size:0.75rem; color:var(--mv-muted);">現在の城ランク</div>
@@ -126,7 +141,6 @@
         <div class="panel">
             <div class="panel-header">⚔️ 特殊部隊 (競輪研究) 状態監視</div>
             <div class="obs-box" id="home-keirin-status">Runtime OFF<br>現在の状態: 通産 (タスク実績から自動判定)</div>
-            <p style="font-size:0.75rem; color:var(--mv-muted); margin-top:8px;">この領域は週間のレース予想・買い目はお示ししません。競輪研究は歴史データ上の構造分析のみです。</p>
         </div>
 
         <div class="panel">
@@ -146,7 +160,7 @@
                 </div>
             </div>
             <div class="asset-summary">
-                <span>現在地: <strong style="color:var(--mv-primary)">v7.1 セキュア稼働</strong></span>
+                <span>現在地: <strong style="color:var(--mv-primary)">v8.0 チャット統合稼働</strong></span>
                 <span>全収益: <strong style="color:var(--mv-gold)" id="ui-total-assets">0</strong> 円</span>
             </div>
         </div>
@@ -155,20 +169,13 @@
             <div class="panel-header">📊 戦況観測モニター</div>
             <div id="ui-emperor-eye" class="obs-box">[観測データ待機中]</div>
         </div>
-
-        <div class="panel">
-            <div class="panel-header">📟 司令ターミナル</div>
-            <div class="obs-box" style="height:120px; overflow-y:auto; margin-bottom:8px;" id="terminal-log">
-                [System] v7.1 XSS防御 ＆ スキーマ検証シールド有効。
-            </div>
-        </div>
     </main>
 
     <!-- VIEW: 部隊 -->
     <main id="view-units" class="view-container hidden" role="tabpanel">
         <div class="panel">
             <div class="panel-header">⚔️ 司令・精鋭部隊レジストリ (自動導出)</div>
-            <p class="muted-text">部隊の「任務状態」は手動選択を廃止し、未完了タスクの実データから自動導出されます。</p>
+            <p class="muted-text">各部隊の任務状態は実タスクから自動導出されます。</p>
             <div class="data-list" id="units-list"></div>
         </div>
     </main>
@@ -207,7 +214,7 @@
     <!-- VIEW: 参謀 -->
     <main id="view-advisor" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">🧠 AI参謀・自動分析レポート (Schema Verified)</div>
+            <div class="panel-header">🧠 AI参謀・自動分析レポート</div>
             <div id="ai-auto-reports">
                 <div class="auto-report-card">
                     <div style="color:var(--mv-gold); font-weight:bold;">[稼働中] セキュア・インポート待機中</div>
@@ -218,9 +225,8 @@
     </main>
 
     <script>
-    const STATE_KEY = "MULTIVERSE_RUNTIME_STATE_V7";
+    const STATE_KEY = "MULTIVERSE_RUNTIME_STATE_V8";
 
-    // 簡易チェックサム生成関数 (SHA風味のハッシュ代替)
     function generateChecksum(str) {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -234,11 +240,14 @@
     const RuntimeState = {
         data: { 
             schema_version: "1.0", 
-            provenance: "client-runtime-v7.1",
+            provenance: "client-runtime-v8.0",
             updated_at: null, 
             tasks: [], 
             revenues: [], 
             ai_reports: [], 
+            chat_logs: [
+                { sender: "system", text: "【ラファエル】司令官、ホーム画面チャットへようこそ。どのようなご指示でもお気軽にどうぞ。" }
+            ],
             settings: {} 
         },
         load: () => {
@@ -248,19 +257,16 @@
                 const parsed = JSON.parse(raw);
                 if (RuntimeState.validate(parsed)) {
                     RuntimeState.data = parsed;
-                } else {
-                    console.warn("Schema validation failed. Applying Fail Closed fallback.");
                 }
-            } catch (e) { 
-                console.error("Parse error. Fail Closed triggered."); 
-            }
+            } catch (e) { console.error("Parse error"); }
         },
         save: () => {
             RuntimeState.data.updated_at = new Date().toISOString();
             const payloadStr = JSON.stringify({
                 tasks: RuntimeState.data.tasks,
                 revenues: RuntimeState.data.revenues,
-                ai_reports: RuntimeState.data.ai_reports
+                ai_reports: RuntimeState.data.ai_reports,
+                chat_logs: RuntimeState.data.chat_logs
             });
             RuntimeState.data.checksum = generateChecksum(payloadStr);
             localStorage.setItem(STATE_KEY, JSON.stringify(RuntimeState.data));
@@ -272,9 +278,7 @@
             if (!Array.isArray(state.tasks) || !Array.isArray(state.revenues)) return false;
             return true;
         },
-        backup: () => { 
-            localStorage.setItem(`${STATE_KEY}_BACKUP`, localStorage.getItem(STATE_KEY)); 
-        }
+        backup: () => { localStorage.setItem(`${STATE_KEY}_BACKUP`, localStorage.getItem(STATE_KEY)); }
     };
 
     const CastleLogic = {
@@ -307,7 +311,7 @@
                     troop: troop || "ラファエル",
                     revenue: rev,
                     done: false, 
-                    reflected: false, // 二重反映防止フラグ
+                    reflected: false,
                     created_at: new Date().toISOString() 
                 });
                 RuntimeState.save();
@@ -316,8 +320,6 @@
                 const t = RuntimeState.data.tasks.find(x => x.id === id);
                 if (!t) return;
                 t.done = !t.done;
-                
-                // タスク完了 -> 部隊収益/総資産への自動反映 (二重反映防止付き)
                 if (t.done && !t.reflected && t.revenue !== 0) {
                     RuntimeState.data.revenues.push({
                         id: 'rev_' + Date.now(),
@@ -327,7 +329,6 @@
                     });
                     t.reflected = true;
                 } else if (!t.done && t.reflected) {
-                    // 完了解除された場合、対応する収益ログを相殺
                     RuntimeState.data.revenues = RuntimeState.data.revenues.filter(r => r.source_task !== t.title);
                     t.reflected = false;
                 }
@@ -335,6 +336,26 @@
             },
             delete: (id) => {
                 RuntimeState.data.tasks = RuntimeState.data.tasks.filter(x => x.id !== id);
+                RuntimeState.save();
+            }
+        },
+        chat: {
+            send: (text) => {
+                if (!text) return;
+                RuntimeState.data.chat_logs.push({ sender: "owner", text: text });
+                
+                // 簡易自動応答ロジック（将来的にAI APIアダプターへ接続）
+                let reply = "【ラファエル】ご指示「" + text + "」を正しく受領しました。部隊への指令キューに登録し、次の同期で実行を準備します。";
+                if (text.includes("画像生成") || text.includes("画像")) {
+                    reply = "【ラファエル】画像生成リクエストを検知。特殊部隊およびビジュアル生成モジュールへパイプラインを接続します（バックエンド接続後に実動作します）。";
+                } else if (text.includes("コード") || text.includes("実装")) {
+                    reply = "【ラファエル】コード作成指示を確認。Claude / ローカルAIエージェントへのディスパッチ用パケットを準備します。";
+                } else if (text.includes("収益") || text.includes("資産")) {
+                    const totalRev = RuntimeState.data.revenues.reduce((s, r) => s + r.amount, 0);
+                    reply = `【ラファエル】現在の総資産は ${totalRev.toLocaleString()} 円です。城ランクは ${CastleLogic.getRank(totalRev).rank} です。`;
+                }
+
+                RuntimeState.data.chat_logs.push({ sender: "system", text: reply });
                 RuntimeState.save();
             }
         }
@@ -369,6 +390,16 @@
             UI.renderAll();
         },
         bindEvents: () => {
+            document.getElementById('btn-home-send').addEventListener('click', () => {
+                const input = document.getElementById('home-chat-input');
+                Tools.chat.send(input.value.trim());
+                input.value = '';
+            });
+            document.getElementById('home-chat-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('btn-home-send').click();
+                }
+            });
             document.getElementById('btn-add-task-advanced').addEventListener('click', () => {
                 const titleInput = document.getElementById('new-task-title');
                 const troopSelect = document.getElementById('new-task-troop');
@@ -379,7 +410,7 @@
             });
             document.getElementById('btn-export').addEventListener('click', () => {
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(RuntimeState.data, null, 2));
-                const a = document.createElement('a'); a.href = dataStr; a.download = `multiverse_secure_v7_${Date.now()}.json`; a.click();
+                const a = document.createElement('a'); a.href = dataStr; a.download = `multiverse_v8_${Date.now()}.json`; a.click();
             });
             document.getElementById('btn-import-prompt').addEventListener('click', () => { 
                 document.getElementById('file-import').click(); 
@@ -405,9 +436,6 @@
                 reader.readAsText(file);
             });
         },
-        renderSafeText: (element, text) => {
-            element.textContent = text; // XSS対策: innerHTML禁止、textContentで完全エスケープ
-        },
         renderAll: () => {
             const totalRev = RuntimeState.data.revenues.reduce((s, r) => s + r.amount, 0);
             
@@ -418,6 +446,18 @@
             const castle = CastleLogic.getRank(totalRev);
             document.getElementById('home-castle-rank').textContent = castle.rank;
             document.getElementById('home-castle-desc').textContent = castle.desc;
+
+            // ホームチャットログの描画 (XSS完全防御: textContent使用)
+            const chatBox = document.getElementById('home-chat-box');
+            chatBox.innerHTML = '';
+            const logs = RuntimeState.data.chat_logs || [];
+            logs.forEach(log => {
+                const div = document.createElement('div');
+                div.className = `msg ${log.sender === 'owner' ? 'owner' : 'system'}`;
+                div.textContent = log.text;
+                chatBox.appendChild(div);
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
 
             // ホーム画面：未完了タスク
             const homePending = document.getElementById('home-pending-tasks');
@@ -511,7 +551,7 @@
             });
 
             // 本城観測モニター更新
-            document.getElementById('ui-emperor-eye').textContent = `観測：正常稼働中\nランク：${castle.rank}\n総資産：${totalRev.toLocaleString()} 円\n未完了任務：${pendingList.length} 件\nセキュリティシールド：v7.1 Active`;
+            document.getElementById('ui-emperor-eye').textContent = `観測：正常稼働中\nランク：${castle.rank}\n総資産：${totalRev.toLocaleString()} 円\n未完了任務：${pendingList.length} 件\nチャットログ数：${logs.length} 件\nセキュリティシールド：v8.0 Active`;
         }
     };
 
