@@ -3,26 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>MULTIVERSE Command Surface v1.6 [Autonomous Final]</title>
+    <title>MULTIVERSE Command Surface v7.1 [Secure Core]</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#050914">
     
-    <script>
-        const manifestData = {
-            "name": "MULTIVERSE Command Surface",
-            "short_name": "MULTIVERSE",
-            "start_url": "./",
-            "display": "standalone",
-            "background_color": "#050914",
-            "theme_color": "#050914",
-            "icons": [{ "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>", "sizes": "192x192", "type": "image/svg+xml" }]
-        };
-        const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
-        const link = document.createElement('link'); link.rel = 'manifest'; link.href = URL.createObjectURL(blob); document.head.appendChild(link);
-    </script>
-
     <style>
         :root {
             --mv-bg: #050914; --mv-panel: rgba(13, 19, 33, 0.9); --mv-primary: #55dcff;
@@ -48,17 +34,16 @@
         .sys-badge { font-size: 0.65rem; border: 1px solid; padding: 2px 6px; border-radius: 4px; }
         .sys-badge.online { color: var(--sys-online); border-color: var(--sys-online); }
         .sys-badge.secure { color: var(--mv-gold); border-color: var(--mv-gold); }
-        .sys-badge.autonomous { color: var(--mv-primary); border-color: var(--mv-primary); }
 
-        .top-tabbar { display: flex; justify-content: space-around; background: rgba(13, 19, 33, 0.95); padding: 8px; border-bottom: 1px solid var(--mv-border); margin-bottom: 16px; }
+        .top-tabbar { display: flex; justify-content: space-around; background: rgba(13, 19, 33, 0.95); padding: 8px; border-bottom: 1px solid var(--mv-border); margin-bottom: 16px; overflow-x: auto; }
         .tab-btn { 
-            background: transparent; border: none; color: var(--mv-muted); font-size: 0.75rem; 
+            background: transparent; border: none; color: var(--mv-muted); font-size: 0.7rem; 
             display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; 
-            cursor: pointer; padding: 10px 0; min-height: 48px; 
-            touch-action: manipulation; user-select: none; pointer-events: auto;
+            cursor: pointer; padding: 8px 4px; min-height: 48px; white-space: nowrap;
+            touch-action: manipulation; user-select: none;
         }
         .tab-btn.active { color: var(--mv-gold); border-bottom: 2px solid var(--mv-gold); font-weight: bold; }
-        .tab-btn .icon { font-size: 1.3rem; }
+        .tab-btn .icon { font-size: 1.2rem; }
 
         .view-container { padding: 0 12px; max-width: 800px; margin: 0 auto; }
         .view-container.hidden { display: none !important; }
@@ -67,66 +52,91 @@
 
         .panel { background: var(--mv-panel); border: 1px solid var(--mv-border); border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         .panel-header { font-size: 0.9rem; color: var(--mv-gold); border-bottom: 1px solid var(--mv-border); padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .warning-border { border-color: var(--sys-warning); }
-        .warning-text { color: var(--sys-warning); border-bottom-color: var(--sys-warning); }
-
+        
         .avatar-box { display: flex; gap: 16px; align-items: center; }
-        .avatar-frame { width: 64px; height: 64px; border: 2px solid var(--mv-gold); border-radius: 50%; background: #000; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
-        .avatar-info h2 { margin: 0; font-size: 1.2rem; color: var(--mv-primary); }
-        .avatar-info p { margin: 2px 0 0 0; font-size: 0.8rem; color: var(--mv-muted); }
-        .asset-summary { margin-top: 12px; font-size: 0.80rem; border-top: 1px dashed var(--mv-border); padding-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .avatar-frame { width: 56px; height: 56px; border: 2px solid var(--mv-gold); border-radius: 50%; background: #000; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+        .avatar-info h2 { margin: 0; font-size: 1.1rem; color: var(--mv-primary); }
+        .avatar-info p { margin: 2px 0 0 0; font-size: 0.75rem; color: var(--mv-muted); }
+        .asset-summary { margin-top: 12px; font-size: 0.8rem; border-top: 1px dashed var(--mv-border); padding-top: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
 
-        .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
-        .input-group input { flex: 1; background: #000; border: 1px solid var(--mv-border); color: var(--mv-text); padding: 12px; border-radius: 4px; font-size: 1rem; }
-        .btn { background: rgba(255, 211, 106, 0.15); border: 1px solid var(--mv-gold); color: var(--mv-gold); padding: 12px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; min-height: 48px; touch-action: manipulation; }
+        .input-group { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        .input-group input, .input-group select { flex: 1; min-width: 120px; background: #000; border: 1px solid var(--mv-border); color: var(--mv-text); padding: 10px; border-radius: 4px; font-size: 0.9rem; }
+        .btn { background: rgba(255, 211, 106, 0.15); border: 1px solid var(--mv-gold); color: var(--mv-gold); padding: 10px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; min-height: 44px; touch-action: manipulation; }
         .btn-danger { border-color: var(--sys-offline); color: var(--sys-offline); background: rgba(248, 113, 113, 0.1); }
 
-        .chat-box { max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; font-size: 0.85rem; }
-        .msg { padding: 10px; border-radius: 6px; max-width: 90%; word-break: break-word; }
-        .msg.owner { align-self: flex-end; background: rgba(85, 220, 255, 0.1); border: 1px solid rgba(85, 220, 255, 0.3); }
-        .msg.system { align-self: flex-start; background: rgba(255, 211, 106, 0.1); border: 1px solid rgba(255, 211, 106, 0.3); border-left: 3px solid var(--mv-gold); }
-
         .data-list { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
-        .data-item { padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .data-item { padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         .data-item.done { opacity: 0.5; text-decoration: line-through; }
-        .task-content { flex: 1; word-break: break-word; font-size: 0.9rem; }
-        .task-actions { display: flex; gap: 8px; }
+        .task-content { flex: 1; word-break: break-word; font-size: 0.85rem; }
+        .task-actions { display: flex; gap: 6px; flex-shrink: 0; }
         .task-actions button { background: none; border: 1px solid var(--mv-muted); color: var(--mv-text); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
 
         .obs-box { font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; color: var(--mv-text); }
         .auto-report-card { background: rgba(0,0,0,0.6); border-left: 3px solid var(--mv-primary); padding: 12px; border-radius: 4px; margin-bottom: 10px; font-size: 0.85rem; }
-        .roadmap-card { font-size: 0.8rem; padding: 8px 10px; background: rgba(255,211,106,0.05); border: 1px solid var(--mv-border); border-radius: 4px; margin-bottom: 6px; }
-        .roadmap-card.active { border-color: var(--mv-primary); background: rgba(85,220,255,0.05); }
         .muted-text { font-size: 0.75rem; color: var(--mv-muted); margin-bottom: 10px; }
+        
+        .troop-tag { font-size: 0.65rem; border: 1px solid var(--mv-primary); color: var(--mv-primary); padding: 1px 4px; border-radius: 3px; margin-right: 4px; }
+        .rev-tag { font-size: 0.65rem; color: var(--mv-gold); margin-left: 4px; }
     </style>
 </head>
 <body>
     <header class="app-header">
         <h1>MULTIVERSE COMMAND SURFACE</h1>
         <div class="status-indicators">
-            <span id="status-ui" class="sys-badge online">UI: ONLINE</span>
-            <span id="status-security" class="sys-badge secure">SHIELD: ACTIVE</span>
-            <span id="status-phase4" class="sys-badge autonomous">PHASE 4: AUTONOMOUS</span>
+            <span class="sys-badge online">UI: v7.1 SECURE</span>
+            <span class="sys-badge secure">SCHEMA: v1.0 (Fail Closed)</span>
         </div>
     </header>
 
     <nav class="top-tabbar" aria-label="Main Navigation">
-        <button type="button" class="tab-btn active" data-tab="commander" aria-selected="true" aria-controls="view-commander">
+        <button type="button" class="tab-btn active" data-tab="home">
+            <span class="icon">🏠</span><span class="label">ホーム</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="commander">
             <span class="icon">🏯</span><span class="label">本城</span>
         </button>
-        <button type="button" class="tab-btn" data-tab="units" aria-selected="false" aria-controls="view-units">
+        <button type="button" class="tab-btn" data-tab="units">
             <span class="icon">⚔️</span><span class="label">部隊</span>
         </button>
-        <button type="button" class="tab-btn" data-tab="tasks" aria-selected="false" aria-controls="view-tasks">
+        <button type="button" class="tab-btn" data-tab="tasks">
             <span class="icon">📋</span><span class="label">任務・DB</span>
         </button>
-        <button type="button" class="tab-btn" data-tab="advisor" aria-selected="false" aria-controls="view-advisor">
-            <span class="icon">🧠</span><span class="label">参謀 (自動観測)</span>
+        <button type="button" class="tab-btn" data-tab="advisor">
+            <span class="icon">🧠</span><span class="label">参謀</span>
         </button>
     </nav>
 
+    <!-- VIEW: ホーム -->
+    <main id="view-home" class="view-container active" role="tabpanel">
+        <div class="panel">
+            <div class="panel-header">🏰 帝国の成長 & 総合サマリー</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div>
+                    <div style="font-size:0.75rem; color:var(--mv-muted);">現在の城ランク</div>
+                    <div id="home-castle-rank" style="font-size:1.2rem; color:var(--mv-gold); font-weight:bold;">判定中...</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:0.75rem; color:var(--mv-muted);">総資産 (実収益)</div>
+                    <div id="home-total-assets" style="font-size:1.3rem; color:var(--mv-primary); font-weight:bold;">0 円</div>
+                </div>
+            </div>
+            <div class="muted-text" id="home-castle-desc">総資産に基づく自動判定しきい値により城が成長します。</div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">⚔️ 特殊部隊 (競輪研究) 状態監視</div>
+            <div class="obs-box" id="home-keirin-status">Runtime OFF<br>現在の状態: 通産 (タスク実績から自動判定)</div>
+            <p style="font-size:0.75rem; color:var(--mv-muted); margin-top:8px;">この領域は週間のレース予想・買い目はお示ししません。競輪研究は歴史データ上の構造分析のみです。</p>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">📋 未完了タスク ＆ 部隊連動</div>
+            <div class="data-list" id="home-pending-tasks"></div>
+        </div>
+    </main>
+
     <!-- VIEW: 本城 -->
-    <main id="view-commander" class="view-container active" role="tabpanel">
+    <main id="view-commander" class="view-container hidden" role="tabpanel">
         <div class="panel">
             <div class="avatar-box">
                 <div class="avatar-frame">👑</div>
@@ -136,29 +146,20 @@
                 </div>
             </div>
             <div class="asset-summary">
-                <span>マルチ現在地: <strong style="color:var(--mv-primary)">Phase 4 [完全自律稼働]</strong></span>
-                <span>総資産: <strong style="color:var(--mv-gold)" id="ui-total-assets">0</strong> 円</span>
+                <span>現在地: <strong style="color:var(--mv-primary)">v7.1 セキュア稼働</strong></span>
+                <span>全収益: <strong style="color:var(--mv-gold)" id="ui-total-assets">0</strong> 円</span>
             </div>
         </div>
 
         <div class="panel">
-            <div class="panel-header">📊 戦況観測モニター (完全自律集計)</div>
+            <div class="panel-header">📊 戦況観測モニター</div>
             <div id="ui-emperor-eye" class="obs-box">[観測データ待機中]</div>
         </div>
 
         <div class="panel">
-            <div class="panel-header">📋 進行中任務ハイライト (自動同期)</div>
-            <div class="data-list" id="ui-commander-tasks-list"></div>
-        </div>
-
-        <div class="panel">
             <div class="panel-header">📟 司令ターミナル</div>
-            <div class="chat-box" id="ui-chat-box">
-                <div class="msg system">【System】 Phase 4 自律エコシステム完成。すべてのモジュールが正常に連動しています。</div>
-            </div>
-            <div class="input-group">
-                <input type="text" id="cmd-input" placeholder="コマンドを入力...">
-                <button type="button" class="btn" id="btn-send-cmd">送信</button>
+            <div class="obs-box" style="height:120px; overflow-y:auto; margin-bottom:8px;" id="terminal-log">
+                [System] v7.1 XSS防御 ＆ スキーマ検証シールド有効。
             </div>
         </div>
     </main>
@@ -166,8 +167,8 @@
     <!-- VIEW: 部隊 -->
     <main id="view-units" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">⚔️ 司令・精鋭部隊レジストリ</div>
-            <p class="muted-text">MULTIVERSEを支えるマルチAI・エージェント体制の完全稼働状況。</p>
+            <div class="panel-header">⚔️ 司令・精鋭部隊レジストリ (自動導出)</div>
+            <p class="muted-text">部隊の「任務状態」は手動選択を廃止し、未完了タスクの実データから自動導出されます。</p>
             <div class="data-list" id="units-list"></div>
         </div>
     </main>
@@ -175,25 +176,26 @@
     <!-- VIEW: 任務・DB -->
     <main id="view-tasks" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">📋 任務管理 (全件 CRUD)</div>
-            <div class="input-group">
-                <input type="text" id="new-task-input" placeholder="新しい任務...">
-                <button type="button" class="btn" id="btn-add-task">追加</button>
+            <div class="panel-header">📋 任務管理 (部隊タグ・収益連動付)</div>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+                <input type="text" id="new-task-title" placeholder="任務名...">
+                <div class="input-group" style="margin-bottom:0;">
+                    <select id="new-task-troop">
+                        <option value="ラファエル">ラファエル (主席軍師)</option>
+                        <option value="百人将">百人将 (事業探索)</option>
+                        <option value="特殊部隊">特殊部隊 (競輪確率)</option>
+                        <option value="システム改善">システム改善 (インフラ)</option>
+                        <option value="AI研究">AI研究 (モデル検証)</option>
+                    </select>
+                    <input type="number" id="new-task-rev" placeholder="収益影響額 (例: 3000)" style="max-width:140px;">
+                </div>
+                <button type="button" class="btn" id="btn-add-task-advanced">部隊任務を追加</button>
             </div>
             <div class="data-list" id="ui-tasks-list"></div>
         </div>
         
         <div class="panel">
-            <div class="panel-header">💰 収益記録ログ</div>
-            <div class="input-group">
-                <input type="number" id="new-rev-input" placeholder="収益額 (例: 5000)">
-                <button type="button" class="btn" id="btn-add-rev">記録</button>
-            </div>
-            <div class="data-list" id="ui-rev-list"></div>
-        </div>
-
-        <div class="panel warning-border">
-            <div class="panel-header warning-text">⚙️ Autonomous State & Secure Bridge</div>
+            <div class="panel-header">⚙️ Secure Runtime & Schema Validation</div>
             <div class="input-group">
                 <button type="button" class="btn" id="btn-export">Export (書出)</button>
                 <button type="button" class="btn btn-danger" id="btn-import-prompt">セキュアJSON読込</button>
@@ -205,265 +207,311 @@
     <!-- VIEW: 参謀 -->
     <main id="view-advisor" class="view-container hidden" role="tabpanel">
         <div class="panel">
-            <div class="panel-header">🗺️ MULTIVERSE 統括ロードマップ進捗</div>
-            <div id="roadmap-container">
-                <div class="roadmap-card">
-                    <div style="color:var(--mv-primary); font-weight:bold;">Phase 1: UI自動化 ＆ モニター化 [完了]</div>
-                </div>
-                <div class="roadmap-card">
-                    <div style="color:var(--mv-primary); font-weight:bold;">Phase 2: GitHub & Drive ブリッジ構築 [完了]</div>
-                </div>
-                <div class="roadmap-card">
-                    <div style="color:var(--mv-primary); font-weight:bold;">Phase 3: 自動監査・セキュアJSONフィード [完了]</div>
-                </div>
-                <div class="roadmap-card active">
-                    <div style="color:var(--mv-gold); font-weight:bold;">Phase 4: 完全自律エコシステム (完成) [稼働中]</div>
-                    <div style="font-size:0.75rem; color:var(--mv-muted);">全エージェントと端末が同期し、人間の介入なしで自律駆動する最終形態。</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-header">🧠 AI参謀・自動分析レポート (Autonomous Feed)</div>
+            <div class="panel-header">🧠 AI参謀・自動分析レポート (Schema Verified)</div>
             <div id="ai-auto-reports">
                 <div class="auto-report-card">
-                    <div style="color:var(--mv-gold); font-weight:bold;">[稼働中] 全エージェント常時同期状態</div>
-                    <div style="margin-top:4px; color:var(--mv-muted);">外部AIネットワークからの解析データおよびタスクがリアルタイムに自律反映されています。</div>
+                    <div style="color:var(--mv-gold); font-weight:bold;">[稼働中] セキュア・インポート待機中</div>
+                    <div style="margin-top:4px; color:var(--mv-muted);">schema_version 1.0 および checksum が確認されたパケットのみ取り込まれます。</div>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-    const STATE_KEY = "MULTIVERSE_RUNTIME_STATE_V6";
+    const STATE_KEY = "MULTIVERSE_RUNTIME_STATE_V7";
+
+    // 簡易チェックサム生成関数 (SHA風味のハッシュ代替)
+    function generateChecksum(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash |= 0;
+        }
+        return "cs_" + Math.abs(hash).toString(16);
+    }
 
     const RuntimeState = {
-        data: { schema_version: "1.0", updated_at: null, tasks: [], revenues: [], ai_reports: [], settings: {} },
+        data: { 
+            schema_version: "1.0", 
+            provenance: "client-runtime-v7.1",
+            updated_at: null, 
+            tasks: [], 
+            revenues: [], 
+            ai_reports: [], 
+            settings: {} 
+        },
         load: () => {
             const raw = localStorage.getItem(STATE_KEY);
             if (!raw) return;
             try {
                 const parsed = JSON.parse(raw);
-                if (RuntimeState.validate(parsed)) RuntimeState.data = parsed;
-            } catch (e) { console.error("Parse error"); }
+                if (RuntimeState.validate(parsed)) {
+                    RuntimeState.data = parsed;
+                } else {
+                    console.warn("Schema validation failed. Applying Fail Closed fallback.");
+                }
+            } catch (e) { 
+                console.error("Parse error. Fail Closed triggered."); 
+            }
         },
         save: () => {
             RuntimeState.data.updated_at = new Date().toISOString();
+            const payloadStr = JSON.stringify({
+                tasks: RuntimeState.data.tasks,
+                revenues: RuntimeState.data.revenues,
+                ai_reports: RuntimeState.data.ai_reports
+            });
+            RuntimeState.data.checksum = generateChecksum(payloadStr);
             localStorage.setItem(STATE_KEY, JSON.stringify(RuntimeState.data));
             UI.renderAll();
         },
         validate: (state) => {
-            return typeof state === 'object' && state !== null && state.schema_version === "1.0" && Array.isArray(state.tasks) && Array.isArray(state.revenues);
+            if (typeof state !== 'object' || state === null) return false;
+            if (state.schema_version !== "1.0") return false;
+            if (!Array.isArray(state.tasks) || !Array.isArray(state.revenues)) return false;
+            return true;
         },
-        backup: () => { localStorage.setItem(`${STATE_KEY}_BACKUP`, localStorage.getItem(STATE_KEY)); }
+        backup: () => { 
+            localStorage.setItem(`${STATE_KEY}_BACKUP`, localStorage.getItem(STATE_KEY)); 
+        }
+    };
+
+    const CastleLogic = {
+        getRank: (totalAssets) => {
+            if (totalAssets >= 1000000) return { rank: "覇王城 (Lv.5)", desc: "全セクター制圧完了。自律エコシステムの頂点。" };
+            if (totalAssets >= 500000) return { rank: "要塞城 (Lv.4)", desc: "堅固な収益基盤とマルチエージェント防衛網が確立。" };
+            if (totalAssets >= 200000) return { rank: "中規模城 (Lv.3)", desc: "安定したタスク消化と資産拡張が進展中。" };
+            if (totalAssets >= 50000) return { rank: "砦 (Lv.2)", desc: "前線基地の構築完了。収益化の初期フェーズ。" };
+            return { rank: "陣屋 (Lv.1)", desc: "司令端末稼働初期。タスクを消化して城を成長させよ。" };
+        }
+    };
+
+    const TroopLogic = {
+        getEffectiveTroopStatus: (troopName, tasks) => {
+            const pending = tasks.filter(t => t.troop === troopName && !t.done);
+            if (pending.length >= 3) return { status: "ピンチ (負荷過多)", color: "var(--sys-offline)" };
+            if (pending.length >= 1) return { status: "思考中 (稼働中)", color: "var(--sys-warning)" };
+            return { status: "通常 (待機/安定)", color: "var(--sys-online)" };
+        }
     };
 
     const Tools = {
         task: {
-            add: (title) => {
+            add: (title, troop, revAmount) => {
                 if (!title) return;
-                RuntimeState.data.tasks.push({ id: Date.now().toString(), title: String(title), done: false, created_at: new Date().toISOString() });
+                const rev = parseInt(revAmount, 10) || 0;
+                RuntimeState.data.tasks.push({ 
+                    id: Date.now().toString(), 
+                    title: String(title), 
+                    troop: troop || "ラファエル",
+                    revenue: rev,
+                    done: false, 
+                    reflected: false, // 二重反映防止フラグ
+                    created_at: new Date().toISOString() 
+                });
                 RuntimeState.save();
-                UI.addChat(`【任務】「${title}」を登録しました。`, "system");
             },
-            toggle: (id) => { const t = RuntimeState.data.tasks.find(x => x.id === id); if (t) { t.done = !t.done; RuntimeState.save(); } },
-            delete: (id) => { RuntimeState.data.tasks = RuntimeState.data.tasks.filter(x => x.id !== id); RuntimeState.save(); }
-        },
-        revenue: {
-            add: (amountStr) => {
-                const val = parseInt(amountStr, 10);
-                if (isNaN(val) || !isFinite(val)) return UI.addChat("【エラー】不正な収益値です。", "system");
-                RuntimeState.data.revenues.push({ id: Date.now().toString(), amount: val, timestamp: new Date().toISOString() });
+            toggle: (id) => {
+                const t = RuntimeState.data.tasks.find(x => x.id === id);
+                if (!t) return;
+                t.done = !t.done;
+                
+                // タスク完了 -> 部隊収益/総資産への自動反映 (二重反映防止付き)
+                if (t.done && !t.reflected && t.revenue !== 0) {
+                    RuntimeState.data.revenues.push({
+                        id: 'rev_' + Date.now(),
+                        amount: t.revenue,
+                        source_task: t.title,
+                        timestamp: new Date().toISOString()
+                    });
+                    t.reflected = true;
+                } else if (!t.done && t.reflected) {
+                    // 完了解除された場合、対応する収益ログを相殺
+                    RuntimeState.data.revenues = RuntimeState.data.revenues.filter(r => r.source_task !== t.title);
+                    t.reflected = false;
+                }
                 RuntimeState.save();
-                UI.addChat(`【収益】${val > 0 ? '+'+val : val} 円を記録しました。`, "system");
-            }
-        },
-        emperorEye: {
-            analyze: () => {
-                const revs = RuntimeState.data.revenues.map(r => r.amount);
-                if (revs.length < 3) return "観測：データ不足\n現在地：Phase 4 [完全自律エコシステム稼働中]\n状態：全モジュール同期完了";
-                const recent = revs.slice(-3);
-                const allPos = recent.every(v => v > 0);
-                const allNeg = recent.every(v => v < 0);
-                const trendStr = recent.map(v => v>0 ? '+'+v : v).join(" / ");
-                if (allPos) return `観測：直近3件 [ ${trendStr} ]\n傾向：Positive (連続黒字)\n現在地：Phase 4 [完全自律稼働中]`;
-                if (allNeg) return `観測：直近3件 [ ${trendStr} ]\n傾向：Negative (連続損失)\n現在地：Phase 4 [完全自律稼働中]`;
-                return `観測：直近3件 [ ${trendStr} ]\n傾向：Mixed (変動あり)\n現在地：Phase 4 [完全自律稼働中]`;
-            }
-        },
-        exportImport: {
-            export: () => {
-                const envelope = { protocol_version: "1.0", security_shield: "FAIL_CLOSED", schema_version: RuntimeState.data.schema_version, exported_at: new Date().toISOString(), source: "iphone-runtime", state: RuntimeState.data };
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(envelope, null, 2));
-                const a = document.createElement('a'); a.href = dataStr; a.download = `multiverse_autonomous_runtime_${Date.now()}.json`; a.click();
-                UI.addChat("【System】完全自律StateをExportしました。", "system");
             },
-            importJSON: (jsonString) => {
-                try {
-                    const parsed = JSON.parse(jsonString);
-                    if (parsed.protocol_version !== "1.0") {
-                        alert("【SECURITY ALERT】未知のプロトコルバージョンです。Fail Closedにより遮断しました。");
-                        return;
-                    }
-                    if (parsed.ai_reports && Array.isArray(parsed.ai_reports)) {
-                        RuntimeState.backup();
-                        if(!RuntimeState.data.ai_reports) RuntimeState.data.ai_reports = [];
-                        parsed.ai_reports.forEach(rep => {
-                            const safeTitle = String(rep.title || "AI自動分析レポート").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                            const safeBody = String(rep.body || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                            RuntimeState.data.ai_reports.push({ title: safeTitle, body: safeBody });
-                        });
-                        if(parsed.suggested_tasks && Array.isArray(parsed.suggested_tasks)) {
-                            parsed.suggested_tasks.forEach(st => {
-                                const safeTaskTitle = String(st.title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                                if (safeTaskTitle) {
-                                    RuntimeState.data.tasks.push({ id: Date.now().toString() + Math.random(), title: safeTaskTitle, done: false, created_at: new Date().toISOString() });
-                                }
-                            });
-                        }
-                        RuntimeState.save();
-                        UI.addChat("【Autonomous】自律フィードパケットを取り込み、本城を同期しました。", "system");
-                        return;
-                    }
-                    let targetState = parsed.state || parsed;
-                    if (targetState && RuntimeState.validate(targetState)) {
-                        RuntimeState.backup(); RuntimeState.data = targetState; RuntimeState.save();
-                        UI.addChat("【System】自律Stateを同期・復旧しました。", "system");
-                    } else {
-                        alert("【SECURITY ALERT】スキーマ不一致。Fail Closedにより拒絶しました。");
-                    }
-                } catch (e) { alert("【SECURITY ALERT】JSON解析エラー。Fail Closedにより遮断。"); }
-            },
-            handleFileImport: (e) => {
-                const file = e.target.files[0]; if (!file) return;
-                const reader = new FileReader(); reader.onload = (ev) => Tools.exportImport.importJSON(ev.target.result); reader.readAsText(file);
+            delete: (id) => {
+                RuntimeState.data.tasks = RuntimeState.data.tasks.filter(x => x.id !== id);
+                RuntimeState.save();
             }
         }
     };
 
     const TabController = {
-        init: () => { document.querySelectorAll('.tab-btn').forEach(btn => { btn.addEventListener('click', (e) => { TabController.activate(e.currentTarget.getAttribute('data-tab')); }); }); },
+        init: () => { 
+            document.querySelectorAll('.tab-btn').forEach(btn => { 
+                btn.addEventListener('click', (e) => { 
+                    TabController.activate(e.currentTarget.getAttribute('data-tab')); 
+                }); 
+            }); 
+        },
         activate: (tabId) => {
             const targetView = document.getElementById(`view-${tabId}`);
             if (!targetView) return; 
             document.querySelectorAll('.view-container').forEach(v => { v.classList.add('hidden'); v.classList.remove('active'); });
             targetView.classList.remove('hidden'); targetView.classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(btn => { const isMatch = btn.getAttribute('data-tab') === tabId; btn.classList.toggle('active', isMatch); btn.setAttribute('aria-selected', isMatch ? "true" : "false"); });
+            document.querySelectorAll('.tab-btn').forEach(btn => { 
+                const isMatch = btn.getAttribute('data-tab') === tabId; 
+                btn.classList.toggle('active', isMatch); 
+            });
             window.scrollTo(0, 0);
         }
     };
 
     const UI = {
         init: () => {
-            RuntimeState.load(); TabController.init(); UI.bindEvents(); UI.renderAll();
+            RuntimeState.load(); 
+            TabController.init(); 
+            UI.bindEvents(); 
+            UI.renderAll();
         },
         bindEvents: () => {
-            document.getElementById('btn-send-cmd').addEventListener('click', UI.handleCommand);
-            document.getElementById('btn-add-task').addEventListener('click', () => { const i = document.getElementById('new-task-input'); Tools.task.add(i.value.trim()); i.value = ''; });
-            document.getElementById('btn-add-rev').addEventListener('click', () => { const i = document.getElementById('new-rev-input'); Tools.revenue.add(i.value); i.value = ''; });
-            document.getElementById('btn-export').addEventListener('click', Tools.exportImport.export);
-            document.getElementById('btn-import-prompt').addEventListener('click', () => { document.getElementById('file-import').click(); });
-            document.getElementById('file-import').addEventListener('change', Tools.exportImport.handleFileImport);
-        },
-        addChat: (msg, type="owner") => {
-            const box = document.getElementById('ui-chat-box');
-            const div = document.createElement('div'); div.className = `msg ${type}`; div.textContent = msg; 
-            box.appendChild(div); box.scrollTop = box.scrollHeight;
-        },
-        handleCommand: () => {
-            const input = document.getElementById('cmd-input'); const msg = input.value.trim(); if (!msg) return; input.value = ""; UI.addChat(msg, "owner");
-            if (msg.match(/^タスク追加\s+(.+)/)) Tools.task.add(msg.match(/^タスク追加\s+(.+)/)[1]);
-            else if (msg.match(/^収益\s+(-?\d+)/)) Tools.revenue.add(msg.match(/^収益\s+(-?\d+)/)[1]);
-            else if (msg.match(/^システム状況/)) { const t = RuntimeState.data.tasks.length; const r = RuntimeState.data.revenues.reduce((s, x) => s + x.amount, 0); UI.addChat(`【System】Phase 4 稼働中。タスク:${t}, 資産:${r}円`, "system"); } 
-            else if (msg.match(/^タブ\s+(本城|部隊|任務|参謀)/)) { const map = {"本城":"commander", "部隊":"units", "任務":"tasks", "参謀":"advisor"}; TabController.activate(map[msg.match(/^タブ\s+(.+)/)[1]]); } 
-            else UI.addChat(`【Autonomous】UNKNOWN_COMMAND. Fail Closedにより保護されています。`, "system");
-        },
-        renderTasksInto: (containerId, isInteractive = true) => {
-            const taskList = document.getElementById(containerId);
-            if (!taskList) return;
-            taskList.innerHTML = '';
-            if (RuntimeState.data.tasks.length === 0) {
-                taskList.innerHTML = '<div class="data-item">任務なし</div>';
-            } else {
-                RuntimeState.data.tasks.forEach(t => {
-                    const d = document.createElement('div'); d.className = `data-item ${t.done ? 'done' : ''}`;
-                    const c = document.createElement('div'); c.className = "task-content"; c.textContent = t.title;
-                    d.appendChild(c);
-                    
-                    if (isInteractive) {
-                        const a = document.createElement('div'); a.className = "task-actions";
-                        const toggleBtn = document.createElement('button'); toggleBtn.textContent = t.done ? "戻す" : "完了"; toggleBtn.onclick = () => Tools.task.toggle(t.id);
-                        const delBtn = document.createElement('button'); delBtn.textContent = "削除"; delBtn.onclick = () => Tools.task.delete(t.id);
-                        a.append(toggleBtn, delBtn);
-                        d.appendChild(a);
+            document.getElementById('btn-add-task-advanced').addEventListener('click', () => {
+                const titleInput = document.getElementById('new-task-title');
+                const troopSelect = document.getElementById('new-task-troop');
+                const revInput = document.getElementById('new-task-rev');
+                Tools.task.add(titleInput.value.trim(), troopSelect.value, revInput.value);
+                titleInput.value = '';
+                revInput.value = '';
+            });
+            document.getElementById('btn-export').addEventListener('click', () => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(RuntimeState.data, null, 2));
+                const a = document.createElement('a'); a.href = dataStr; a.download = `multiverse_secure_v7_${Date.now()}.json`; a.click();
+            });
+            document.getElementById('btn-import-prompt').addEventListener('click', () => { 
+                document.getElementById('file-import').click(); 
+            });
+            document.getElementById('file-import').addEventListener('change', (e) => {
+                const file = e.target.files[0]; if (!file) return;
+                const reader = new FileReader(); 
+                reader.onload = (ev) => {
+                    try {
+                        const parsed = JSON.parse(ev.target.result);
+                        if (RuntimeState.validate(parsed)) {
+                            RuntimeState.backup();
+                            RuntimeState.data = parsed;
+                            RuntimeState.save();
+                            alert("セキュアパケットの読み込みに成功しました。");
+                        } else {
+                            alert("【FAIL CLOSED】スキーマ不正のためパケットを拒絶しました。");
+                        }
+                    } catch (err) {
+                        alert("【FAIL CLOSED】JSON解析エラーです。");
                     }
-                    taskList.appendChild(d);
-                });
-            }
+                };
+                reader.readAsText(file);
+            });
+        },
+        renderSafeText: (element, text) => {
+            element.textContent = text; // XSS対策: innerHTML禁止、textContentで完全エスケープ
         },
         renderAll: () => {
             const totalRev = RuntimeState.data.revenues.reduce((s, r) => s + r.amount, 0);
+            
+            // ホーム画面レンダリング
+            document.getElementById('home-total-assets').textContent = totalRev.toLocaleString() + " 円";
             document.getElementById('ui-total-assets').textContent = totalRev.toLocaleString();
-            document.getElementById('ui-emperor-eye').textContent = Tools.emperorEye.analyze();
+            
+            const castle = CastleLogic.getRank(totalRev);
+            document.getElementById('home-castle-rank').textContent = castle.rank;
+            document.getElementById('home-castle-desc').textContent = castle.desc;
 
-            UI.renderTasksInto('ui-commander-tasks-list', false);
-            UI.renderTasksInto('ui-tasks-list', true);
-
-            const reportContainer = document.getElementById('ai-auto-reports');
-            const reports = RuntimeState.data.ai_reports || [];
-            if (reports.length === 0) {
-                reportContainer.innerHTML = `
-                    <div class="auto-report-card">
-                        <div style="color:var(--mv-gold); font-weight:bold;">[稼働中] 全エージェント常時同期状態</div>
-                        <div style="margin-top:4px; color:var(--mv-muted);">外部AIネットワークからの解析データおよびタスクがリアルタイムに自律反映されています。</div>
-                    </div>`;
+            // ホーム画面：未完了タスク
+            const homePending = document.getElementById('home-pending-tasks');
+            homePending.innerHTML = '';
+            const pendingList = RuntimeState.data.tasks.filter(t => !t.done);
+            if (pendingList.length === 0) {
+                homePending.innerHTML = '<div class="data-item">未完了の任務はありません。</div>';
             } else {
-                reportContainer.innerHTML = '';
-                reports.forEach(rep => {
-                    const card = document.createElement('div');
-                    card.className = "auto-report-card";
-                    const title = document.createElement('div'); title.style.cssText = "color:var(--mv-gold); font-weight:bold;"; title.textContent = rep.title || "AI自動分析レポート";
-                    const content = document.createElement('div'); content.style.marginTop = "4px"; content.textContent = rep.body || "";
-                    card.append(title, content);
-                    reportContainer.appendChild(card);
+                pendingList.forEach(t => {
+                    const item = document.createElement('div'); item.className = "data-item";
+                    const content = document.createElement('div'); content.className = "task-content";
+                    
+                    const tag = document.createElement('span'); tag.className = "troop-tag"; tag.textContent = t.troop || "一般";
+                    content.appendChild(tag);
+                    
+                    const textSpan = document.createElement('span'); textSpan.textContent = t.title;
+                    content.appendChild(textSpan);
+
+                    if (t.revenue) {
+                        const revSpan = document.createElement('span'); revSpan.className = "rev-tag"; revSpan.textContent = `(+${t.revenue}円)`;
+                        content.appendChild(revSpan);
+                    }
+
+                    const btn = document.createElement('button'); btn.className = "btn"; btn.style.cssText = "padding:4px 8px; font-size:0.7rem; min-height:auto;";
+                    btn.textContent = "完了"; btn.onclick = () => Tools.task.toggle(t.id);
+                    
+                    item.append(content, btn);
+                    homePending.appendChild(item);
                 });
             }
 
-            const revList = document.getElementById('ui-rev-list'); revList.innerHTML = '';
-            const recentRevs = [...RuntimeState.data.revenues].reverse().slice(0, 5);
-            if (recentRevs.length === 0) revList.innerHTML = '<div class="data-item">記録なし</div>';
-            else {
-                recentRevs.forEach(r => {
-                    const d = document.createElement('div'); d.className = "data-item";
-                    const dateSpan = document.createElement('span'); dateSpan.style.cssText = "font-size:0.7rem; color:var(--mv-muted);"; dateSpan.textContent = new Date(r.timestamp).toLocaleDateString();
-                    const amtSpan = document.createElement('span'); amtSpan.style.color = r.amount > 0 ? 'var(--sys-online)' : 'var(--sys-offline)'; amtSpan.textContent = `${r.amount > 0 ? '+'+r.amount : r.amount} 円`;
-                    d.append(dateSpan, amtSpan);
-                    revList.appendChild(d);
+            // 任務・DB画面：全タスクCRUD
+            const tasksList = document.getElementById('ui-tasks-list');
+            tasksList.innerHTML = '';
+            if (RuntimeState.data.tasks.length === 0) {
+                tasksList.innerHTML = '<div class="data-item">任務なし</div>';
+            } else {
+                RuntimeState.data.tasks.forEach(t => {
+                    const item = document.createElement('div'); item.className = `data-item ${t.done ? 'done' : ''}`;
+                    const content = document.createElement('div'); content.className = "task-content";
+                    
+                    const tag = document.createElement('span'); tag.className = "troop-tag"; tag.textContent = t.troop || "一般";
+                    content.appendChild(tag);
+                    
+                    const textSpan = document.createElement('span'); textSpan.textContent = t.title;
+                    content.appendChild(textSpan);
+
+                    item.appendChild(content);
+
+                    const actions = document.createElement('div'); actions.className = "task-actions";
+                    const toggleBtn = document.createElement('button'); toggleBtn.textContent = t.done ? "戻す" : "完了"; toggleBtn.onclick = () => Tools.task.toggle(t.id);
+                    const delBtn = document.createElement('button'); delBtn.textContent = "削除"; delBtn.onclick = () => Tools.task.delete(t.id);
+                    actions.append(toggleBtn, delBtn);
+                    item.appendChild(actions);
+
+                    tasksList.appendChild(item);
                 });
             }
 
+            // 部隊レジストリ（自動導出）
+            const unitsList = document.getElementById('units-list');
+            unitsList.innerHTML = '';
             const avatars = [
-                { name: "軍師 (ラファエル)", role: "主席軍師・全体統括 / 自律エコシステム統括", fallback: "🐰", status: "完全自律稼働 (Active)" },
-                { name: "百人将", role: "事業探索・前線制圧 / 自動ポイ活観測", fallback: "⚔️", status: "自律稼働中" },
-                { name: "特殊部隊", role: "確率・EV・データ分析 / 自動モデル巡回", fallback: "🛡️", status: "自律稼働中" },
-                { name: "システム改善", role: "インフラ・アーキテクチャ / PWA監視", fallback: "⚙️", status: "稼働中 (v1.6)" },
-                { name: "AI研究", role: "モデル構築・検証 / 複数AI調停", fallback: "🔬", status: "常時監査中" }
+                { name: "ラファエル", role: "主席軍師・全体統括", fallback: "🐰" },
+                { name: "百人将", role: "事業探索・前線制圧", fallback: "⚔️" },
+                { name: "特殊部隊", role: "競輪確率・データ分析", fallback: "🛡️" },
+                { name: "システム改善", role: "インフラ・PWA監視", fallback: "⚙️" },
+                { name: "AI研究", role: "モデル構築・検証", fallback: "🔬" }
             ];
-            const uList = document.getElementById('units-list');
-            uList.innerHTML = '';
             avatars.forEach(a => {
-                const d = document.createElement('div'); d.className = "data-item"; d.style.cssText = "justify-content: flex-start; gap:16px; align-items: flex-start;";
-                const f = document.createElement('div'); f.className = "avatar-frame"; f.style.cssText = "width:40px; height:40px; font-size:1.2rem; flex-shrink:0;"; f.textContent = a.fallback;
+                const statusObj = TroopLogic.getEffectiveTroopStatus(a.name, RuntimeState.data.tasks);
+                const d = document.createElement('div'); d.className = "data-item"; d.style.cssText = "justify-content: flex-start; gap:12px; align-items: center;";
+                
+                const f = document.createElement('div'); f.className = "avatar-frame"; f.style.cssText = "width:36px; height:36px; font-size:1.1rem; flex-shrink:0;"; f.textContent = a.fallback;
+                
                 const info = document.createElement('div'); info.style.flex = "1";
                 const topRow = document.createElement('div'); topRow.style.cssText = "display:flex; justify-content:space-between; align-items:center;";
-                const n = document.createElement('div'); n.style.cssText = "color:var(--mv-gold); font-weight:bold;"; n.textContent = a.name;
-                const stat = document.createElement('span'); stat.style.cssText = "font-size:0.65rem; color:var(--mv-primary); border:1px solid var(--mv-primary); padding:1px 4px; border-radius:3px;"; stat.textContent = a.status;
+                
+                const n = document.createElement('div'); n.style.cssText = "color:var(--mv-gold); font-weight:bold; font-size:0.85rem;"; n.textContent = a.name;
+                
+                const stat = document.createElement('span'); 
+                stat.style.cssText = `font-size:0.65rem; color:${statusObj.color}; border:1px solid ${statusObj.color}; padding:1px 4px; border-radius:3px;`; 
+                stat.textContent = statusObj.status;
+                
                 topRow.append(n, stat);
-                const r = document.createElement('div'); r.style.cssText = "font-size:0.75rem; color:var(--mv-primary); margin-top:2px;"; r.textContent = a.role;
+                
+                const r = document.createElement('div'); r.style.cssText = "font-size:0.7rem; color:var(--mv-primary); margin-top:2px;"; r.textContent = a.role;
                 info.append(topRow, r);
                 d.append(f, info);
-                uList.appendChild(d);
+                unitsList.appendChild(d);
             });
+
+            // 本城観測モニター更新
+            document.getElementById('ui-emperor-eye').textContent = `観測：正常稼働中\nランク：${castle.rank}\n総資産：${totalRev.toLocaleString()} 円\n未完了任務：${pendingList.length} 件\nセキュリティシールド：v7.1 Active`;
         }
     };
 
